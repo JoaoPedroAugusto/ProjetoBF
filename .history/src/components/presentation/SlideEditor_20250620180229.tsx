@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { Plus, Edit, Trash2, Image as ImageIcon, Video, Save, X, Move, Eye, EyeOff, Copy, Layers, RotateCw, Maximize2, Minimize2, Database, Upload, Trash, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, ZoomIn, ZoomOut, RotateCcw, Palette, Play, Pause, Volume2, VolumeX, Grid, Lock, Unlock, AlignLeft, AlignCenter, AlignRight, AlignJustify, Type, Sliders, HardDrive, AlertTriangle } from 'lucide-react';
-import { Slide, MediaElement } from '../../types/presentation';
+import { Slide, MediaElement } from './types/presentation';
 import { mediaStorage, MediaFile, StorageStats } from '../../utils/mediaStorage';
 
 interface SlideEditorProps {
