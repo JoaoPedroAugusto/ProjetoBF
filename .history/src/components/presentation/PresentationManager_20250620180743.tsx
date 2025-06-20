@@ -2,9 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Presentation, Play, Edit, Settings, Eye } from 'lucide-react';
 import { SlideViewer } from './SlideViewer';
 import { SlideEditor } from './SlideEditor';
-import { Slide, SlidePresentation, PresentationSettings } from '../../types/presentation';
-import { mediaStorage } from '../../utils/mediaStorage';
-import { CustomDialog } from './customDiaolg';
+import { Slide, SlidePresentation, PresentationSettings } from './types/presentation';
 
 interface PresentationManagerProps {
   sectorId: string;
@@ -26,42 +24,6 @@ export const PresentationManager: React.FC<PresentationManagerProps> = ({
     allowFullscreen: true,
     theme: 'dark'
   });
-  const [dialogState, setDialogState] = useState<{
-    isOpen: boolean;
-    title: string;
-    message: string;
-    type: 'alert' | 'confirm';
-    onConfirm?: () => void;
-  }>({
-    isOpen: false,
-    title: '',
-    message: '',
-    type: 'confirm'
-  });
-
-  // Funções auxiliares para diálogos
-  const showAlert = (title: string, message: string) => {
-    setDialogState({
-      isOpen: true,
-      title,
-      message,
-      type: 'alert'
-    });
-  };
-
-  const showConfirm = (title: string, message: string, onConfirm: () => void) => {
-    setDialogState({
-      isOpen: true,
-      title,
-      message,
-      type: 'confirm',
-      onConfirm
-    });
-  };
-
-  const closeDialog = () => {
-    setDialogState(prev => ({ ...prev, isOpen: false }));
-  };
 
   // Atalho Shift + P para apresentação
   const handleKeyPress = useCallback((event: KeyboardEvent) => {
@@ -154,36 +116,17 @@ export const PresentationManager: React.FC<PresentationManagerProps> = ({
     ];
   };
 
-  const savePresentation = async (presentation: SlidePresentation) => {
+  const savePresentation = (presentation: SlidePresentation) => {
     try {
-      // Tentar salvar no localStorage primeiro (para compatibilidade)
       localStorage.setItem(`presentation-${sectorId}`, JSON.stringify(presentation));
       setCurrentPresentation(presentation);
     } catch (error) {
       console.error('Erro ao salvar apresentação:', error);
-      
-      // Se der erro de quota no localStorage, tentar migrar para IndexedDB
-      if (error instanceof DOMException && error.name === 'QuotaExceededError') {
-        try {
-          // Migrar dados existentes para IndexedDB se necessário
-          await mediaStorage.migrateFromLocalStorage();
-          
-          // Tentar salvar novamente
-          localStorage.setItem(`presentation-${sectorId}`, JSON.stringify(presentation));
-          setCurrentPresentation(presentation);
-          
-          showAlert('Dados Migrados', 'Dados migrados para armazenamento otimizado. Apresentação salva com sucesso!');
-        } catch (migrationError) {
-          console.error('Erro na migração:', migrationError);
-          showAlert('Erro de Armazenamento', 'Erro ao salvar apresentação. Tente remover alguns arquivos de mídia para liberar espaço.');
-        }
-      } else {
-        showAlert('Erro de Armazenamento', 'Erro ao salvar apresentação. Verifique o espaço de armazenamento.');
-      }
+      alert('Erro ao salvar apresentação. Verifique o espaço de armazenamento.');
     }
   };
 
-  const handleSlidesChange = async (slides: Slide[]) => {
+  const handleSlidesChange = (slides: Slide[]) => {
     if (!currentPresentation) return;
     
     const updatedPresentation = {
@@ -191,7 +134,7 @@ export const PresentationManager: React.FC<PresentationManagerProps> = ({
       slides,
       updatedAt: new Date()
     };
-    await savePresentation(updatedPresentation);
+    savePresentation(updatedPresentation);
   };
 
   const startPresentation = () => {
@@ -469,16 +412,6 @@ export const PresentationManager: React.FC<PresentationManagerProps> = ({
           </div>
         </div>
       </div>
-
-      {/* Custom Dialog */}
-      <CustomDialog
-        isOpen={dialogState.isOpen}
-        onClose={closeDialog}
-        onConfirm={dialogState.onConfirm}
-        title={dialogState.title}
-        message={dialogState.message}
-        type={dialogState.type}
-      />
     </div>
   );
 };

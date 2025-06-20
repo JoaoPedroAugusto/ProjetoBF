@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { ChevronLeft, ChevronRight, X, Maximize, Minimize, Play, Pause, Volume2, VolumeX, RotateCcw, Maximize2 } from 'lucide-react';
-import { Slide, PresentationSettings } from '../../types/presentation';
+import { Slide, PresentationSettings } from './types/presentation';
 
 interface SlideViewerProps {
   slides: Slide[];

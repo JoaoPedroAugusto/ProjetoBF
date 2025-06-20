@@ -2,7 +2,6 @@ import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { Plus, Edit, Trash2, Image as ImageIcon, Video, Save, X, Move, Eye, EyeOff, Copy, Layers, RotateCw, Maximize2, Minimize2, Database, Upload, Trash, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, ZoomIn, ZoomOut, RotateCcw, Palette, Play, Pause, Volume2, VolumeX, Grid, Lock, Unlock, AlignLeft, AlignCenter, AlignRight, AlignJustify, Type, Sliders, HardDrive, AlertTriangle } from 'lucide-react';
 import { Slide, MediaElement } from '../../types/presentation';
 import { mediaStorage, MediaFile, StorageStats } from '../../utils/mediaStorage';
-import { CustomDialog } from './customDiaolg';
 
 interface SlideEditorProps {
   slides: Slide[];
@@ -59,18 +58,6 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
   const [lockedElements, setLockedElements] = useState<Set<string>>(new Set());
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [dialogState, setDialogState] = useState<{
-    isOpen: boolean;
-    title: string;
-    message: string;
-    type: 'alert' | 'confirm';
-    onConfirm?: () => void;
-  }>({
-    isOpen: false,
-    title: '',
-    message: '',
-    type: 'confirm'
-  });
   const [dragState, setDragState] = useState<DragState>({
     isDragging: false,
     elementId: null,
@@ -94,30 +81,6 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
   
   const previewRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // Funções auxiliares para diálogos
-  const showAlert = (title: string, message: string) => {
-    setDialogState({
-      isOpen: true,
-      title,
-      message,
-      type: 'alert'
-    });
-  };
-
-  const showConfirm = (title: string, message: string, onConfirm: () => void) => {
-    setDialogState({
-      isOpen: true,
-      title,
-      message,
-      type: 'confirm',
-      onConfirm
-    });
-  };
-
-  const closeDialog = () => {
-    setDialogState(prev => ({ ...prev, isOpen: false }));
-  };
 
   // Carregar biblioteca de mídia e estatísticas
   useEffect(() => {
@@ -268,7 +231,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
 
     } catch (error) {
       console.error('Erro ao fazer upload:', error);
-      showAlert('Erro no Upload', 'Erro ao fazer upload: ' + (error as Error).message);
+      alert('Erro ao fazer upload: ' + (error as Error).message);
       setIsUploading(false);
       setUploadProgress(0);
     }
@@ -295,15 +258,11 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
   };
 
   const removeFromMediaLibrary = async (id: string) => {
-    showConfirm(
-      'Remover Arquivo',
-      'Tem certeza que deseja remover este arquivo? Esta ação não pode ser desfeita.',
-      async () => {
-        await mediaStorage.removeMedia(id);
-        await loadMediaLibrary();
-        await updateStorageStats();
-      }
-    );
+    if (confirm('Tem certeza que deseja remover este arquivo? Esta ação não pode ser desfeita.')) {
+      await mediaStorage.removeMedia(id);
+      await loadMediaLibrary();
+      await updateStorageStats();
+    }
   };
 
   const snapToGridValue = (value: number): number => {
@@ -577,14 +536,10 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
   };
 
   const handleDeleteSlide = (slideId: string) => {
-    showConfirm(
-      'Excluir Slide',
-      'Tem certeza que deseja excluir este slide? Esta ação não pode ser desfeita.',
-      () => {
-        const updatedSlides = slides.filter(slide => slide.id !== slideId);
-        onSlidesChange(updatedSlides);
-      }
-    );
+    if (confirm('Tem certeza que deseja excluir este slide?')) {
+      const updatedSlides = slides.filter(slide => slide.id !== slideId);
+      onSlidesChange(updatedSlides);
+    }
   };
 
   const handleMoveSlide = (slideId: string, direction: 'up' | 'down') => {
@@ -800,20 +755,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
         </div>
       </div>
 
-      {/* Atalhos de Teclado */}
-      <div className="mb-4 bg-blue-50 p-3 rounded-lg">
-        <h4 className="text-sm font-medium text-blue-800 mb-2">Atalhos de Teclado:</h4>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs text-blue-700">
-          <div><kbd className="bg-blue-200 px-1 rounded">Shift+P</kbd> Apresentar</div>
-          <div><kbd className="bg-blue-200 px-1 rounded">Ctrl+S</kbd> Salvar</div>
-          <div><kbd className="bg-blue-200 px-1 rounded">Ctrl+C</kbd> Duplicar</div>
-          <div><kbd className="bg-blue-200 px-1 rounded">Ctrl+G</kbd> Grid</div>
-          <div><kbd className="bg-blue-200 px-1 rounded">Ctrl+L</kbd> Bloquear</div>
-          <div><kbd className="bg-blue-200 px-1 rounded">Del</kbd> Excluir</div>
-          <div><kbd className="bg-blue-200 px-1 rounded">Setas</kbd> Mover</div>
-          <div><kbd className="bg-blue-200 px-1 rounded">Shift+Setas</kbd> Mover 1px</div>
-        </div>
-      </div>
+    
 
       {/* Storage Usage */}
       <div className="mb-4 bg-gray-50 p-3 rounded-lg">
@@ -2051,16 +1993,6 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
           </div>
         </div>
       )}
-
-      {/* Custom Dialog */}
-      <CustomDialog
-        isOpen={dialogState.isOpen}
-        onClose={closeDialog}
-        onConfirm={dialogState.onConfirm}
-        title={dialogState.title}
-        message={dialogState.message}
-        type={dialogState.type}
-      />
     </div>
   );
 };

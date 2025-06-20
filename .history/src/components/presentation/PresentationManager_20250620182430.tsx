@@ -4,7 +4,6 @@ import { SlideViewer } from './SlideViewer';
 import { SlideEditor } from './SlideEditor';
 import { Slide, SlidePresentation, PresentationSettings } from '../../types/presentation';
 import { mediaStorage } from '../../utils/mediaStorage';
-import { CustomDialog } from './customDiaolg';
 
 interface PresentationManagerProps {
   sectorId: string;
@@ -26,42 +25,6 @@ export const PresentationManager: React.FC<PresentationManagerProps> = ({
     allowFullscreen: true,
     theme: 'dark'
   });
-  const [dialogState, setDialogState] = useState<{
-    isOpen: boolean;
-    title: string;
-    message: string;
-    type: 'alert' | 'confirm';
-    onConfirm?: () => void;
-  }>({
-    isOpen: false,
-    title: '',
-    message: '',
-    type: 'confirm'
-  });
-
-  // Funções auxiliares para diálogos
-  const showAlert = (title: string, message: string) => {
-    setDialogState({
-      isOpen: true,
-      title,
-      message,
-      type: 'alert'
-    });
-  };
-
-  const showConfirm = (title: string, message: string, onConfirm: () => void) => {
-    setDialogState({
-      isOpen: true,
-      title,
-      message,
-      type: 'confirm',
-      onConfirm
-    });
-  };
-
-  const closeDialog = () => {
-    setDialogState(prev => ({ ...prev, isOpen: false }));
-  };
 
   // Atalho Shift + P para apresentação
   const handleKeyPress = useCallback((event: KeyboardEvent) => {
@@ -172,13 +135,13 @@ export const PresentationManager: React.FC<PresentationManagerProps> = ({
           localStorage.setItem(`presentation-${sectorId}`, JSON.stringify(presentation));
           setCurrentPresentation(presentation);
           
-          showAlert('Dados Migrados', 'Dados migrados para armazenamento otimizado. Apresentação salva com sucesso!');
+          alert('Dados migrados para armazenamento otimizado. Apresentação salva com sucesso!');
         } catch (migrationError) {
           console.error('Erro na migração:', migrationError);
-          showAlert('Erro de Armazenamento', 'Erro ao salvar apresentação. Tente remover alguns arquivos de mídia para liberar espaço.');
+          alert('Erro ao salvar apresentação. Tente remover alguns arquivos de mídia para liberar espaço.');
         }
       } else {
-        showAlert('Erro de Armazenamento', 'Erro ao salvar apresentação. Verifique o espaço de armazenamento.');
+        alert('Erro ao salvar apresentação. Verifique o espaço de armazenamento.');
       }
     }
   };
@@ -469,16 +432,6 @@ export const PresentationManager: React.FC<PresentationManagerProps> = ({
           </div>
         </div>
       </div>
-
-      {/* Custom Dialog */}
-      <CustomDialog
-        isOpen={dialogState.isOpen}
-        onClose={closeDialog}
-        onConfirm={dialogState.onConfirm}
-        title={dialogState.title}
-        message={dialogState.message}
-        type={dialogState.type}
-      />
     </div>
   );
 };
