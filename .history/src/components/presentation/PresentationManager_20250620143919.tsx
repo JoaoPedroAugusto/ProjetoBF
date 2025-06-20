@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Presentation, Play, Edit, Settings, Eye } from 'lucide-react';
 import { SlideViewer } from './SlideViewer';
 import { SlideEditor } from './SlideEditor';
@@ -24,21 +24,6 @@ export const PresentationManager: React.FC<PresentationManagerProps> = ({
     allowFullscreen: true,
     theme: 'dark'
   });
-
-  // Atalho Shift + P para apresentação
-  const handleKeyPress = useCallback((event: KeyboardEvent) => {
-    if (event.shiftKey && (event.key === 'p' || event.key === 'P')) {
-      event.preventDefault();
-      if (!isViewing && !isEditing) {
-        startPresentation();
-      }
-    }
-  }, [isViewing, isEditing]);
-
-  useEffect(() => {
-    document.addEventListener('keydown', handleKeyPress);
-    return () => document.removeEventListener('keydown', handleKeyPress);
-  }, [handleKeyPress]);
 
   // Carregar apresentação do localStorage
   useEffect(() => {
@@ -133,7 +118,6 @@ export const PresentationManager: React.FC<PresentationManagerProps> = ({
   };
 
   const startPresentation = () => {
-    setSelectedSlideIndex(0);
     setIsViewing(true);
   };
 
@@ -189,10 +173,6 @@ export const PresentationManager: React.FC<PresentationManagerProps> = ({
               <span>{currentPresentation.slides.length} slides</span>
               <span>•</span>
               <span>Última atualização: {currentPresentation.updatedAt.toLocaleDateString('pt-BR')}</span>
-              <span>•</span>
-              <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium">
-                Pressione Shift + P para apresentar
-              </span>
             </div>
           </div>
           

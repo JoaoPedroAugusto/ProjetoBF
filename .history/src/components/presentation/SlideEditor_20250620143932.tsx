@@ -89,79 +89,6 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
     calculateStorageUsage();
   }, []);
 
-  // Atalhos de teclado estilo Canva
-  useEffect(() => {
-    const handleKeyPress = (event: KeyboardEvent) => {
-      // Só processar se não estiver em um input
-      if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
-        return;
-      }
-
-      // Shift + P para apresentação (será implementado no PresentationManager)
-      if (event.shiftKey && (event.key === 'p' || event.key === 'P')) {
-        event.preventDefault();
-        console.log('Atalho Shift+P detectado - implementar no PresentationManager');
-        return;
-      }
-
-      // Outros atalhos
-      switch (event.key) {
-        case 'Delete':
-        case 'Backspace':
-          if (selectedMediaElement) {
-            event.preventDefault();
-            removeMediaElement(selectedMediaElement);
-          }
-          break;
-        case 'c':
-        case 'C':
-          if (event.ctrlKey && selectedMediaElement) {
-            event.preventDefault();
-            duplicateMediaElement(selectedMediaElement);
-          }
-          break;
-        case 'g':
-        case 'G':
-          if (event.ctrlKey) {
-            event.preventDefault();
-            setShowGrid(!showGrid);
-          }
-          break;
-        case 'l':
-        case 'L':
-          if (event.ctrlKey && selectedMediaElement) {
-            event.preventDefault();
-            toggleElementLock(selectedMediaElement);
-          }
-          break;
-      }
-
-      // Movimento com setas
-      if (selectedMediaElement && ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) {
-        event.preventDefault();
-        const moveAmount = event.shiftKey ? 1 : gridSize; // Shift para movimento fino
-        
-        switch (event.key) {
-          case 'ArrowUp':
-            moveElement(selectedMediaElement, 'up', moveAmount);
-            break;
-          case 'ArrowDown':
-            moveElement(selectedMediaElement, 'down', moveAmount);
-            break;
-          case 'ArrowLeft':
-            moveElement(selectedMediaElement, 'left', moveAmount);
-            break;
-          case 'ArrowRight':
-            moveElement(selectedMediaElement, 'right', moveAmount);
-            break;
-        }
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyPress);
-    return () => document.removeEventListener('keydown', handleKeyPress);
-  }, [selectedMediaElement, showGrid, gridSize]);
-
   const loadMediaLibrary = () => {
     try {
       const saved = localStorage.getItem('media-library');
@@ -404,8 +331,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
       zIndex: (editingSlide.mediaElements?.length || 0) + 1,
       opacity: 1,
       borderRadius: 8,
-      rotation: 0,
-      isFullscreen: false
+      rotation: 0
     };
 
     setEditingSlide({
@@ -506,12 +432,6 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
     setVideoPreviewStates(newStates);
   };
 
-  const toggleElementFullscreen = (elementId: string) => {
-    updateMediaElement(elementId, { 
-      isFullscreen: !editingSlide?.mediaElements?.find(el => el.id === elementId)?.isFullscreen 
-    });
-  };
-
   // Funções de movimento preciso
   const moveElement = (elementId: string, direction: 'up' | 'down' | 'left' | 'right', amount: number = gridSize) => {
     const element = editingSlide?.mediaElements?.find(el => el.id === elementId);
@@ -531,7 +451,6 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
         newX = Math.max(0, snapToGridValue(element.x - amount));
         break;
       case 'right':
-        // CORREÇÃO: Garantir que elementos colem na borda direita
         newX = Math.min(EDITOR_WIDTH - element.width, snapToGridValue(element.x + amount));
         break;
     }
@@ -573,7 +492,6 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
         newX = snapToGridValue((EDITOR_WIDTH - element.width) / 2);
         break;
       case 'right':
-        // CORREÇÃO: Garantir alinhamento perfeito à direita
         newX = EDITOR_WIDTH - element.width;
         break;
       case 'top':
@@ -655,7 +573,6 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
         const scaledDeltaX = deltaX * scaleX;
         const scaledDeltaY = deltaY * scaleY;
         
-        // CORREÇÃO: Garantir que elementos possam colar nas bordas
         const maxX = EDITOR_WIDTH - (element.width || 100);
         const maxY = EDITOR_HEIGHT - (element.height || 100);
         
@@ -787,21 +704,6 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
         </div>
       </div>
 
-      {/* Atalhos de Teclado */}
-      <div className="mb-4 bg-blue-50 p-3 rounded-lg">
-        <h4 className="text-sm font-medium text-blue-800 mb-2">Atalhos de Teclado:</h4>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs text-blue-700">
-          <div><kbd className="bg-blue-200 px-1 rounded">Shift+P</kbd> Apresentar</div>
-          <div><kbd className="bg-blue-200 px-1 rounded">Ctrl+C</kbd> Duplicar</div>
-          <div><kbd className="bg-blue-200 px-1 rounded">Ctrl+G</kbd> Grid</div>
-          <div><kbd className="bg-blue-200 px-1 rounded">Ctrl+L</kbd> Bloquear</div>
-          <div><kbd className="bg-blue-200 px-1 rounded">Del</kbd> Excluir</div>
-          <div><kbd className="bg-blue-200 px-1 rounded">Setas</kbd> Mover</div>
-          <div><kbd className="bg-blue-200 px-1 rounded">Shift+Setas</kbd> Mover 1px</div>
-          <div><kbd className="bg-blue-200 px-1 rounded">1-9</kbd> Ir para slide</div>
-        </div>
-      </div>
-
       {/* Storage Usage */}
       <div className="mb-4 bg-gray-50 p-3 rounded-lg">
         <div className="flex justify-between items-center mb-2">
@@ -861,11 +763,6 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                     ) : (
                       <div className="w-full h-12 bg-gray-200 rounded flex items-center justify-center">
                         <Video className="h-4 w-4 text-gray-400" />
-                      </div>
-                    )}
-                    {media.isFullscreen && (
-                      <div className="absolute top-1 right-1 bg-blue-500 text-white p-1 rounded">
-                        <Maximize2 className="h-2 w-2" />
                       </div>
                     )}
                   </div>
@@ -1232,9 +1129,6 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                                 {lockedElements.has(element.id) && (
                                   <Lock className="h-3 w-3 text-red-500" />
                                 )}
-                                {element.isFullscreen && (
-                                  <Maximize2 className="h-3 w-3 text-blue-500" />
-                                )}
                               </div>
                               <div className="flex items-center space-x-1">
                                 {element.type === 'video' && (
@@ -1257,24 +1151,6 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                                     )}
                                   </button>
                                 )}
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    toggleElementFullscreen(element.id);
-                                  }}
-                                  className={`p-1 ${
-                                    element.isFullscreen
-                                      ? 'text-blue-600 hover:text-blue-800'
-                                      : 'text-gray-400 hover:text-gray-600'
-                                  }`}
-                                  title="Tela Cheia"
-                                >
-                                  {element.isFullscreen ? (
-                                    <Minimize2 className="h-3 w-3" />
-                                  ) : (
-                                    <Maximize2 className="h-3 w-3" />
-                                  )}
-                                </button>
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation();
@@ -1329,9 +1205,6 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                         Elemento Selecionado
                         {lockedElements.has(selectedElement.id) && (
                           <Lock className="h-4 w-4 ml-2 text-red-500" />
-                        )}
-                        {selectedElement.isFullscreen && (
-                          <Maximize2 className="h-4 w-4 ml-2 text-blue-500" />
                         )}
                       </h4>
                       
@@ -1644,7 +1517,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Preview do Slide
                       <span className="text-xs text-gray-500 ml-2">
-                        (Clique e arraste elementos • Cantos/bordas para redimensionar • Clique duplo para tela cheia)
+                        (Clique e arraste elementos • Cantos/bordas para redimensionar)
                       </span>
                     </label>
                     <div 
@@ -1746,10 +1619,6 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                               e.stopPropagation();
                               setSelectedMediaElement(element.id);
                             }}
-                            onDoubleClick={(e) => {
-                              e.stopPropagation();
-                              toggleElementFullscreen(element.id);
-                            }}
                           >
                             {element.type === 'image' ? (
                               <img 
@@ -1836,12 +1705,6 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                                   <span>{Math.round(element.x || 0)}, {Math.round(element.y || 0)}</span>
                                   <span>•</span>
                                   <span>{element.width}×{element.height}</span>
-                                  {element.isFullscreen && (
-                                    <>
-                                      <span>•</span>
-                                      <Maximize2 className="h-3 w-3" />
-                                    </>
-                                  )}
                                 </div>
                               </>
                             )}
@@ -1850,13 +1713,6 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                             {isLocked && (
                               <div className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded z-10">
                                 <Lock className="h-3 w-3" />
-                              </div>
-                            )}
-
-                            {/* Fullscreen indicator */}
-                            {element.isFullscreen && (
-                              <div className="absolute top-1 left-1 bg-blue-500 text-white p-1 rounded z-10">
-                                <Maximize2 className="h-3 w-3" />
                               </div>
                             )}
                           </div>
@@ -1870,7 +1726,6 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                             <Image className="h-12 w-12 mx-auto mb-2" />
                             <p className="text-sm">Adicione mídias para começar</p>
                             <p className="text-xs mt-1">Arraste e solte elementos para posicionar</p>
-                            <p className="text-xs mt-1">Clique duplo para tela cheia</p>
                           </div>
                         </div>
                       )}

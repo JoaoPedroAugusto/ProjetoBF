@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { ChevronLeft, ChevronRight, X, Maximize, Minimize, Play, Pause, Volume2, VolumeX, RotateCcw, Maximize2 } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { ChevronLeft, ChevronRight, X, Maximize, Minimize, Play, Pause, Volume2, VolumeX, SkipBack, SkipForward, RotateCcw } from 'lucide-react';
 import { Slide, PresentationSettings } from '../types/presentation';
 
 interface SlideViewerProps {
@@ -31,13 +31,10 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
   const [isPlaying, setIsPlaying] = useState(false);
   const [showControls, setShowControls] = useState(true);
   const [isActuallyFullscreen, setIsActuallyFullscreen] = useState(false);
+  const [videoElements, setVideoElements] = useState<Map<string, HTMLVideoElement>>(new Map());
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [videoProgress, setVideoProgress] = useState<Map<string, number>>(new Map());
-  const [controlsTimeout, setControlsTimeout] = useState<NodeJS.Timeout | null>(null);
-  
-  const videoRefs = useRef<Map<string, HTMLVideoElement>>(new Map());
-  const containerRef = useRef<HTMLDivElement>(null);
 
   const currentSlide = slides[currentSlideIndex];
 
@@ -51,107 +48,66 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
 
-  // Gerenciar vídeos de forma mais robusta
+  // Preload and manage video elements
   useEffect(() => {
-    const currentVideos = new Map<string, HTMLVideoElement>();
+    const newVideoElements = new Map<string, HTMLVideoElement>();
     
-    // Pausar todos os vídeos primeiro
-    videoRefs.current.forEach((video) => {
-      video.pause();
-      video.currentTime = 0;
-    });
-    
-    // Configurar vídeos do slide atual
     currentSlide?.mediaElements?.forEach((element) => {
       if (element.type === 'video') {
-        const existingVideo = videoRefs.current.get(element.id);
-        if (existingVideo && existingVideo.src === element.url) {
-          // Reutilizar vídeo existente
-          currentVideos.set(element.id, existingVideo);
-          existingVideo.muted = isMuted;
-          existingVideo.currentTime = 0;
-        } else {
-          // Criar novo elemento de vídeo
-          const video = document.createElement('video');
-          video.src = element.url;
-          video.preload = 'auto';
-          video.muted = isMuted;
-          video.loop = true;
-          video.playsInline = true;
-          video.crossOrigin = 'anonymous';
-          
-          // Configurações para melhor qualidade
-          video.style.objectFit = 'cover';
-          video.style.width = '100%';
-          video.style.height = '100%';
-          
-          // Event listeners
-          video.addEventListener('loadeddata', () => {
-            console.log(`Vídeo ${element.id} carregado`);
-          });
-          
-          video.addEventListener('error', (e) => {
-            console.error(`Erro no vídeo ${element.id}:`, e);
-          });
-          
-          video.addEventListener('timeupdate', () => {
-            if (video.duration > 0) {
-              const progress = (video.currentTime / video.duration) * 100;
-              setVideoProgress(prev => new Map(prev.set(element.id, progress)));
-            }
-          });
-          
-          currentVideos.set(element.id, video);
-        }
+        const video = document.createElement('video');
+        video.src = element.url;
+        video.preload = 'metadata';
+        video.muted = isMuted;
+        video.loop = true;
+        video.playsInline = true;
+        
+        // Improve video quality
+        video.style.imageRendering = 'high-quality';
+        video.style.imageRendering = '-webkit-optimize-contrast';
+        
+        // Add event listeners for progress tracking
+        video.addEventListener('timeupdate', () => {
+          const progress = (video.currentTime / video.duration) * 100;
+          setVideoProgress(prev => new Map(prev.set(element.id, progress)));
+        });
+        
+        newVideoElements.set(element.id, video);
       }
     });
     
-    videoRefs.current = currentVideos;
+    setVideoElements(newVideoElements);
     
-    // Cleanup
+    // Cleanup old video elements
     return () => {
-      videoRefs.current.forEach((video) => {
+      videoElements.forEach((video) => {
         video.pause();
+        video.src = '';
       });
     };
   }, [currentSlideIndex, isMuted]);
 
-  // Controlar reprodução de vídeos
+  // Auto-play videos when slide changes or video play state changes
   useEffect(() => {
-    const playVideos = async () => {
-      if (isVideoPlaying) {
-        for (const [id, video] of videoRefs.current) {
-          try {
-            video.currentTime = 0;
-            await video.play();
-            console.log(`Vídeo ${id} iniciado`);
-          } catch (error) {
-            console.error(`Erro ao reproduzir vídeo ${id}:`, error);
-          }
-        }
-      } else {
-        videoRefs.current.forEach((video) => {
-          video.pause();
-        });
-      }
-    };
-
-    playVideos();
-  }, [isVideoPlaying, currentSlideIndex]);
-
-  // Navegação por teclado com atalhos do Canva
-  const handleKeyPress = useCallback((event: KeyboardEvent) => {
-    // Prevenir ações padrão para teclas específicas
-    if (['ArrowLeft', 'ArrowRight', ' ', 'p', 'P'].includes(event.key)) {
-      event.preventDefault();
+    if (isVideoPlaying) {
+      videoElements.forEach((video) => {
+        video.play().catch(console.error);
+      });
+    } else {
+      videoElements.forEach((video) => {
+        video.pause();
+      });
     }
+  }, [isVideoPlaying, videoElements]);
 
+  // Navegação por teclado
+  const handleKeyPress = useCallback((event: KeyboardEvent) => {
     switch (event.key) {
       case 'ArrowLeft':
         goToPreviousSlide();
         break;
       case 'ArrowRight':
       case ' ':
+        event.preventDefault();
         goToNextSlide();
         break;
       case 'Escape':
@@ -169,37 +125,21 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
         break;
       case 'p':
       case 'P':
-        // Atalho do Canva: Shift + P para apresentação
-        if (event.shiftKey) {
-          togglePlayPause();
-        } else {
-          toggleVideoPlayback();
-        }
+        event.preventDefault();
+        toggleVideoPlayback();
         break;
       case 'm':
       case 'M':
+        event.preventDefault();
         toggleMute();
         break;
       case 'r':
       case 'R':
+        event.preventDefault();
         restartVideos();
         break;
-      case '1':
-      case '2':
-      case '3':
-      case '4':
-      case '5':
-      case '6':
-      case '7':
-      case '8':
-      case '9':
-        const slideIndex = parseInt(event.key) - 1;
-        if (slideIndex < slides.length) {
-          goToSlide(slideIndex);
-        }
-        break;
     }
-  }, [currentSlideIndex, slides.length]);
+  }, [currentSlideIndex]);
 
   useEffect(() => {
     document.addEventListener('keydown', handleKeyPress);
@@ -217,20 +157,14 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
   }, [currentSlideIndex, isPlaying, settings]);
 
   // Ocultar controles automaticamente
-  const handleMouseMove = useCallback(() => {
-    setShowControls(true);
-    
-    if (controlsTimeout) {
-      clearTimeout(controlsTimeout);
-    }
-    
+  useEffect(() => {
     if (isActuallyFullscreen || isFullscreen) {
-      const timeout = setTimeout(() => {
+      const timer = setTimeout(() => {
         setShowControls(false);
       }, 3000);
-      setControlsTimeout(timeout);
+      return () => clearTimeout(timer);
     }
-  }, [isActuallyFullscreen, isFullscreen, controlsTimeout]);
+  }, [isActuallyFullscreen, isFullscreen, currentSlideIndex]);
 
   const goToNextSlide = () => {
     if (currentSlideIndex < slides.length - 1) {
@@ -252,8 +186,8 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
 
   const toggleFullscreen = async () => {
     try {
-      if (!document.fullscreenElement && containerRef.current) {
-        await containerRef.current.requestFullscreen();
+      if (!document.fullscreenElement) {
+        await document.documentElement.requestFullscreen();
       } else {
         await document.exitFullscreen();
       }
@@ -271,15 +205,14 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
   };
 
   const toggleMute = () => {
-    const newMutedState = !isMuted;
-    setIsMuted(newMutedState);
-    videoRefs.current.forEach((video) => {
-      video.muted = newMutedState;
+    setIsMuted(!isMuted);
+    videoElements.forEach((video) => {
+      video.muted = !isMuted;
     });
   };
 
   const restartVideos = () => {
-    videoRefs.current.forEach((video) => {
+    videoElements.forEach((video) => {
       video.currentTime = 0;
       if (isVideoPlaying) {
         video.play().catch(console.error);
@@ -287,18 +220,8 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
     });
   };
 
-  const toggleElementFullscreen = (elementId: string) => {
-    const element = currentSlide?.mediaElements?.find(el => el.id === elementId);
-    if (!element) return;
-
-    // Atualizar o estado do elemento para tela cheia
-    const updatedElements = currentSlide.mediaElements?.map(el => 
-      el.id === elementId ? { ...el, isFullscreen: !el.isFullscreen } : { ...el, isFullscreen: false }
-    );
-
-    // Aqui você precisaria atualizar o slide, mas como estamos no viewer, 
-    // vamos apenas simular o comportamento visual
-    console.log(`Toggle fullscreen para elemento ${elementId}`);
+  const handleMouseMove = () => {
+    setShowControls(true);
   };
 
   if (!currentSlide) {
@@ -318,7 +241,6 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
 
   return (
     <div 
-      ref={containerRef}
       className={containerClasses}
       onMouseMove={handleMouseMove}
       style={{
@@ -367,52 +289,6 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
           const containerWidth = window.innerWidth;
           const containerHeight = window.innerHeight;
           
-          // Se o elemento está em tela cheia, ocupar toda a tela
-          if (element.isFullscreen) {
-            return (
-              <div
-                key={element.id}
-                className="absolute inset-0 z-50 bg-black flex items-center justify-center"
-                onClick={() => toggleElementFullscreen(element.id)}
-              >
-                {element.type === 'image' ? (
-                  <img 
-                    src={element.url}
-                    alt={element.alt || currentSlide.title}
-                    className="max-w-full max-h-full object-contain"
-                    style={{ imageRendering: 'high-quality' }}
-                  />
-                ) : (
-                  <video 
-                    key={`fullscreen-${element.id}-${currentSlideIndex}`}
-                    ref={(el) => {
-                      if (el) videoRefs.current.set(element.id, el);
-                    }}
-                    src={element.url}
-                    className="max-w-full max-h-full object-contain"
-                    autoPlay={isVideoPlaying}
-                    muted={isMuted}
-                    loop
-                    playsInline
-                    controls={false}
-                    style={{ imageRendering: 'high-quality' }}
-                  />
-                )}
-                
-                {/* Botão para sair da tela cheia */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleElementFullscreen(element.id);
-                  }}
-                  className="absolute top-4 right-4 bg-black bg-opacity-50 hover:bg-opacity-75 text-white p-2 rounded-full"
-                >
-                  <Minimize2 className="h-6 w-6" />
-                </button>
-              </div>
-            );
-          }
-          
           // Calcular escala mantendo proporção exata
           const scaleX = containerWidth / EDITOR_WIDTH;
           const scaleY = containerHeight / EDITOR_HEIGHT;
@@ -424,21 +300,17 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
           const scaledWidth = Math.round(element.width * scale * 100) / 100;
           const scaledHeight = Math.round(element.height * scale * 100) / 100;
           
-          // Centralizar o conteúdo com precisão - CORREÇÃO PARA BORDAS
+          // Centralizar o conteúdo com precisão
           const offsetX = Math.round((containerWidth - EDITOR_WIDTH * scale) / 2 * 100) / 100;
           const offsetY = Math.round((containerHeight - EDITOR_HEIGHT * scale) / 2 * 100) / 100;
-
-          // Garantir que elementos não saiam das bordas
-          const finalX = Math.max(0, Math.min(containerWidth - scaledWidth, scaledX + offsetX));
-          const finalY = Math.max(0, Math.min(containerHeight - scaledHeight, scaledY + offsetY));
 
           return (
             <div
               key={element.id}
-              className="absolute group cursor-pointer"
+              className="absolute"
               style={{
-                left: `${finalX}px`,
-                top: `${finalY}px`,
+                left: `${scaledX + offsetX}px`,
+                top: `${scaledY + offsetY}px`,
                 width: `${scaledWidth}px`,
                 height: `${scaledHeight}px`,
                 zIndex: element.zIndex || 1,
@@ -448,7 +320,6 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
                 willChange: 'transform',
                 backfaceVisibility: 'hidden'
               }}
-              onClick={() => toggleElementFullscreen(element.id)}
             >
               {element.type === 'image' ? (
                 <img 
@@ -462,38 +333,30 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
                   }}
                   loading="eager"
                 />
-              ) : (
+              ) : element.type === 'video' ? (
                 <div className="relative w-full h-full">
                   <video 
                     key={`${element.id}-${currentSlideIndex}`}
-                    ref={(el) => {
-                      if (el) {
-                        videoRefs.current.set(element.id, el);
-                        el.muted = isMuted;
-                        if (isVideoPlaying) {
-                          el.play().catch(console.error);
-                        }
-                      }
-                    }}
                     src={element.url}
                     className="w-full h-full object-cover"
                     style={{ 
                       borderRadius: `${Math.round((element.borderRadius || 0) * scale * 100) / 100}px`,
                       imageRendering: 'high-quality'
                     }}
+                    autoPlay={isVideoPlaying}
                     muted={isMuted}
                     loop
                     playsInline
-                    preload="auto"
-                    controls={false}
-                  />
-                  
-                  {/* Botão de tela cheia no hover */}
-                  <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 flex items-center justify-center">
-                    <button className="opacity-0 group-hover:opacity-100 bg-white bg-opacity-20 hover:bg-opacity-40 text-white p-2 rounded-full transition-all duration-200">
-                      <Maximize2 className="h-5 w-5" />
-                    </button>
-                  </div>
+                    preload="metadata"
+                    onLoadedData={(e) => {
+                      const video = e.target as HTMLVideoElement;
+                      if (isVideoPlaying) {
+                        video.play().catch(console.error);
+                      }
+                    }}
+                  >
+                    Seu navegador não suporta o elemento de vídeo.
+                  </video>
                   
                   {/* Video Progress Bar */}
                   {isVideoPlaying && showControls && (
@@ -507,7 +370,7 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
                     </div>
                   )}
                 </div>
-              )}
+              ) : null}
             </div>
           );
         })}
@@ -522,7 +385,7 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
                 className="w-full h-auto max-h-96 object-contain rounded-lg shadow-lg"
                 style={{ imageRendering: 'high-quality' }}
               />
-            ) : (
+            ) : currentSlide.media.type === 'video' ? (
               <video 
                 src={currentSlide.media.url}
                 controls={showControls}
@@ -531,12 +394,12 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
                 muted={isMuted}
                 loop
                 playsInline
-                preload="auto"
+                preload="metadata"
                 style={{ imageRendering: 'high-quality' }}
               >
                 Seu navegador não suporta o elemento de vídeo.
               </video>
-            )}
+            ) : null}
           </div>
         )}
       </div>
@@ -573,7 +436,7 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
               <button
                 onClick={togglePlayPause}
                 className="bg-black bg-opacity-50 hover:bg-opacity-75 text-white p-2 rounded-full transition-all duration-200"
-                title="Play/Pause Apresentação (Shift+P)"
+                title="Play/Pause Apresentação (Espaço)"
               >
                 {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
               </button>
@@ -659,6 +522,22 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
               ))}
             </div>
           </div>
+
+          {/* Keyboard Shortcuts Help */}
+          {showControls && (
+            <div className="absolute bottom-20 right-4 bg-black bg-opacity-70 text-white text-xs p-3 rounded-lg max-w-xs">
+              <div className="font-semibold mb-2">Atalhos do Teclado:</div>
+              <div className="space-y-1">
+                <div>← → : Navegar slides</div>
+                <div>Espaço: Play/Pause apresentação</div>
+                <div>P: Play/Pause vídeos</div>
+                <div>M: Mute/Unmute</div>
+                <div>R: Reiniciar vídeos</div>
+                <div>F: Tela cheia</div>
+                <div>Esc: Sair</div>
+              </div>
+            </div>
+          )}
         </>
       )}
     </div>

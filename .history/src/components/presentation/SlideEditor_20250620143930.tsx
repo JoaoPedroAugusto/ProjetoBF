@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { Plus, Edit, Trash2, Image, Video, Save, X, Move, Eye, EyeOff, Copy, Layers, RotateCw, Maximize2, Minimize2, Database, Upload, Trash, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, ZoomIn, ZoomOut, RotateCcw, Palette, Play, Pause, Volume2, VolumeX, Grid, Lock, Unlock, AlignLeft, AlignCenter, AlignRight, AlignJustify, Type, Sliders } from 'lucide-react';
+import { Plus, Edit, Trash2, Image, Video, Save, X, Move, Eye, EyeOff, Copy, Layers, RotateCw, Maximize2, Minimize2, Database, Upload, Trash, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, ZoomIn, ZoomOut, RotateCcw, Palette } from 'lucide-react';
 import { Slide, MediaElement } from '../types/presentation';
 
 interface SlideEditorProps {
@@ -54,12 +54,6 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
   const [showMediaLibrary, setShowMediaLibrary] = useState(false);
   const [mediaLibrary, setMediaLibrary] = useState<MediaLibraryItem[]>([]);
   const [storageUsage, setStorageUsage] = useState(0);
-  const [showGrid, setShowGrid] = useState(false);
-  const [snapToGrid, setSnapToGrid] = useState(true);
-  const [gridSize, setGridSize] = useState(20);
-  const [videoPreviewStates, setVideoPreviewStates] = useState<Map<string, boolean>>(new Map());
-  const [lockedElements, setLockedElements] = useState<Set<string>>(new Set());
-  const [zoom, setZoom] = useState(1);
   const [dragState, setDragState] = useState<DragState>({
     isDragging: false,
     elementId: null,
@@ -88,79 +82,6 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
     loadMediaLibrary();
     calculateStorageUsage();
   }, []);
-
-  // Atalhos de teclado estilo Canva
-  useEffect(() => {
-    const handleKeyPress = (event: KeyboardEvent) => {
-      // Só processar se não estiver em um input
-      if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
-        return;
-      }
-
-      // Shift + P para apresentação (será implementado no PresentationManager)
-      if (event.shiftKey && (event.key === 'p' || event.key === 'P')) {
-        event.preventDefault();
-        console.log('Atalho Shift+P detectado - implementar no PresentationManager');
-        return;
-      }
-
-      // Outros atalhos
-      switch (event.key) {
-        case 'Delete':
-        case 'Backspace':
-          if (selectedMediaElement) {
-            event.preventDefault();
-            removeMediaElement(selectedMediaElement);
-          }
-          break;
-        case 'c':
-        case 'C':
-          if (event.ctrlKey && selectedMediaElement) {
-            event.preventDefault();
-            duplicateMediaElement(selectedMediaElement);
-          }
-          break;
-        case 'g':
-        case 'G':
-          if (event.ctrlKey) {
-            event.preventDefault();
-            setShowGrid(!showGrid);
-          }
-          break;
-        case 'l':
-        case 'L':
-          if (event.ctrlKey && selectedMediaElement) {
-            event.preventDefault();
-            toggleElementLock(selectedMediaElement);
-          }
-          break;
-      }
-
-      // Movimento com setas
-      if (selectedMediaElement && ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) {
-        event.preventDefault();
-        const moveAmount = event.shiftKey ? 1 : gridSize; // Shift para movimento fino
-        
-        switch (event.key) {
-          case 'ArrowUp':
-            moveElement(selectedMediaElement, 'up', moveAmount);
-            break;
-          case 'ArrowDown':
-            moveElement(selectedMediaElement, 'down', moveAmount);
-            break;
-          case 'ArrowLeft':
-            moveElement(selectedMediaElement, 'left', moveAmount);
-            break;
-          case 'ArrowRight':
-            moveElement(selectedMediaElement, 'right', moveAmount);
-            break;
-        }
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyPress);
-    return () => document.removeEventListener('keydown', handleKeyPress);
-  }, [selectedMediaElement, showGrid, gridSize]);
 
   const loadMediaLibrary = () => {
     try {
@@ -198,91 +119,44 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
       }
       // Converter para MB (aproximado)
       const usageMB = totalSize / (1024 * 1024);
-      setStorageUsage(Math.min(usageMB, 1024)); // Máximo 1GB
+      setStorageUsage(Math.min(usageMB, 50)); // Máximo 50MB
     } catch (error) {
       console.error('Erro ao calcular uso de armazenamento:', error);
     }
   };
 
-  const compressImage = (file: File, maxWidth: number = 1920, quality: number = 0.9): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      const img = new Image();
-      
-      img.onload = () => {
-        // Calcular dimensões mantendo proporção
-        let { width, height } = img;
-        if (width > maxWidth) {
-          height = (height * maxWidth) / width;
-          width = maxWidth;
-        }
-        
-        canvas.width = width;
-        canvas.height = height;
-        
-        // Desenhar imagem com alta qualidade
-        if (ctx) {
-          ctx.imageSmoothingEnabled = true;
-          ctx.imageSmoothingQuality = 'high';
-          ctx.drawImage(img, 0, 0, width, height);
-          
-          // Converter para base64 com qualidade especificada
-          const dataUrl = canvas.toDataURL('image/jpeg', quality);
-          resolve(dataUrl);
-        } else {
-          reject(new Error('Não foi possível obter contexto do canvas'));
-        }
-      };
-      
-      img.onerror = reject;
-      img.src = URL.createObjectURL(file);
-    });
-  };
-
   const addToMediaLibrary = async (file: File): Promise<string> => {
-    try {
-      let dataUrl: string;
-      
-      if (file.type.startsWith('image/')) {
-        // Comprimir imagem mantendo qualidade
-        dataUrl = await compressImage(file, 1920, 0.9);
-      } else {
-        // Para vídeos, usar como está (limitado a 100MB)
-        if (file.size > 100 * 1024 * 1024) {
-          throw new Error('Arquivo de vídeo muito grande. Máximo 100MB.');
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const dataUrl = e.target?.result as string;
+          const mediaItem: MediaLibraryItem = {
+            id: `media-${Date.now()}`,
+            name: file.name,
+            type: file.type.startsWith('image/') ? 'image' : 'video',
+            url: dataUrl,
+            size: file.size,
+            uploadDate: new Date()
+          };
+
+          // Verificar se já existe
+          const existing = mediaLibrary.find(item => item.name === file.name && item.size === file.size);
+          if (existing) {
+            resolve(existing.url);
+            return;
+          }
+
+          const newLibrary = [...mediaLibrary, mediaItem];
+          saveMediaLibrary(newLibrary);
+          resolve(dataUrl);
+        } catch (error) {
+          reject(error);
         }
-        
-        dataUrl = await new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = (e) => resolve(e.target?.result as string);
-          reader.onerror = reject;
-          reader.readAsDataURL(file);
-        });
-      }
-
-      const mediaItem: MediaLibraryItem = {
-        id: `media-${Date.now()}`,
-        name: file.name,
-        type: file.type.startsWith('image/') ? 'image' : 'video',
-        url: dataUrl,
-        size: dataUrl.length,
-        uploadDate: new Date()
       };
-
-      // Verificar se já existe
-      const existing = mediaLibrary.find(item => item.name === file.name && Math.abs(item.size - mediaItem.size) < 1000);
-      if (existing) {
-        return existing.url;
-      }
-
-      const newLibrary = [...mediaLibrary, mediaItem];
-      saveMediaLibrary(newLibrary);
-      return dataUrl;
-    } catch (error) {
-      console.error('Erro ao processar arquivo:', error);
-      throw error;
-    }
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
   };
 
   const removeFromMediaLibrary = (id: string) => {
@@ -370,7 +244,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
       addMediaElementToSlide(url, type, file.name);
     } catch (error) {
       console.error('Erro ao fazer upload:', error);
-      alert('Erro ao fazer upload da mídia: ' + (error as Error).message);
+      alert('Erro ao fazer upload da mídia');
     }
   };
 
@@ -380,18 +254,10 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
     setShowMediaLibrary(false);
   };
 
-  const snapToGridValue = (value: number): number => {
-    if (!snapToGrid) return value;
-    return Math.round(value / gridSize) * gridSize;
-  };
-
   const addMediaElementToSlide = (url: string, type: 'image' | 'video', name: string) => {
     if (!editingSlide) return;
 
-    // Posições baseadas nas dimensões fixas do editor com snap to grid
-    const baseX = snapToGridValue(100);
-    const baseY = snapToGridValue(100);
-
+    // Posições baseadas nas dimensões fixas do editor
     const newMediaElement: MediaElement = {
       id: `media-${Date.now()}`,
       type,
@@ -399,13 +265,12 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
       alt: name,
       width: type === 'image' ? 300 : 400,
       height: type === 'image' ? 200 : 225,
-      x: baseX,
-      y: baseY,
+      x: 100, // Posição fixa em pixels
+      y: 100, // Posição fixa em pixels
       zIndex: (editingSlide.mediaElements?.length || 0) + 1,
       opacity: 1,
       borderRadius: 8,
-      rotation: 0,
-      isFullscreen: false
+      rotation: 0
     };
 
     setEditingSlide({
@@ -419,14 +284,6 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
 
   const updateMediaElement = (elementId: string, updates: Partial<MediaElement>) => {
     if (!editingSlide) return;
-
-    // Aplicar snap to grid nas posições
-    if (updates.x !== undefined) {
-      updates.x = snapToGridValue(updates.x);
-    }
-    if (updates.y !== undefined) {
-      updates.y = snapToGridValue(updates.y);
-    }
 
     const updatedElements = editingSlide.mediaElements?.map(element =>
       element.id === elementId ? { ...element, ...updates } : element
@@ -463,8 +320,8 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
     const newElement: MediaElement = {
       ...element,
       id: `media-${Date.now()}`,
-      x: snapToGridValue(element.x + 20),
-      y: snapToGridValue(element.y + 20),
+      x: element.x + 20,
+      y: element.y + 20,
       zIndex: (editingSlide.mediaElements?.length || 0) + 1
     };
 
@@ -490,49 +347,26 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
     updateMediaElement(elementId, { zIndex: Math.max(1, minZ - 1) });
   };
 
-  const toggleElementLock = (elementId: string) => {
-    const newLockedElements = new Set(lockedElements);
-    if (newLockedElements.has(elementId)) {
-      newLockedElements.delete(elementId);
-    } else {
-      newLockedElements.add(elementId);
-    }
-    setLockedElements(newLockedElements);
-  };
-
-  const toggleVideoPreview = (elementId: string) => {
-    const newStates = new Map(videoPreviewStates);
-    newStates.set(elementId, !newStates.get(elementId));
-    setVideoPreviewStates(newStates);
-  };
-
-  const toggleElementFullscreen = (elementId: string) => {
-    updateMediaElement(elementId, { 
-      isFullscreen: !editingSlide?.mediaElements?.find(el => el.id === elementId)?.isFullscreen 
-    });
-  };
-
   // Funções de movimento preciso
-  const moveElement = (elementId: string, direction: 'up' | 'down' | 'left' | 'right', amount: number = gridSize) => {
+  const moveElement = (elementId: string, direction: 'up' | 'down' | 'left' | 'right', amount: number = 10) => {
     const element = editingSlide?.mediaElements?.find(el => el.id === elementId);
-    if (!element || lockedElements.has(elementId)) return;
+    if (!element) return;
 
     let newX = element.x;
     let newY = element.y;
 
     switch (direction) {
       case 'up':
-        newY = Math.max(0, snapToGridValue(element.y - amount));
+        newY = Math.max(0, element.y - amount);
         break;
       case 'down':
-        newY = Math.min(EDITOR_HEIGHT - element.height, snapToGridValue(element.y + amount));
+        newY = Math.min(EDITOR_HEIGHT - element.height, element.y + amount);
         break;
       case 'left':
-        newX = Math.max(0, snapToGridValue(element.x - amount));
+        newX = Math.max(0, element.x - amount);
         break;
       case 'right':
-        // CORREÇÃO: Garantir que elementos colem na borda direita
-        newX = Math.min(EDITOR_WIDTH - element.width, snapToGridValue(element.x + amount));
+        newX = Math.min(EDITOR_WIDTH - element.width, element.x + amount);
         break;
     }
 
@@ -542,7 +376,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
   // Funções de redimensionamento preciso
   const resizeElement = (elementId: string, type: 'width' | 'height', delta: number) => {
     const element = editingSlide?.mediaElements?.find(el => el.id === elementId);
-    if (!element || lockedElements.has(elementId)) return;
+    if (!element) return;
 
     const updates: Partial<MediaElement> = {};
 
@@ -560,7 +394,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
   // Funções de alinhamento
   const alignElement = (elementId: string, alignment: 'left' | 'center' | 'right' | 'top' | 'middle' | 'bottom') => {
     const element = editingSlide?.mediaElements?.find(el => el.id === elementId);
-    if (!element || lockedElements.has(elementId)) return;
+    if (!element) return;
 
     let newX = element.x;
     let newY = element.y;
@@ -570,17 +404,16 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
         newX = 0;
         break;
       case 'center':
-        newX = snapToGridValue((EDITOR_WIDTH - element.width) / 2);
+        newX = (EDITOR_WIDTH - element.width) / 2;
         break;
       case 'right':
-        // CORREÇÃO: Garantir alinhamento perfeito à direita
         newX = EDITOR_WIDTH - element.width;
         break;
       case 'top':
         newY = 0;
         break;
       case 'middle':
-        newY = snapToGridValue((EDITOR_HEIGHT - element.height) / 2);
+        newY = (EDITOR_HEIGHT - element.height) / 2;
         break;
       case 'bottom':
         newY = EDITOR_HEIGHT - element.height;
@@ -594,8 +427,6 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
   const handleMouseDown = useCallback((e: React.MouseEvent, elementId: string) => {
     e.preventDefault();
     e.stopPropagation();
-    
-    if (lockedElements.has(elementId)) return;
     
     const element = editingSlide?.mediaElements?.find(el => el.id === elementId);
     if (!element || !previewRef.current) return;
@@ -612,14 +443,12 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
       startElementY: element.y || 0,
       previewRect: rect
     });
-  }, [editingSlide, lockedElements]);
+  }, [editingSlide]);
 
   // Resize functionality
   const handleResizeMouseDown = useCallback((e: React.MouseEvent, elementId: string, handle: ResizeState['handle']) => {
     e.preventDefault();
     e.stopPropagation();
-    
-    if (lockedElements.has(elementId)) return;
     
     const element = editingSlide?.mediaElements?.find(el => el.id === elementId);
     if (!element) return;
@@ -635,7 +464,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
       startElementY: element.y || 0,
       handle
     });
-  }, [editingSlide, lockedElements]);
+  }, [editingSlide]);
 
   // Global mouse move and up handlers
   useEffect(() => {
@@ -655,18 +484,13 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
         const scaledDeltaX = deltaX * scaleX;
         const scaledDeltaY = deltaY * scaleY;
         
-        // CORREÇÃO: Garantir que elementos possam colar nas bordas
         const maxX = EDITOR_WIDTH - (element.width || 100);
         const maxY = EDITOR_HEIGHT - (element.height || 100);
         
-        let newX = Math.max(0, Math.min(maxX, dragState.startElementX + scaledDeltaX));
-        let newY = Math.max(0, Math.min(maxY, dragState.startElementY + scaledDeltaY));
+        const newX = Math.max(0, Math.min(maxX, dragState.startElementX + scaledDeltaX));
+        const newY = Math.max(0, Math.min(maxY, dragState.startElementY + scaledDeltaY));
 
-        // Aplicar snap to grid
-        newX = snapToGridValue(newX);
-        newY = snapToGridValue(newY);
-
-        updateMediaElement(dragState.elementId, { x: newX, y: newY });
+        updateMediaElement(dragState.elementId, { x: Math.round(newX), y: Math.round(newY) });
       }
 
       // Handle resizing
@@ -723,8 +547,8 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
         updateMediaElement(resizeState.elementId, { 
           width: Math.round(newWidth), 
           height: Math.round(newHeight),
-          x: snapToGridValue(newX),
-          y: snapToGridValue(newY)
+          x: Math.round(newX),
+          y: Math.round(newY)
         });
       }
     };
@@ -761,7 +585,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
         document.removeEventListener('mouseup', handleGlobalMouseUp);
       };
     }
-  }, [dragState, resizeState, updateMediaElement, editingSlide, snapToGrid, gridSize]);
+  }, [dragState, resizeState, updateMediaElement, editingSlide]);
 
   const selectedElement = editingSlide?.mediaElements?.find(el => el.id === selectedMediaElement);
 
@@ -787,33 +611,18 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
         </div>
       </div>
 
-      {/* Atalhos de Teclado */}
-      <div className="mb-4 bg-blue-50 p-3 rounded-lg">
-        <h4 className="text-sm font-medium text-blue-800 mb-2">Atalhos de Teclado:</h4>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs text-blue-700">
-          <div><kbd className="bg-blue-200 px-1 rounded">Shift+P</kbd> Apresentar</div>
-          <div><kbd className="bg-blue-200 px-1 rounded">Ctrl+C</kbd> Duplicar</div>
-          <div><kbd className="bg-blue-200 px-1 rounded">Ctrl+G</kbd> Grid</div>
-          <div><kbd className="bg-blue-200 px-1 rounded">Ctrl+L</kbd> Bloquear</div>
-          <div><kbd className="bg-blue-200 px-1 rounded">Del</kbd> Excluir</div>
-          <div><kbd className="bg-blue-200 px-1 rounded">Setas</kbd> Mover</div>
-          <div><kbd className="bg-blue-200 px-1 rounded">Shift+Setas</kbd> Mover 1px</div>
-          <div><kbd className="bg-blue-200 px-1 rounded">1-9</kbd> Ir para slide</div>
-        </div>
-      </div>
-
       {/* Storage Usage */}
       <div className="mb-4 bg-gray-50 p-3 rounded-lg">
         <div className="flex justify-between items-center mb-2">
           <span className="text-sm text-gray-600">Uso do Armazenamento</span>
-          <span className="text-sm font-medium">{storageUsage.toFixed(1)}MB / 1024MB (1GB)</span>
+          <span className="text-sm font-medium">{storageUsage.toFixed(1)}MB / 50MB</span>
         </div>
         <div className="w-full bg-gray-200 rounded-full h-2">
           <div 
             className={`h-2 rounded-full transition-all ${
-              storageUsage > 800 ? 'bg-red-500' : storageUsage > 500 ? 'bg-yellow-500' : 'bg-green-500'
+              storageUsage > 40 ? 'bg-red-500' : storageUsage > 25 ? 'bg-yellow-500' : 'bg-green-500'
             }`}
-            style={{ width: `${(storageUsage / 1024) * 100}%` }}
+            style={{ width: `${(storageUsage / 50) * 100}%` }}
           />
         </div>
       </div>
@@ -861,11 +670,6 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                     ) : (
                       <div className="w-full h-12 bg-gray-200 rounded flex items-center justify-center">
                         <Video className="h-4 w-4 text-gray-400" />
-                      </div>
-                    )}
-                    {media.isFullscreen && (
-                      <div className="absolute top-1 right-1 bg-blue-500 text-white p-1 rounded">
-                        <Maximize2 className="h-2 w-2" />
                       </div>
                     )}
                   </div>
@@ -987,44 +791,6 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Painel de Configurações */}
                 <div className="lg:col-span-1 space-y-4 max-h-[70vh] overflow-y-auto">
-                  {/* Controles de Grid e Zoom */}
-                  <div className="bg-gray-50 p-3 rounded-lg">
-                    <h4 className="text-sm font-medium text-gray-700 mb-3">Controles do Editor</h4>
-                    <div className="grid grid-cols-2 gap-2 mb-3">
-                      <button
-                        onClick={() => setShowGrid(!showGrid)}
-                        className={`px-3 py-2 rounded text-sm flex items-center justify-center space-x-1 ${
-                          showGrid ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'
-                        }`}
-                      >
-                        <Grid className="h-4 w-4" />
-                        <span>Grid</span>
-                      </button>
-                      <button
-                        onClick={() => setSnapToGrid(!snapToGrid)}
-                        className={`px-3 py-2 rounded text-sm flex items-center justify-center space-x-1 ${
-                          snapToGrid ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-700'
-                        }`}
-                      >
-                        <Move className="h-4 w-4" />
-                        <span>Snap</span>
-                      </button>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <label className="text-xs text-gray-600">Grid:</label>
-                      <select
-                        value={gridSize}
-                        onChange={(e) => setGridSize(parseInt(e.target.value))}
-                        className="text-xs px-2 py-1 border rounded"
-                      >
-                        <option value={10}>10px</option>
-                        <option value={20}>20px</option>
-                        <option value={25}>25px</option>
-                        <option value={50}>50px</option>
-                      </select>
-                    </div>
-                  </div>
-
                   {/* Tipo de Slide */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -1229,70 +995,8 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                                   {element.alt || `${element.type} ${element.id.slice(-4)}`}
                                 </span>
                                 <span className="text-xs text-gray-500">z:{element.zIndex}</span>
-                                {lockedElements.has(element.id) && (
-                                  <Lock className="h-3 w-3 text-red-500" />
-                                )}
-                                {element.isFullscreen && (
-                                  <Maximize2 className="h-3 w-3 text-blue-500" />
-                                )}
                               </div>
                               <div className="flex items-center space-x-1">
-                                {element.type === 'video' && (
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      toggleVideoPreview(element.id);
-                                    }}
-                                    className={`p-1 rounded ${
-                                      videoPreviewStates.get(element.id) 
-                                        ? 'text-green-600 hover:text-green-800' 
-                                        : 'text-gray-400 hover:text-gray-600'
-                                    }`}
-                                    title="Play/Pause Preview"
-                                  >
-                                    {videoPreviewStates.get(element.id) ? (
-                                      <Pause className="h-3 w-3" />
-                                    ) : (
-                                      <Play className="h-3 w-3" />
-                                    )}
-                                  </button>
-                                )}
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    toggleElementFullscreen(element.id);
-                                  }}
-                                  className={`p-1 ${
-                                    element.isFullscreen
-                                      ? 'text-blue-600 hover:text-blue-800'
-                                      : 'text-gray-400 hover:text-gray-600'
-                                  }`}
-                                  title="Tela Cheia"
-                                >
-                                  {element.isFullscreen ? (
-                                    <Minimize2 className="h-3 w-3" />
-                                  ) : (
-                                    <Maximize2 className="h-3 w-3" />
-                                  )}
-                                </button>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    toggleElementLock(element.id);
-                                  }}
-                                  className={`p-1 ${
-                                    lockedElements.has(element.id)
-                                      ? 'text-red-600 hover:text-red-800'
-                                      : 'text-gray-400 hover:text-gray-600'
-                                  }`}
-                                  title="Bloquear/Desbloquear"
-                                >
-                                  {lockedElements.has(element.id) ? (
-                                    <Lock className="h-3 w-3" />
-                                  ) : (
-                                    <Unlock className="h-3 w-3" />
-                                  )}
-                                </button>
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation();
@@ -1327,28 +1031,20 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                       <h4 className="text-sm font-medium text-gray-700 flex items-center">
                         <Move className="h-4 w-4 mr-2" />
                         Elemento Selecionado
-                        {lockedElements.has(selectedElement.id) && (
-                          <Lock className="h-4 w-4 ml-2 text-red-500" />
-                        )}
-                        {selectedElement.isFullscreen && (
-                          <Maximize2 className="h-4 w-4 ml-2 text-blue-500" />
-                        )}
                       </h4>
                       
                       {/* Ações rápidas */}
                       <div className="grid grid-cols-2 gap-2">
                         <button
                           onClick={() => bringToFront(selectedElement.id)}
-                          disabled={lockedElements.has(selectedElement.id)}
-                          className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-2 py-1 rounded text-xs flex items-center justify-center space-x-1 disabled:opacity-50"
+                          className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-2 py-1 rounded text-xs flex items-center justify-center space-x-1"
                         >
                           <Layers className="h-3 w-3" />
                           <span>Frente</span>
                         </button>
                         <button
                           onClick={() => sendToBack(selectedElement.id)}
-                          disabled={lockedElements.has(selectedElement.id)}
-                          className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-2 py-1 rounded text-xs flex items-center justify-center space-x-1 disabled:opacity-50"
+                          className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-2 py-1 rounded text-xs flex items-center justify-center space-x-1"
                         >
                           <Layers className="h-3 w-3" />
                           <span>Trás</span>
@@ -1357,21 +1053,19 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
 
                       {/* Controles de movimento */}
                       <div>
-                        <label className="block text-xs text-gray-600 mb-2">Movimento ({gridSize}px)</label>
+                        <label className="block text-xs text-gray-600 mb-2">Movimento (10px)</label>
                         <div className="grid grid-cols-3 gap-1">
                           <div></div>
                           <button
                             onClick={() => moveElement(selectedElement.id, 'up')}
-                            disabled={lockedElements.has(selectedElement.id)}
-                            className="bg-blue-100 hover:bg-blue-200 text-blue-700 p-2 rounded flex items-center justify-center disabled:opacity-50"
+                            className="bg-blue-100 hover:bg-blue-200 text-blue-700 p-2 rounded flex items-center justify-center"
                           >
                             <ArrowUp className="h-4 w-4" />
                           </button>
                           <div></div>
                           <button
                             onClick={() => moveElement(selectedElement.id, 'left')}
-                            disabled={lockedElements.has(selectedElement.id)}
-                            className="bg-blue-100 hover:bg-blue-200 text-blue-700 p-2 rounded flex items-center justify-center disabled:opacity-50"
+                            className="bg-blue-100 hover:bg-blue-200 text-blue-700 p-2 rounded flex items-center justify-center"
                           >
                             <ArrowLeft className="h-4 w-4" />
                           </button>
@@ -1380,16 +1074,14 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                           </div>
                           <button
                             onClick={() => moveElement(selectedElement.id, 'right')}
-                            disabled={lockedElements.has(selectedElement.id)}
-                            className="bg-blue-100 hover:bg-blue-200 text-blue-700 p-2 rounded flex items-center justify-center disabled:opacity-50"
+                            className="bg-blue-100 hover:bg-blue-200 text-blue-700 p-2 rounded flex items-center justify-center"
                           >
                             <ArrowRight className="h-4 w-4" />
                           </button>
                           <div></div>
                           <button
                             onClick={() => moveElement(selectedElement.id, 'down')}
-                            disabled={lockedElements.has(selectedElement.id)}
-                            className="bg-blue-100 hover:bg-blue-200 text-blue-700 p-2 rounded flex items-center justify-center disabled:opacity-50"
+                            className="bg-blue-100 hover:bg-blue-200 text-blue-700 p-2 rounded flex items-center justify-center"
                           >
                             <ArrowDown className="h-4 w-4" />
                           </button>
@@ -1403,43 +1095,37 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                         <div className="grid grid-cols-3 gap-1">
                           <button
                             onClick={() => alignElement(selectedElement.id, 'left')}
-                            disabled={lockedElements.has(selectedElement.id)}
-                            className="bg-green-100 hover:bg-green-200 text-green-700 px-2 py-1 rounded text-xs disabled:opacity-50"
+                            className="bg-green-100 hover:bg-green-200 text-green-700 px-2 py-1 rounded text-xs"
                           >
-                            <AlignLeft className="h-3 w-3" />
+                            Esq
                           </button>
                           <button
                             onClick={() => alignElement(selectedElement.id, 'center')}
-                            disabled={lockedElements.has(selectedElement.id)}
-                            className="bg-green-100 hover:bg-green-200 text-green-700 px-2 py-1 rounded text-xs disabled:opacity-50"
+                            className="bg-green-100 hover:bg-green-200 text-green-700 px-2 py-1 rounded text-xs"
                           >
-                            <AlignCenter className="h-3 w-3" />
+                            Centro
                           </button>
                           <button
                             onClick={() => alignElement(selectedElement.id, 'right')}
-                            disabled={lockedElements.has(selectedElement.id)}
-                            className="bg-green-100 hover:bg-green-200 text-green-700 px-2 py-1 rounded text-xs disabled:opacity-50"
+                            className="bg-green-100 hover:bg-green-200 text-green-700 px-2 py-1 rounded text-xs"
                           >
-                            <AlignRight className="h-3 w-3" />
+                            Dir
                           </button>
                           <button
                             onClick={() => alignElement(selectedElement.id, 'top')}
-                            disabled={lockedElements.has(selectedElement.id)}
-                            className="bg-green-100 hover:bg-green-200 text-green-700 px-2 py-1 rounded text-xs disabled:opacity-50"
+                            className="bg-green-100 hover:bg-green-200 text-green-700 px-2 py-1 rounded text-xs"
                           >
                             Topo
                           </button>
                           <button
                             onClick={() => alignElement(selectedElement.id, 'middle')}
-                            disabled={lockedElements.has(selectedElement.id)}
-                            className="bg-green-100 hover:bg-green-200 text-green-700 px-2 py-1 rounded text-xs disabled:opacity-50"
+                            className="bg-green-100 hover:bg-green-200 text-green-700 px-2 py-1 rounded text-xs"
                           >
                             Meio
                           </button>
                           <button
                             onClick={() => alignElement(selectedElement.id, 'bottom')}
-                            disabled={lockedElements.has(selectedElement.id)}
-                            className="bg-green-100 hover:bg-green-200 text-green-700 px-2 py-1 rounded text-xs disabled:opacity-50"
+                            className="bg-green-100 hover:bg-green-200 text-green-700 px-2 py-1 rounded text-xs"
                           >
                             Base
                           </button>
@@ -1457,20 +1143,17 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                               onChange={(e) => updateMediaElement(selectedElement.id, {
                                 width: parseInt(e.target.value) || 400
                               })}
-                              disabled={lockedElements.has(selectedElement.id)}
-                              className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded-l disabled:opacity-50"
+                              className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded-l"
                             />
                             <button
                               onClick={() => resizeElement(selectedElement.id, 'width', -10)}
-                              disabled={lockedElements.has(selectedElement.id)}
-                              className="bg-gray-200 hover:bg-gray-300 px-2 py-1 text-xs disabled:opacity-50"
+                              className="bg-gray-200 hover:bg-gray-300 px-2 py-1 text-xs"
                             >
                               -
                             </button>
                             <button
                               onClick={() => resizeElement(selectedElement.id, 'width', 10)}
-                              disabled={lockedElements.has(selectedElement.id)}
-                              className="bg-gray-200 hover:bg-gray-300 px-2 py-1 text-xs rounded-r disabled:opacity-50"
+                              className="bg-gray-200 hover:bg-gray-300 px-2 py-1 text-xs rounded-r"
                             >
                               +
                             </button>
@@ -1485,20 +1168,17 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                               onChange={(e) => updateMediaElement(selectedElement.id, {
                                 height: parseInt(e.target.value) || 300
                               })}
-                              disabled={lockedElements.has(selectedElement.id)}
-                              className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded-l disabled:opacity-50"
+                              className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded-l"
                             />
                             <button
                               onClick={() => resizeElement(selectedElement.id, 'height', -10)}
-                              disabled={lockedElements.has(selectedElement.id)}
-                              className="bg-gray-200 hover:bg-gray-300 px-2 py-1 text-xs disabled:opacity-50"
+                              className="bg-gray-200 hover:bg-gray-300 px-2 py-1 text-xs"
                             >
                               -
                             </button>
                             <button
                               onClick={() => resizeElement(selectedElement.id, 'height', 10)}
-                              disabled={lockedElements.has(selectedElement.id)}
-                              className="bg-gray-200 hover:bg-gray-300 px-2 py-1 text-xs rounded-r disabled:opacity-50"
+                              className="bg-gray-200 hover:bg-gray-300 px-2 py-1 text-xs rounded-r"
                             >
                               +
                             </button>
@@ -1513,20 +1193,17 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                               onChange={(e) => updateMediaElement(selectedElement.id, {
                                 x: parseInt(e.target.value) || 0
                               })}
-                              disabled={lockedElements.has(selectedElement.id)}
-                              className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded-l disabled:opacity-50"
+                              className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded-l"
                             />
                             <button
                               onClick={() => moveElement(selectedElement.id, 'left', 1)}
-                              disabled={lockedElements.has(selectedElement.id)}
-                              className="bg-gray-200 hover:bg-gray-300 px-2 py-1 text-xs disabled:opacity-50"
+                              className="bg-gray-200 hover:bg-gray-300 px-2 py-1 text-xs"
                             >
                               -
                             </button>
                             <button
                               onClick={() => moveElement(selectedElement.id, 'right', 1)}
-                              disabled={lockedElements.has(selectedElement.id)}
-                              className="bg-gray-200 hover:bg-gray-300 px-2 py-1 text-xs rounded-r disabled:opacity-50"
+                              className="bg-gray-200 hover:bg-gray-300 px-2 py-1 text-xs rounded-r"
                             >
                               +
                             </button>
@@ -1541,20 +1218,17 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                               onChange={(e) => updateMediaElement(selectedElement.id, {
                                 y: parseInt(e.target.value) || 0
                               })}
-                              disabled={lockedElements.has(selectedElement.id)}
-                              className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded-l disabled:opacity-50"
+                              className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded-l"
                             />
                             <button
                               onClick={() => moveElement(selectedElement.id, 'up', 1)}
-                              disabled={lockedElements.has(selectedElement.id)}
-                              className="bg-gray-200 hover:bg-gray-300 px-2 py-1 text-xs disabled:opacity-50"
+                              className="bg-gray-200 hover:bg-gray-300 px-2 py-1 text-xs"
                             >
                               -
                             </button>
                             <button
                               onClick={() => moveElement(selectedElement.id, 'down', 1)}
-                              disabled={lockedElements.has(selectedElement.id)}
-                              className="bg-gray-200 hover:bg-gray-300 px-2 py-1 text-xs rounded-r disabled:opacity-50"
+                              className="bg-gray-200 hover:bg-gray-300 px-2 py-1 text-xs rounded-r"
                             >
                               +
                             </button>
@@ -1577,8 +1251,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                             onChange={(e) => updateMediaElement(selectedElement.id, {
                               opacity: parseFloat(e.target.value)
                             })}
-                            disabled={lockedElements.has(selectedElement.id)}
-                            className="w-full disabled:opacity-50"
+                            className="w-full"
                           />
                         </div>
                         <div>
@@ -1590,8 +1263,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                               onClick={() => updateMediaElement(selectedElement.id, {
                                 rotation: (selectedElement.rotation || 0) - 15
                               })}
-                              disabled={lockedElements.has(selectedElement.id)}
-                              className="bg-orange-100 hover:bg-orange-200 text-orange-700 p-1 rounded disabled:opacity-50"
+                              className="bg-orange-100 hover:bg-orange-200 text-orange-700 p-1 rounded"
                             >
                               <RotateCcw className="h-3 w-3" />
                             </button>
@@ -1603,15 +1275,13 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                               onChange={(e) => updateMediaElement(selectedElement.id, {
                                 rotation: parseInt(e.target.value)
                               })}
-                              disabled={lockedElements.has(selectedElement.id)}
-                              className="flex-1 disabled:opacity-50"
+                              className="flex-1"
                             />
                             <button
                               onClick={() => updateMediaElement(selectedElement.id, {
                                 rotation: (selectedElement.rotation || 0) + 15
                               })}
-                              disabled={lockedElements.has(selectedElement.id)}
-                              className="bg-orange-100 hover:bg-orange-200 text-orange-700 p-1 rounded disabled:opacity-50"
+                              className="bg-orange-100 hover:bg-orange-200 text-orange-700 p-1 rounded"
                             >
                               <RotateCw className="h-3 w-3" />
                             </button>
@@ -1629,8 +1299,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                             onChange={(e) => updateMediaElement(selectedElement.id, {
                               borderRadius: parseInt(e.target.value)
                             })}
-                            disabled={lockedElements.has(selectedElement.id)}
-                            className="w-full disabled:opacity-50"
+                            className="w-full"
                           />
                         </div>
                       </div>
@@ -1644,7 +1313,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Preview do Slide
                       <span className="text-xs text-gray-500 ml-2">
-                        (Clique e arraste elementos • Cantos/bordas para redimensionar • Clique duplo para tela cheia)
+                        (Clique e arraste elementos • Cantos/bordas para redimensionar)
                       </span>
                     </label>
                     <div 
@@ -1664,24 +1333,9 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
                           style={{ 
                             backgroundImage: `url(${editingSlide.backgroundImage})`,
-                            opacity: editingSlide.backgroundOpacity || 0.3,
-                            imageRendering: 'high-quality'
+                            opacity: editingSlide.backgroundOpacity || 0.3
                           }}
                         />
-                      )}
-
-                      {/* Grid Overlay */}
-                      {showGrid && (
-                        <div className="absolute inset-0 pointer-events-none opacity-20">
-                          <svg width="100%" height="100%" className="absolute inset-0">
-                            <defs>
-                              <pattern id="grid" width={gridSize} height={gridSize} patternUnits="userSpaceOnUse">
-                                <path d={`M ${gridSize} 0 L 0 0 0 ${gridSize}`} fill="none" stroke="#3b82f6" strokeWidth="0.5"/>
-                              </pattern>
-                            </defs>
-                            <rect width="100%" height="100%" fill="url(#grid)" />
-                          </svg>
-                        </div>
                       )}
 
                       {/* Content */}
@@ -1711,12 +1365,10 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                         const scaleX = previewRect.width / EDITOR_WIDTH;
                         const scaleY = previewRect.height / EDITOR_HEIGHT;
 
-                        const displayX = Math.round((element.x || 0) * scaleX * 100) / 100;
-                        const displayY = Math.round((element.y || 0) * scaleY * 100) / 100;
-                        const displayWidth = Math.round((element.width || 400) * scaleX * 100) / 100;
-                        const displayHeight = Math.round((element.height || 300) * scaleY * 100) / 100;
-
-                        const isLocked = lockedElements.has(element.id);
+                        const displayX = (element.x || 0) * scaleX;
+                        const displayY = (element.y || 0) * scaleY;
+                        const displayWidth = (element.width || 400) * scaleX;
+                        const displayHeight = (element.height || 300) * scaleY;
 
                         return (
                           <div
@@ -1725,9 +1377,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                               selectedMediaElement === element.id
                                 ? 'ring-2 ring-blue-500 ring-opacity-75'
                                 : 'hover:ring-2 hover:ring-gray-400 hover:ring-opacity-50'
-                            } ${dragState.isDragging && dragState.elementId === element.id ? 'z-50' : ''} ${
-                              isLocked ? 'ring-2 ring-red-500 ring-opacity-50' : ''
-                            }`}
+                            } ${dragState.isDragging && dragState.elementId === element.id ? 'z-50' : ''}`}
                             style={{
                               left: `${displayX}px`,
                               top: `${displayY}px`,
@@ -1736,19 +1386,13 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                               zIndex: element.zIndex || 1,
                               opacity: element.opacity || 1,
                               transform: `rotate(${element.rotation || 0}deg)`,
-                              borderRadius: `${Math.round((element.borderRadius || 0) * Math.min(scaleX, scaleY) * 100) / 100}px`,
-                              cursor: isLocked ? 'not-allowed' : (dragState.isDragging && dragState.elementId === element.id ? 'grabbing' : 'grab'),
-                              willChange: 'transform',
-                              backfaceVisibility: 'hidden'
+                              borderRadius: `${(element.borderRadius || 0) * Math.min(scaleX, scaleY)}px`,
+                              cursor: dragState.isDragging && dragState.elementId === element.id ? 'grabbing' : 'grab'
                             }}
-                            onMouseDown={(e) => !isLocked && handleMouseDown(e, element.id)}
+                            onMouseDown={(e) => handleMouseDown(e, element.id)}
                             onClick={(e) => {
                               e.stopPropagation();
                               setSelectedMediaElement(element.id);
-                            }}
-                            onDoubleClick={(e) => {
-                              e.stopPropagation();
-                              toggleElementFullscreen(element.id);
                             }}
                           >
                             {element.type === 'image' ? (
@@ -1756,43 +1400,20 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                                 src={element.url}
                                 alt={element.alt}
                                 className="w-full h-full object-cover pointer-events-none"
-                                style={{ 
-                                  borderRadius: `${Math.round((element.borderRadius || 0) * Math.min(scaleX, scaleY) * 100) / 100}px`,
-                                  imageRendering: 'high-quality'
-                                }}
+                                style={{ borderRadius: `${(element.borderRadius || 0) * Math.min(scaleX, scaleY)}px` }}
                                 draggable={false}
                               />
                             ) : (
-                              <div className="relative w-full h-full">
-                                <video 
-                                  src={element.url}
-                                  className="w-full h-full object-cover pointer-events-none"
-                                  style={{ 
-                                    borderRadius: `${Math.round((element.borderRadius || 0) * Math.min(scaleX, scaleY) * 100) / 100}px`,
-                                    imageRendering: 'high-quality'
-                                  }}
-                                  draggable={false}
-                                  autoPlay={videoPreviewStates.get(element.id)}
-                                  muted
-                                  loop
-                                  playsInline
-                                />
-                                
-                                {/* Video Play Button Overlay */}
-                                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                  <div className="bg-black bg-opacity-50 rounded-full p-2">
-                                    {videoPreviewStates.get(element.id) ? (
-                                      <Pause className="h-4 w-4 text-white" />
-                                    ) : (
-                                      <Play className="h-4 w-4 text-white" />
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
+                              <video 
+                                src={element.url}
+                                className="w-full h-full object-cover pointer-events-none"
+                                style={{ borderRadius: `${(element.borderRadius || 0) * Math.min(scaleX, scaleY)}px` }}
+                                draggable={false}
+                              />
                             )}
                             
                             {/* Selection indicators */}
-                            {selectedMediaElement === element.id && !isLocked && (
+                            {selectedMediaElement === element.id && (
                               <>
                                 {/* Corner resize handles */}
                                 <div 
@@ -1836,32 +1457,26 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                                   <span>{Math.round(element.x || 0)}, {Math.round(element.y || 0)}</span>
                                   <span>•</span>
                                   <span>{element.width}×{element.height}</span>
-                                  {element.isFullscreen && (
-                                    <>
-                                      <span>•</span>
-                                      <Maximize2 className="h-3 w-3" />
-                                    </>
-                                  )}
                                 </div>
                               </>
-                            )}
-
-                            {/* Lock indicator */}
-                            {isLocked && (
-                              <div className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded z-10">
-                                <Lock className="h-3 w-3" />
-                              </div>
-                            )}
-
-                            {/* Fullscreen indicator */}
-                            {element.isFullscreen && (
-                              <div className="absolute top-1 left-1 bg-blue-500 text-white p-1 rounded z-10">
-                                <Maximize2 className="h-3 w-3" />
-                              </div>
                             )}
                           </div>
                         );
                       })}
+
+                      {/* Grid overlay quando elemento está selecionado */}
+                      {selectedMediaElement && (
+                        <div className="absolute inset-0 pointer-events-none opacity-20">
+                          <svg width="100%" height="100%" className="absolute inset-0">
+                            <defs>
+                              <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                                <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#3b82f6" strokeWidth="0.5"/>
+                              </pattern>
+                            </defs>
+                            <rect width="100%" height="100%" fill="url(#grid)" />
+                          </svg>
+                        </div>
+                      )}
 
                       {/* Empty state */}
                       {(!editingSlide.mediaElements || editingSlide.mediaElements.length === 0) && (
@@ -1870,7 +1485,6 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                             <Image className="h-12 w-12 mx-auto mb-2" />
                             <p className="text-sm">Adicione mídias para começar</p>
                             <p className="text-xs mt-1">Arraste e solte elementos para posicionar</p>
-                            <p className="text-xs mt-1">Clique duplo para tela cheia</p>
                           </div>
                         </div>
                       )}
