@@ -1,5 +1,3 @@
-﻿# ProjetoBF
- 
 # Sistema de Apresentação - Documentação Final
 
 ## Visão Geral
