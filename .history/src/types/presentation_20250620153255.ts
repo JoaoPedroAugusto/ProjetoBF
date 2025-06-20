@@ -11,17 +11,6 @@ export interface MediaElement {
   opacity?: number;
   borderRadius?: number;
   rotation?: number;
-  isFullscreen?: boolean;
-  // Novos campos para vídeo
-  autoPlay?: boolean;
-  muted?: boolean;
-  loop?: boolean;
-  controls?: boolean;
-  // Metadados do arquivo
-  fileName?: string;
-  fileSize?: number;
-  duration?: number;
-  isLocalFile?: boolean;
 }
 
 export interface Slide {
@@ -38,7 +27,6 @@ export interface Slide {
   hideContent?: boolean;
   order: number;
   mediaElements?: MediaElement[];
-  // Legacy support
   media?: {
     type: 'image' | 'video';
     url: string;
@@ -65,3 +53,44 @@ export interface PresentationSettings {
   allowFullscreen: boolean;
   theme: 'light' | 'dark';
 }
+
+// Interfaces adicionais para melhor gestão de mídia
+export interface MediaLibraryItem {
+  id: string;
+  name: string;
+  type: 'image' | 'video';
+  url: string;
+  size: number;
+  uploadDate: Date;
+  isObjectURL?: boolean; // Flag para identificar Object URLs que precisam ser limpos
+}
+
+export interface StorageInfo {
+  used: number; // MB usado
+  available: number; // MB disponível
+  percentage: number; // Porcentagem usada
+}
+
+// Tipos para gestão de estado do editor
+export interface DragState {
+  isDragging: boolean;
+  elementId: string | null;
+  startX: number;
+  startY: number;
+  startElementX: number;
+  startElementY: number;
+  previewRect: DOMRect | null;
+}
+
+export interface ResizeState {
+  isResizing: boolean;
+  elementId: string | null;
+  startX: number;
+  startY: number;
+  startWidth: number;
+  startHeight: number;
+  startElementX: number;
+  startElementY: number;
+  handle: 'nw' | 'ne' | 'sw' | 'se' | 'n' | 's' | 'e' | 'w' | null;
+}
+

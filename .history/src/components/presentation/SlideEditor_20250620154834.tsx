@@ -1,7 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { Plus, Edit, Trash2, Image as ImageIcon, Video, Save, X, Move, Eye, EyeOff, Copy, Layers, RotateCw, Maximize2, Minimize2, Database, Upload, Trash, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, ZoomIn, ZoomOut, RotateCcw, Palette, Play, Pause, Volume2, VolumeX, Grid, Lock, Unlock, AlignLeft, AlignCenter, AlignRight, AlignJustify, Type, Sliders, HardDrive, AlertTriangle } from 'lucide-react';
+import { Plus, Edit, Trash2, Image as ImageIcon, Video, Save, X, Move, Eye, EyeOff, Copy, Layers, RotateCw, Maximize2, Minimize2, Database, Upload, Trash, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, ZoomIn, ZoomOut, RotateCcw, Palette, Play, Pause, Volume2, VolumeX, Grid, Lock, Unlock, AlignLeft, AlignCenter, AlignRight, AlignJustify, Type, Sliders } from 'lucide-react';
 import { Slide, MediaElement } from './types/presentation';
-import { mediaStorage, MediaFile, StorageStats } from './utils/mediaStorage';
 
 interface SlideEditorProps {
   slides: Slide[];
@@ -31,6 +30,15 @@ interface ResizeState {
   handle: 'nw' | 'ne' | 'sw' | 'se' | 'n' | 's' | 'e' | 'w' | null;
 }
 
+interface MediaLibraryItem {
+  id: string;
+  name: string;
+  type: 'image' | 'video';
+  url: string;
+  size: number;
+  uploadDate: Date;
+}
+
 // Constantes para dimensões consistentes
 const EDITOR_WIDTH = 1200;
 const EDITOR_HEIGHT = 675; // 16:9 aspect ratio
@@ -44,20 +52,14 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
   const [isCreating, setIsCreating] = useState(false);
   const [selectedMediaElement, setSelectedMediaElement] = useState<string | null>(null);
   const [showMediaLibrary, setShowMediaLibrary] = useState(false);
-  const [mediaLibrary, setMediaLibrary] = useState<MediaFile[]>([]);
-  const [storageStats, setStorageStats] = useState<StorageStats>({
-    used: 0,
-    available: 0,
-    total: 0,
-    percentage: 0
-  });
+  const [mediaLibrary, setMediaLibrary] = useState<MediaLibraryItem[]>([]);
+  const [storageUsage, setStorageUsage] = useState(0);
   const [showGrid, setShowGrid] = useState(false);
   const [snapToGrid, setSnapToGrid] = useState(true);
   const [gridSize, setGridSize] = useState(20);
   const [videoPreviewStates, setVideoPreviewStates] = useState<Map<string, boolean>>(new Map());
   const [lockedElements, setLockedElements] = useState<Set<string>>(new Set());
-  const [isUploading, setIsUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
+  const [zoom, setZoom] = useState(1);
   const [dragState, setDragState] = useState<DragState>({
     isDragging: false,
     elementId: null,
@@ -82,10 +84,10 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
   const previewRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Carregar biblioteca de mídia e estatísticas
+  // Carregar biblioteca de mídia
   useEffect(() => {
     loadMediaLibrary();
-    updateStorageStats();
+    calculateStorageUsage();
   }, []);
 
   // Atalhos de teclado estilo Canva
@@ -133,13 +135,6 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
             toggleElementLock(selectedMediaElement);
           }
           break;
-        case 's':
-        case 'S':
-          if (event.ctrlKey && editingSlide) {
-            event.preventDefault();
-            handleSaveSlide();
-          }
-          break;
       }
 
       // Movimento com setas
@@ -166,103 +161,225 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
 
     document.addEventListener('keydown', handleKeyPress);
     return () => document.removeEventListener('keydown', handleKeyPress);
-  }, [selectedMediaElement, showGrid, gridSize, editingSlide]);
+  }, [selectedMediaElement, showGrid, gridSize]);
 
-  const loadMediaLibrary = async () => {
+  const loadMediaLibrary = () => {
     try {
-      const library = mediaStorage.getMediaLibrary();
-      setMediaLibrary(library);
+      const saved = localStorage.getItem('media-library');
+      if (saved) {
+        const library = JSON.parse(saved);
+        setMediaLibrary(library.map((item: any) => ({
+          ...item,
+          uploadDate: new Date(item.uploadDate)
+        })));
+      }
     } catch (error) {
       console.error('Erro ao carregar biblioteca de mídia:', error);
     }
   };
 
-  const updateStorageStats = async () => {
+  const saveMediaLibrary = (library: MediaLibraryItem[]) => {
     try {
-      const stats = await mediaStorage.getStorageStats();
-      setStorageStats(stats);
+      localStorage.setItem('media-library', JSON.stringify(library));
+      setMediaLibrary(library);
+      calculateStorageUsage();
     } catch (error) {
-      console.error('Erro ao atualizar estatísticas:', error);
+      console.error('Erro ao salvar biblioteca de mídia:', error);
+      alert('Erro ao salvar mídia. Espaço de armazenamento pode estar cheio.');
     }
+  };
+
+  const calculateStorageUsage = () => {
+    try {
+      let totalSize = 0;
+      for (let key in localStorage) {
+        if (localStorage.hasOwnProperty(key)) {
+          totalSize += localStorage[key].length;
+        }
+      }
+      // Converter para MB (aproximado)
+      const usageMB = totalSize / (1024 * 1024);
+      setStorageUsage(Math.min(usageMB, 1024)); // Máximo 1GB
+    } catch (error) {
+      console.error('Erro ao calcular uso de armazenamento:', error);
+    }
+  };
+
+  const compressImage = (file: File, maxWidth: number = 1920, quality: number = 0.9): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new window.Image(); // Usar window.Image explicitamente
+      
+      img.onload = () => {
+        // Calcular dimensões mantendo proporção
+        let { width, height } = img;
+        if (width > maxWidth) {
+          height = (height * maxWidth) / width;
+          width = maxWidth;
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        
+        // Desenhar imagem com alta qualidade
+        if (ctx) {
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = 'high';
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          // Converter para base64 com qualidade especificada
+          const dataUrl = canvas.toDataURL('image/jpeg', quality);
+          resolve(dataUrl);
+        } else {
+          reject(new Error('Não foi possível obter contexto do canvas'));
+        }
+      };
+      
+      img.onerror = () => reject(new Error('Erro ao carregar imagem'));
+      img.src = URL.createObjectURL(file);
+    });
+  };
+
+  const addToMediaLibrary = async (file: File): Promise<string> => {
+    try {
+      let dataUrl: string;
+      
+      if (file.type.startsWith('image/')) {
+        // Comprimir imagem mantendo qualidade
+        dataUrl = await compressImage(file, 1920, 0.9);
+      } else {
+        // Para vídeos, usar base64 sem limitação de tamanho. Cuidado: arquivos muito grandes podem causar problemas de desempenho e armazenamento.
+        dataUrl = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = (e) => resolve(e.target?.result as string);
+          reader.onerror = () => reject(new Error("Erro ao ler arquivo"));
+          reader.readAsDataURL(file);
+        });
+      }
+
+      const mediaItem: MediaLibraryItem = {
+        id: `media-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        name: file.name,
+        type: file.type.startsWith('image/') ? 'image' : 'video',
+        url: dataUrl,
+        size: dataUrl.length,
+        uploadDate: new Date()
+      };
+
+      // Verificar se já existe
+      const existing = mediaLibrary.find(item => item.name === file.name && Math.abs(item.size - mediaItem.size) < 1000);
+      if (existing) {
+        return existing.url;
+      }
+
+      const newLibrary = [...mediaLibrary, mediaItem];
+      saveMediaLibrary(newLibrary);
+      return dataUrl;
+    } catch (error) {
+      console.error('Erro ao processar arquivo:', error);
+      throw error;
+    }
+  };
+
+  const removeFromMediaLibrary = (id: string) => {
+    const newLibrary = mediaLibrary.filter(item => item.id !== id);
+    saveMediaLibrary(newLibrary);
+  };
+
+  const createNewSlide = (): Slide => ({
+    id: `slide-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    title: 'Novo Slide',
+    content: 'Conteúdo do slide...',
+    type: 'text',
+    backgroundColor: '#1e40af',
+    textColor: '#ffffff',
+    order: slides.length,
+    mediaElements: [],
+    createdAt: new Date(),
+    updatedAt: new Date()
+  });
+
+  const handleAddSlide = () => {
+    const newSlide = createNewSlide();
+    setEditingSlide(newSlide);
+    setIsCreating(true);
+  };
+
+  const handleEditSlide = (slide: Slide) => {
+    setEditingSlide({ ...slide });
+    setIsCreating(false);
+    setSelectedMediaElement(null);
+  };
+
+  const handleSaveSlide = () => {
+    if (!editingSlide) return;
+
+    const updatedSlide = {
+      ...editingSlide,
+      updatedAt: new Date()
+    };
+
+    if (isCreating) {
+      onSlidesChange([...slides, updatedSlide]);
+    } else {
+      const updatedSlides = slides.map(slide => 
+        slide.id === editingSlide.id ? updatedSlide : slide
+      );
+      onSlidesChange(updatedSlides);
+    }
+
+    setEditingSlide(null);
+    setIsCreating(false);
+    setSelectedMediaElement(null);
+  };
+
+  const handleDeleteSlide = (slideId: string) => {
+    if (confirm('Tem certeza que deseja excluir este slide?')) {
+      const updatedSlides = slides.filter(slide => slide.id !== slideId);
+      onSlidesChange(updatedSlides);
+    }
+  };
+
+  const handleMoveSlide = (slideId: string, direction: 'up' | 'down') => {
+    const slideIndex = slides.findIndex(slide => slide.id === slideId);
+    if (slideIndex === -1) return;
+
+    const newIndex = direction === 'up' ? slideIndex - 1 : slideIndex + 1;
+    if (newIndex < 0 || newIndex >= slides.length) return;
+
+    const updatedSlides = [...slides];
+    [updatedSlides[slideIndex], updatedSlides[newIndex]] = [updatedSlides[newIndex], updatedSlides[slideIndex]];
+    
+    updatedSlides.forEach((slide, index) => {
+      slide.order = index;
+    });
+
+    onSlidesChange(updatedSlides);
   };
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>, type: 'image' | 'video') => {
     const file = event.target.files?.[0];
     if (!file || !editingSlide) return;
 
-    setIsUploading(true);
-    setUploadProgress(0);
-
     try {
-      // Simular progresso de upload
-      const progressInterval = setInterval(() => {
-        setUploadProgress(prev => Math.min(prev + 10, 90));
-      }, 100);
-
-      const mediaFile = await mediaStorage.addMedia(file);
+      const url = await addToMediaLibrary(file);
+      addMediaElementToSlide(url, type, file.name);
       
-      clearInterval(progressInterval);
-      setUploadProgress(100);
-
-      // Adicionar ao slide
-      addMediaElementToSlide(mediaFile.url, mediaFile.type, mediaFile.name, {
-        autoPlay: type === 'video',
-        muted: true,
-        loop: true,
-        controls: false,
-        fileName: mediaFile.name,
-        fileSize: mediaFile.size,
-        isLocalFile: true
-      });
-
-      // Atualizar biblioteca e estatísticas
-      await loadMediaLibrary();
-      await updateStorageStats();
-      
-      // Limpar o input
+      // Limpar o input para permitir upload do mesmo arquivo novamente
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
-
-      setTimeout(() => {
-        setIsUploading(false);
-        setUploadProgress(0);
-      }, 500);
-
     } catch (error) {
       console.error('Erro ao fazer upload:', error);
-      alert('Erro ao fazer upload: ' + (error as Error).message);
-      setIsUploading(false);
-      setUploadProgress(0);
+      alert('Erro ao fazer upload da mídia: ' + (error as Error).message);
     }
   };
 
-  const addMediaElementFromLibrary = async (libraryItem: MediaFile) => {
+  const addMediaElementFromLibrary = (libraryItem: MediaLibraryItem) => {
     if (!editingSlide) return;
-    
-    // Atualizar uso do arquivo
-    mediaStorage.updateUsage(libraryItem.id);
-    
-    addMediaElementToSlide(libraryItem.url, libraryItem.type, libraryItem.name, {
-      autoPlay: libraryItem.type === 'video',
-      muted: true,
-      loop: true,
-      controls: false,
-      fileName: libraryItem.name,
-      fileSize: libraryItem.size,
-      isLocalFile: true
-    });
-    
+    addMediaElementToSlide(libraryItem.url, libraryItem.type, libraryItem.name);
     setShowMediaLibrary(false);
-    await loadMediaLibrary(); // Atualizar contadores de uso
-  };
-
-  const removeFromMediaLibrary = async (id: string) => {
-    if (confirm('Tem certeza que deseja remover este arquivo? Esta ação não pode ser desfeita.')) {
-      mediaStorage.removeMedia(id);
-      await loadMediaLibrary();
-      await updateStorageStats();
-    }
   };
 
   const snapToGridValue = (value: number): number => {
@@ -270,12 +387,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
     return Math.round(value / gridSize) * gridSize;
   };
 
-  const addMediaElementToSlide = (
-    url: string, 
-    type: 'image' | 'video', 
-    name: string, 
-    options: Partial<MediaElement> = {}
-  ) => {
+  const addMediaElementToSlide = (url: string, type: 'image' | 'video', name: string) => {
     if (!editingSlide) return;
 
     // Posições baseadas nas dimensões fixas do editor com snap to grid
@@ -295,13 +407,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
       opacity: 1,
       borderRadius: 8,
       rotation: 0,
-      isFullscreen: false,
-      // Configurações padrão para vídeo
-      autoPlay: type === 'video',
-      muted: true,
-      loop: true,
-      controls: false,
-      ...options
+      isFullscreen: false
     };
 
     const updatedSlide = {
@@ -486,77 +592,6 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
     }
 
     updateMediaElement(elementId, { x: newX, y: newY });
-  };
-
-  const createNewSlide = (): Slide => ({
-    id: `slide-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-    title: 'Novo Slide',
-    content: 'Conteúdo do slide...',
-    type: 'text',
-    backgroundColor: '#1e40af',
-    textColor: '#ffffff',
-    order: slides.length,
-    mediaElements: [],
-    createdAt: new Date(),
-    updatedAt: new Date()
-  });
-
-  const handleAddSlide = () => {
-    const newSlide = createNewSlide();
-    setEditingSlide(newSlide);
-    setIsCreating(true);
-  };
-
-  const handleEditSlide = (slide: Slide) => {
-    setEditingSlide({ ...slide });
-    setIsCreating(false);
-    setSelectedMediaElement(null);
-  };
-
-  const handleSaveSlide = () => {
-    if (!editingSlide) return;
-
-    const updatedSlide = {
-      ...editingSlide,
-      updatedAt: new Date()
-    };
-
-    if (isCreating) {
-      onSlidesChange([...slides, updatedSlide]);
-    } else {
-      const updatedSlides = slides.map(slide => 
-        slide.id === editingSlide.id ? updatedSlide : slide
-      );
-      onSlidesChange(updatedSlides);
-    }
-
-    setEditingSlide(null);
-    setIsCreating(false);
-    setSelectedMediaElement(null);
-  };
-
-  const handleDeleteSlide = (slideId: string) => {
-    if (confirm('Tem certeza que deseja excluir este slide?')) {
-      const updatedSlides = slides.filter(slide => slide.id !== slideId);
-      onSlidesChange(updatedSlides);
-    }
-  };
-
-  const handleMoveSlide = (slideId: string, direction: 'up' | 'down') => {
-    const slideIndex = slides.findIndex(slide => slide.id === slideId);
-    if (slideIndex === -1) return;
-
-    const newIndex = direction === 'up' ? slideIndex - 1 : slideIndex + 1;
-    if (newIndex < 0 || newIndex >= slides.length) return;
-
-    const updatedSlides = [...slides];
-    [updatedSlides[slideIndex], updatedSlides[newIndex]] = [updatedSlides[newIndex], updatedSlides[slideIndex]];
-    
-    updatedSlides.forEach((slide, index) => {
-      slide.order = index;
-    });
-
-    onSlidesChange(updatedSlides);
   };
 
   // Drag functionality
@@ -760,61 +795,31 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
         <h4 className="text-sm font-medium text-blue-800 mb-2">Atalhos de Teclado:</h4>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs text-blue-700">
           <div><kbd className="bg-blue-200 px-1 rounded">Shift+P</kbd> Apresentar</div>
-          <div><kbd className="bg-blue-200 px-1 rounded">Ctrl+S</kbd> Salvar</div>
           <div><kbd className="bg-blue-200 px-1 rounded">Ctrl+C</kbd> Duplicar</div>
           <div><kbd className="bg-blue-200 px-1 rounded">Ctrl+G</kbd> Grid</div>
           <div><kbd className="bg-blue-200 px-1 rounded">Ctrl+L</kbd> Bloquear</div>
           <div><kbd className="bg-blue-200 px-1 rounded">Del</kbd> Excluir</div>
           <div><kbd className="bg-blue-200 px-1 rounded">Setas</kbd> Mover</div>
           <div><kbd className="bg-blue-200 px-1 rounded">Shift+Setas</kbd> Mover 1px</div>
+          <div><kbd className="bg-blue-200 px-1 rounded">1-9</kbd> Ir para slide</div>
         </div>
       </div>
 
       {/* Storage Usage */}
       <div className="mb-4 bg-gray-50 p-3 rounded-lg">
         <div className="flex justify-between items-center mb-2">
-          <div className="flex items-center space-x-2">
-            <HardDrive className="h-4 w-4 text-gray-600" />
-            <span className="text-sm text-gray-600">Uso do Armazenamento</span>
-            {storageStats.percentage > 90 && (
-              <AlertTriangle className="h-4 w-4 text-red-500" />
-            )}
-          </div>
-          <span className="text-sm font-medium">
-            {(storageStats.used / 1024 / 1024).toFixed(1)}MB / {(storageStats.total / 1024 / 1024).toFixed(0)}MB
-          </span>
+          <span className="text-sm text-gray-600">Uso do Armazenamento</span>
+          <span className="text-sm font-medium">{storageUsage.toFixed(1)}MB / 1024MB (1GB)</span>
         </div>
         <div className="w-full bg-gray-200 rounded-full h-2">
           <div 
             className={`h-2 rounded-full transition-all ${
-              storageStats.percentage > 90 ? 'bg-red-500' : 
-              storageStats.percentage > 70 ? 'bg-yellow-500' : 'bg-green-500'
+              storageUsage > 800 ? 'bg-red-500' : storageUsage > 500 ? 'bg-yellow-500' : 'bg-green-500'
             }`}
-            style={{ width: `${Math.min(100, storageStats.percentage)}%` }}
+            style={{ width: `${(storageUsage / 1024) * 100}%` }}
           />
         </div>
-        {storageStats.percentage > 90 && (
-          <p className="text-xs text-red-600 mt-1">
-            Armazenamento quase cheio! Remova alguns arquivos para continuar.
-          </p>
-        )}
       </div>
-
-      {/* Upload Progress */}
-      {isUploading && (
-        <div className="mb-4 bg-blue-50 p-3 rounded-lg">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-blue-800">Fazendo upload...</span>
-            <span className="text-sm font-medium text-blue-800">{uploadProgress}%</span>
-          </div>
-          <div className="w-full bg-blue-200 rounded-full h-2">
-            <div 
-              className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-              style={{ width: `${uploadProgress}%` }}
-            />
-          </div>
-        </div>
-      )}
 
       {/* Lista de Slides */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
@@ -857,13 +862,8 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                         className="w-full h-12 object-cover rounded"
                       />
                     ) : (
-                      <div className="w-full h-12 bg-gray-200 rounded flex items-center justify-center relative">
+                      <div className="w-full h-12 bg-gray-200 rounded flex items-center justify-center">
                         <Video className="h-4 w-4 text-gray-400" />
-                        {media.autoPlay && (
-                          <div className="absolute top-0 right-0 bg-green-500 text-white p-0.5 rounded-bl text-xs">
-                            <Play className="h-2 w-2" />
-                          </div>
-                        )}
                       </div>
                     )}
                     {media.isFullscreen && (
@@ -916,14 +916,6 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                 </button>
               </div>
 
-              {/* Storage info */}
-              <div className="mb-4 p-3 bg-gray-50 rounded-lg">
-                <div className="flex justify-between items-center text-sm">
-                  <span>{mediaLibrary.length} arquivos</span>
-                  <span>{(storageStats.used / 1024 / 1024).toFixed(1)}MB usados</span>
-                </div>
-              </div>
-
               {mediaLibrary.length === 0 ? (
                 <div className="text-center py-8">
                   <Database className="h-12 w-12 text-gray-400 mx-auto mb-4" />
@@ -932,9 +924,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                 </div>
               ) : (
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {mediaLibrary
-                    .sort((a, b) => b.lastUsed.getTime() - a.lastUsed.getTime())
-                    .map((item) => (
+                  {mediaLibrary.map((item) => (
                     <div key={item.id} className="border rounded-lg p-3 hover:border-blue-400 transition-colors">
                       <div className="aspect-video bg-gray-100 rounded mb-2 overflow-hidden">
                         {item.type === 'image' ? (
@@ -944,25 +934,15 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center relative">
+                          <div className="w-full h-full flex items-center justify-center">
                             <Video className="h-8 w-8 text-gray-400" />
-                            <div className="absolute bottom-1 right-1 bg-black bg-opacity-50 text-white text-xs px-1 rounded">
-                              VIDEO
-                            </div>
                           </div>
                         )}
                       </div>
-                      <p className="text-sm font-medium truncate mb-1" title={item.name}>
-                        {item.name}
+                      <p className="text-sm font-medium truncate mb-1">{item.name}</p>
+                      <p className="text-xs text-gray-500 mb-2">
+                        {(item.size / 1024 / 1024).toFixed(1)}MB • {item.uploadDate.toLocaleDateString()}
                       </p>
-                      <div className="text-xs text-gray-500 mb-2">
-                        <div>{(item.size / 1024 / 1024).toFixed(1)}MB</div>
-                        <div>{item.uploadDate.toLocaleDateString()}</div>
-                        <div>Usado {item.usageCount}x</div>
-                        {item.compressed && (
-                          <div className="text-green-600">Comprimido</div>
-                        )}
-                      </div>
                       <div className="flex space-x-2">
                         <button
                           onClick={() => addMediaElementFromLibrary(item)}
@@ -1199,9 +1179,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                       Adicionar Mídia
                     </label>
                     <div className="grid grid-cols-2 gap-2">
-                      <label className={`cursor-pointer bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg flex items-center justify-center space-x-2 transition-colors ${
-                        isUploading ? 'opacity-50 cursor-not-allowed' : ''
-                      }`}>
+                      <label className="cursor-pointer bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg flex items-center justify-center space-x-2 transition-colors">
                         <ImageIcon className="h-4 w-4" />
                         <span className="text-sm">Imagem</span>
                         <input
@@ -1209,27 +1187,20 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                           type="file"
                           accept="image/*"
                           onChange={(e) => handleFileUpload(e, 'image')}
-                          disabled={isUploading}
                           className="hidden"
                         />
                       </label>
-                      <label className={`cursor-pointer bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-lg flex items-center justify-center space-x-2 transition-colors ${
-                        isUploading ? 'opacity-50 cursor-not-allowed' : ''
-                      }`}>
+                      <label className="cursor-pointer bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-lg flex items-center justify-center space-x-2 transition-colors">
                         <Video className="h-4 w-4" />
                         <span className="text-sm">Vídeo</span>
                         <input
                           type="file"
                           accept="video/*"
                           onChange={(e) => handleFileUpload(e, 'video')}
-                          disabled={isUploading}
                           className="hidden"
                         />
                       </label>
                     </div>
-                    <p className="text-xs text-gray-500 mt-1">
-                      Imagens: até 10MB • Vídeos: até 50MB
-                    </p>
                   </div>
 
                   {/* Lista de Elementos de Mídia */}
@@ -1267,9 +1238,6 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                                 )}
                                 {element.isFullscreen && (
                                   <Maximize2 className="h-3 w-3 text-blue-500" />
-                                )}
-                                {element.type === 'video' && element.autoPlay && (
-                                  <Play className="h-3 w-3 text-green-500" />
                                 )}
                               </div>
                               <div className="flex items-center space-x-1">
@@ -1371,59 +1339,6 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                         )}
                       </h4>
                       
-                      {/* Configurações de vídeo */}
-                      {selectedElement.type === 'video' && (
-                        <div className="bg-purple-50 p-3 rounded-lg">
-                          <h5 className="text-xs font-medium text-purple-800 mb-2">Configurações de Vídeo</h5>
-                          <div className="grid grid-cols-2 gap-2">
-                            <label className="flex items-center space-x-2">
-                              <input
-                                type="checkbox"
-                                checked={selectedElement.autoPlay || false}
-                                onChange={(e) => updateMediaElement(selectedElement.id, {
-                                  autoPlay: e.target.checked
-                                })}
-                                className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
-                              />
-                              <span className="text-xs">Auto Play</span>
-                            </label>
-                            <label className="flex items-center space-x-2">
-                              <input
-                                type="checkbox"
-                                checked={selectedElement.muted !== false}
-                                onChange={(e) => updateMediaElement(selectedElement.id, {
-                                  muted: e.target.checked
-                                })}
-                                className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
-                              />
-                              <span className="text-xs">Mudo</span>
-                            </label>
-                            <label className="flex items-center space-x-2">
-                              <input
-                                type="checkbox"
-                                checked={selectedElement.loop !== false}
-                                onChange={(e) => updateMediaElement(selectedElement.id, {
-                                  loop: e.target.checked
-                                })}
-                                className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
-                              />
-                              <span className="text-xs">Loop</span>
-                            </label>
-                            <label className="flex items-center space-x-2">
-                              <input
-                                type="checkbox"
-                                checked={selectedElement.controls || false}
-                                onChange={(e) => updateMediaElement(selectedElement.id, {
-                                  controls: e.target.checked
-                                })}
-                                className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
-                              />
-                              <span className="text-xs">Controles</span>
-                            </label>
-                          </div>
-                        </div>
-                      )}
-
                       {/* Ações rápidas */}
                       <div className="grid grid-cols-2 gap-2">
                         <button
@@ -1861,10 +1776,9 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                                     imageRendering: 'high-quality'
                                   }}
                                   draggable={false}
-                                  autoPlay={videoPreviewStates.get(element.id) && element.autoPlay}
-                                  muted={element.muted !== false}
-                                  loop={element.loop !== false}
-                                  controls={element.controls || false}
+                                  autoPlay={videoPreviewStates.get(element.id)}
+                                  muted
+                                  loop
                                   playsInline
                                 />
                                 
@@ -1877,20 +1791,6 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                                       <Play className="h-4 w-4 text-white" />
                                     )}
                                   </div>
-                                </div>
-
-                                {/* Video status indicators */}
-                                <div className="absolute top-1 left-1 flex space-x-1">
-                                  {element.autoPlay && (
-                                    <div className="bg-green-500 text-white p-1 rounded text-xs">
-                                      <Play className="h-2 w-2" />
-                                    </div>
-                                  )}
-                                  {element.muted !== false && (
-                                    <div className="bg-red-500 text-white p-1 rounded text-xs">
-                                      <VolumeX className="h-2 w-2" />
-                                    </div>
-                                  )}
                                 </div>
                               </div>
                             )}

@@ -32,7 +32,7 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
   const [showControls, setShowControls] = useState(true);
   const [isActuallyFullscreen, setIsActuallyFullscreen] = useState(false);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(false); // Mudança: começar desmutado
+  const [isMuted, setIsMuted] = useState(true);
   const [videoProgress, setVideoProgress] = useState<Map<string, number>>(new Map());
   const [controlsTimeout, setControlsTimeout] = useState<NodeJS.Timeout | null>(null);
   
@@ -51,18 +51,6 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
 
-  // Inicializar reprodução de vídeos automaticamente
-  useEffect(() => {
-    if (currentSlide?.mediaElements) {
-      const hasAutoPlayVideos = currentSlide.mediaElements.some(
-        element => element.type === 'video' && element.autoPlay
-      );
-      if (hasAutoPlayVideos) {
-        setIsVideoPlaying(true);
-      }
-    }
-  }, [currentSlideIndex, currentSlide]);
-
   // Gerenciar vídeos de forma mais robusta
   useEffect(() => {
     const currentVideos = new Map<string, HTMLVideoElement>();
@@ -80,15 +68,15 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
         if (existingVideo && existingVideo.src === element.url) {
           // Reutilizar vídeo existente
           currentVideos.set(element.id, existingVideo);
-          existingVideo.muted = element.muted !== false ? true : isMuted;
+          existingVideo.muted = isMuted;
           existingVideo.currentTime = 0;
         } else {
           // Criar novo elemento de vídeo
           const video = document.createElement('video');
           video.src = element.url;
           video.preload = 'auto';
-          video.muted = element.muted !== false ? true : isMuted;
-          video.loop = element.loop !== false;
+          video.muted = isMuted;
+          video.loop = true;
           video.playsInline = true;
           video.crossOrigin = 'anonymous';
           
@@ -110,13 +98,6 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
             if (video.duration > 0) {
               const progress = (video.currentTime / video.duration) * 100;
               setVideoProgress(prev => new Map(prev.set(element.id, progress)));
-            }
-          });
-
-          video.addEventListener('canplay', () => {
-            // Auto-iniciar vídeos marcados para autoplay
-            if (element.autoPlay && isVideoPlaying) {
-              video.play().catch(console.error);
             }
           });
           
@@ -141,23 +122,11 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
       if (isVideoPlaying) {
         for (const [id, video] of videoRefs.current) {
           try {
-            // Verificar se o elemento tem autoPlay habilitado
-            const element = currentSlide?.mediaElements?.find(el => el.id === id);
-            if (element?.autoPlay) {
-              video.currentTime = 0;
-              await video.play();
-              console.log(`Vídeo ${id} iniciado`);
-            }
+            video.currentTime = 0;
+            await video.play();
+            console.log(`Vídeo ${id} iniciado`);
           } catch (error) {
             console.error(`Erro ao reproduzir vídeo ${id}:`, error);
-            // Tentar novamente com mute se der erro de autoplay
-            try {
-              video.muted = true;
-              await video.play();
-              console.log(`Vídeo ${id} iniciado (mudo)`);
-            } catch (retryError) {
-              console.error(`Erro ao reproduzir vídeo ${id} mesmo mudo:`, retryError);
-            }
           }
         }
       } else {
@@ -168,7 +137,7 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
     };
 
     playVideos();
-  }, [isVideoPlaying, currentSlideIndex, currentSlide]);
+  }, [isVideoPlaying, currentSlideIndex]);
 
   // Navegação por teclado com atalhos do Canva
   const handleKeyPress = useCallback((event: KeyboardEvent) => {
@@ -402,21 +371,15 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
                   <video 
                     key={`fullscreen-${element.id}-${currentSlideIndex}`}
                     ref={(el) => {
-                      if (el) {
-                        videoRefs.current.set(element.id, el);
-                        el.muted = element.muted !== false ? true : isMuted;
-                        if (element.autoPlay && isVideoPlaying) {
-                          el.play().catch(console.error);
-                        }
-                      }
+                      if (el) videoRefs.current.set(element.id, el);
                     }}
                     src={element.url}
                     className="max-w-full max-h-full object-contain"
-                    autoPlay={element.autoPlay && isVideoPlaying}
-                    muted={element.muted !== false ? true : isMuted}
-                    loop={element.loop !== false}
+                    autoPlay={isVideoPlaying}
+                    muted={isMuted}
+                    loop
                     playsInline
-                    controls={element.controls || false}
+                    controls={false}
                     style={{ imageRendering: 'high-quality' }}
                   />
                 )}
@@ -478,8 +441,8 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
                     ref={(el) => {
                       if (el) {
                         videoRefs.current.set(element.id, el);
-                        el.muted = element.muted !== false ? true : isMuted;
-                        if (element.autoPlay && isVideoPlaying) {
+                        el.muted = isMuted;
+                        if (isVideoPlaying) {
                           el.play().catch(console.error);
                         }
                       }
@@ -490,12 +453,11 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
                       borderRadius: `${Math.round((element.borderRadius || 0) * scale * 100) / 100}px`,
                       imageRendering: 'high-quality'
                     }}
-                    muted={element.muted !== false ? true : isMuted}
-                    loop={element.loop !== false}
+                    muted={isMuted}
+                    loop
                     playsInline
                     preload="auto"
-                    controls={element.controls || false}
-                    autoPlay={element.autoPlay && isVideoPlaying}
+                    controls={false}
                   />
                   
                   {/* Video Progress Bar */}

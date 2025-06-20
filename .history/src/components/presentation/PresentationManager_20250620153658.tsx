@@ -122,7 +122,11 @@ export const PresentationManager: React.FC<PresentationManagerProps> = ({
       setCurrentPresentation(presentation);
     } catch (error) {
       console.error('Erro ao salvar apresentação:', error);
-      alert('Erro ao salvar apresentação. Verifique o espaço de armazenamento.');
+      if (error instanceof Error && (error.name === 'QuotaExceededError' || error.message.includes('quota'))) {
+        alert('Erro ao salvar apresentação. Espaço de armazenamento esgotado.\n\nTente:\n• Remover vídeos grandes da biblioteca de mídia\n• Usar vídeos menores (máx. 50MB)\n• Limpar dados antigos do navegador');
+      } else {
+        alert('Erro ao salvar apresentação. Verifique o espaço de armazenamento.');
+      }
     }
   };
 

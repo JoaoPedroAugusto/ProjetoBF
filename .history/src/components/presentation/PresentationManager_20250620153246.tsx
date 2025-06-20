@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Presentation, Play, Edit, Settings, Eye } from 'lucide-react';
+import { Presentation, Play, Edit, Settings, Eye, AlertTriangle, HardDrive } from 'lucide-react';
 import { SlideViewer } from './SlideViewer';
 import { SlideEditor } from './SlideEditor';
 import { Slide, SlidePresentation, PresentationSettings } from './types/presentation';
@@ -9,6 +9,70 @@ interface PresentationManagerProps {
   sectorName: string;
 }
 
+// Função para calcular uso do localStorage
+const calculateStorageUsage = (): { used: number; available: number; percentage: number } => {
+  try {
+    let totalSize = 0;
+    for (let key in localStorage) {
+      if (localStorage.hasOwnProperty(key)) {
+        totalSize += localStorage[key].length;
+      }
+    }
+    
+    // Estimar limite do localStorage (varia por navegador, geralmente 5-10MB)
+    const estimatedLimit = 10 * 1024 * 1024; // 10MB
+    const usedMB = totalSize / (1024 * 1024);
+    const availableMB = (estimatedLimit - totalSize) / (1024 * 1024);
+    const percentage = (totalSize / estimatedLimit) * 100;
+    
+    return {
+      used: usedMB,
+      available: Math.max(0, availableMB),
+      percentage: Math.min(percentage, 100)
+    };
+  } catch (error) {
+    console.error('Erro ao calcular uso de armazenamento:', error);
+    return { used: 0, available: 10, percentage: 0 };
+  }
+};
+
+// Função para limpar dados antigos do localStorage
+const cleanupOldData = (): void => {
+  try {
+    const keysToCheck = [];
+    for (let key in localStorage) {
+      if (localStorage.hasOwnProperty(key)) {
+        keysToCheck.push(key);
+      }
+    }
+    
+    // Remover dados muito antigos (mais de 30 dias)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    
+    keysToCheck.forEach(key => {
+      try {
+        if (key.startsWith('presentation-') || key === 'media-library') {
+          const data = JSON.parse(localStorage.getItem(key) || '{}');
+          if (data.updatedAt) {
+            const updatedDate = new Date(data.updatedAt);
+            if (updatedDate < thirtyDaysAgo) {
+              localStorage.removeItem(key);
+              console.log(`Removido dado antigo: ${key}`);
+            }
+          }
+        }
+      } catch (error) {
+        // Se não conseguir parsear, pode ser um dado corrompido
+        console.warn(`Dado possivelmente corrompido removido: ${key}`);
+        localStorage.removeItem(key);
+      }
+    });
+  } catch (error) {
+    console.error('Erro durante limpeza de dados:', error);
+  }
+};
+
 export const PresentationManager: React.FC<PresentationManagerProps> = ({
   sectorId,
   sectorName
@@ -17,6 +81,8 @@ export const PresentationManager: React.FC<PresentationManagerProps> = ({
   const [isViewing, setIsViewing] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [selectedSlideIndex, setSelectedSlideIndex] = useState(0);
+  const [storageInfo, setStorageInfo] = useState(calculateStorageUsage());
+  const [showStorageWarning, setShowStorageWarning] = useState(false);
   const [settings, setSettings] = useState<PresentationSettings>({
     autoAdvance: false,
     autoAdvanceDelay: 5,
@@ -24,6 +90,20 @@ export const PresentationManager: React.FC<PresentationManagerProps> = ({
     allowFullscreen: true,
     theme: 'dark'
   });
+
+  // Atualizar informações de armazenamento periodicamente
+  useEffect(() => {
+    const updateStorageInfo = () => {
+      const info = calculateStorageUsage();
+      setStorageInfo(info);
+      setShowStorageWarning(info.percentage > 80);
+    };
+
+    updateStorageInfo();
+    const interval = setInterval(updateStorageInfo, 5000); // Atualizar a cada 5 segundos
+
+    return () => clearInterval(interval);
+  }, []);
 
   // Atalho Shift + P para apresentação
   const handleKeyPress = useCallback((event: KeyboardEvent) => {
@@ -42,25 +122,44 @@ export const PresentationManager: React.FC<PresentationManagerProps> = ({
 
   // Carregar apresentação do localStorage
   useEffect(() => {
-    const savedPresentation = localStorage.getItem(`presentation-${sectorId}`);
-    if (savedPresentation) {
+    const loadPresentation = async () => {
       try {
-        const presentation = JSON.parse(savedPresentation);
-        // Converter strings de data de volta para objetos Date
-        presentation.slides = presentation.slides.map((slide: any) => ({
-          ...slide,
-          createdAt: new Date(slide.createdAt),
-          updatedAt: new Date(slide.updatedAt),
-          mediaElements: slide.mediaElements || []
-        }));
-        presentation.createdAt = new Date(presentation.createdAt);
-        presentation.updatedAt = new Date(presentation.updatedAt);
-        setCurrentPresentation(presentation);
+        // Primeiro, tentar limpar dados antigos se o armazenamento estiver cheio
+        if (storageInfo.percentage > 90) {
+          cleanupOldData();
+          setStorageInfo(calculateStorageUsage());
+        }
+
+        const savedPresentation = localStorage.getItem(`presentation-${sectorId}`);
+        if (savedPresentation) {
+          try {
+            const presentation = JSON.parse(savedPresentation);
+            // Converter strings de data de volta para objetos Date
+            presentation.slides = presentation.slides.map((slide: any) => ({
+              ...slide,
+              createdAt: new Date(slide.createdAt),
+              updatedAt: new Date(slide.updatedAt),
+              mediaElements: slide.mediaElements || []
+            }));
+            presentation.createdAt = new Date(presentation.createdAt);
+            presentation.updatedAt = new Date(presentation.updatedAt);
+            setCurrentPresentation(presentation);
+          } catch (parseError) {
+            console.error('Erro ao parsear apresentação salva:', parseError);
+            // Se houver erro de parsing, criar apresentação padrão
+            createDefaultPresentation();
+          }
+        } else {
+          // Criar apresentação padrão
+          createDefaultPresentation();
+        }
       } catch (error) {
         console.error('Erro ao carregar apresentação:', error);
+        createDefaultPresentation();
       }
-    } else {
-      // Criar apresentação padrão
+    };
+
+    const createDefaultPresentation = () => {
       const defaultPresentation: SlidePresentation = {
         id: `presentation-${sectorId}`,
         sectorId,
@@ -72,8 +171,10 @@ export const PresentationManager: React.FC<PresentationManagerProps> = ({
       };
       setCurrentPresentation(defaultPresentation);
       savePresentation(defaultPresentation);
-    }
-  }, [sectorId, sectorName]);
+    };
+
+    loadPresentation();
+  }, [sectorId, sectorName, storageInfo.percentage]);
 
   const createDefaultSlides = (sectorName: string): Slide[] => {
     return [
@@ -118,11 +219,70 @@ export const PresentationManager: React.FC<PresentationManagerProps> = ({
 
   const savePresentation = (presentation: SlidePresentation) => {
     try {
-      localStorage.setItem(`presentation-${sectorId}`, JSON.stringify(presentation));
+      // Verificar espaço disponível antes de salvar
+      const currentStorage = calculateStorageUsage();
+      const presentationData = JSON.stringify(presentation);
+      const presentationSize = presentationData.length;
+      
+      // Estimar se há espaço suficiente (deixar pelo menos 1MB livre)
+      const requiredSpace = presentationSize + (1024 * 1024); // +1MB de margem
+      const availableSpace = currentStorage.available * 1024 * 1024;
+      
+      if (requiredSpace > availableSpace) {
+        // Tentar limpar dados antigos primeiro
+        cleanupOldData();
+        const newStorage = calculateStorageUsage();
+        const newAvailableSpace = newStorage.available * 1024 * 1024;
+        
+        if (requiredSpace > newAvailableSpace) {
+          throw new Error('Espaço de armazenamento insuficiente. Considere remover mídias antigas ou usar arquivos menores.');
+        }
+      }
+
+      localStorage.setItem(`presentation-${sectorId}`, presentationData);
       setCurrentPresentation(presentation);
+      
+      // Atualizar informações de armazenamento
+      setStorageInfo(calculateStorageUsage());
+      
+      console.log('Apresentação salva com sucesso');
     } catch (error) {
       console.error('Erro ao salvar apresentação:', error);
-      alert('Erro ao salvar apresentação. Verifique o espaço de armazenamento.');
+      
+      let errorMessage = 'Erro ao salvar apresentação.';
+      
+      if (error instanceof Error) {
+        if (error.message.includes('quota') || error.message.includes('storage') || error.name === 'QuotaExceededError') {
+          errorMessage = 'Espaço de armazenamento esgotado. Tente:\n\n' +
+                        '• Remover vídeos grandes da biblioteca de mídia\n' +
+                        '• Usar imagens menores ou comprimidas\n' +
+                        '• Limpar dados antigos do navegador\n' +
+                        '• Usar vídeos de até 50MB';
+        } else if (error.message.includes('insuficiente')) {
+          errorMessage = error.message;
+        }
+      }
+      
+      alert(errorMessage);
+      
+      // Tentar salvar uma versão simplificada sem mídias grandes
+      try {
+        const simplifiedPresentation = {
+          ...presentation,
+          slides: presentation.slides.map(slide => ({
+            ...slide,
+            mediaElements: slide.mediaElements?.filter(element => 
+              element.type === 'image' || 
+              (element.type === 'video' && !element.url.startsWith('blob:'))
+            ) || []
+          }))
+        };
+        
+        localStorage.setItem(`presentation-${sectorId}-backup`, JSON.stringify(simplifiedPresentation));
+        console.log('Backup simplificado salvo');
+      } catch (backupError) {
+        console.error('Erro ao salvar backup:', backupError);
+      }
     }
   };
 
@@ -155,6 +315,14 @@ export const PresentationManager: React.FC<PresentationManagerProps> = ({
     setIsViewing(true);
   };
 
+  const handleCleanupStorage = () => {
+    if (confirm('Isso removerá dados antigos e pode liberar espaço. Continuar?')) {
+      cleanupOldData();
+      setStorageInfo(calculateStorageUsage());
+      alert('Limpeza concluída!');
+    }
+  };
+
   if (!currentPresentation) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -180,6 +348,31 @@ export const PresentationManager: React.FC<PresentationManagerProps> = ({
 
   return (
     <div className="space-y-6">
+      {/* Aviso de Armazenamento */}
+      {showStorageWarning && (
+        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg">
+          <div className="flex items-start">
+            <AlertTriangle className="h-5 w-5 text-yellow-400 mt-0.5 mr-3" />
+            <div className="flex-1">
+              <h3 className="text-sm font-medium text-yellow-800">
+                Armazenamento quase cheio ({storageInfo.percentage.toFixed(1)}%)
+              </h3>
+              <p className="text-sm text-yellow-700 mt-1">
+                Espaço usado: {storageInfo.used.toFixed(1)}MB | Disponível: {storageInfo.available.toFixed(1)}MB
+              </p>
+              <div className="mt-2">
+                <button
+                  onClick={handleCleanupStorage}
+                  className="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm"
+                >
+                  Limpar dados antigos
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="bg-white rounded-lg shadow-lg p-6">
         <div className="flex justify-between items-start">
@@ -234,6 +427,33 @@ export const PresentationManager: React.FC<PresentationManagerProps> = ({
             </button>
           </div>
         </div>
+
+        {/* Informações de Armazenamento */}
+        <div className="mt-4 bg-gray-50 p-3 rounded-lg">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center space-x-2">
+              <HardDrive className="h-4 w-4 text-gray-500" />
+              <span className="text-sm text-gray-600">Armazenamento Local</span>
+            </div>
+            <span className="text-sm font-medium">
+              {storageInfo.used.toFixed(1)}MB usado ({storageInfo.percentage.toFixed(1)}%)
+            </span>
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-2">
+            <div 
+              className={`h-2 rounded-full transition-all ${
+                storageInfo.percentage > 90 ? 'bg-red-500' : 
+                storageInfo.percentage > 80 ? 'bg-yellow-500' : 'bg-green-500'
+              }`}
+              style={{ width: `${Math.min(storageInfo.percentage, 100)}%` }}
+            />
+          </div>
+          {storageInfo.percentage > 80 && (
+            <p className="text-xs text-gray-600 mt-1">
+              Dica: Use vídeos menores (máx. 50MB) ou remova mídias antigas para liberar espaço.
+            </p>
+          )}
+        </div>
       </div>
 
       {/* Preview dos Slides */}
@@ -261,8 +481,6 @@ export const PresentationManager: React.FC<PresentationManagerProps> = ({
                     }}
                   />
                 )}
-                
-                
                 
                 {/* Content */}
                 {slide.type !== 'fullscreen-background' && (
@@ -415,3 +633,4 @@ export const PresentationManager: React.FC<PresentationManagerProps> = ({
     </div>
   );
 };
+

@@ -12,23 +12,19 @@ export interface MediaElement {
   borderRadius?: number;
   rotation?: number;
   isFullscreen?: boolean;
-  // Novos campos para vídeo
-  autoPlay?: boolean;
-  muted?: boolean;
-  loop?: boolean;
-  controls?: boolean;
-  // Metadados do arquivo
-  fileName?: string;
-  fileSize?: number;
-  duration?: number;
-  isLocalFile?: boolean;
+}
+
+export interface Media {
+  type: 'image' | 'video';
+  url: string;
+  alt?: string;
 }
 
 export interface Slide {
   id: string;
   title: string;
   content: string;
-  type: 'text' | 'mixed' | 'fullscreen-background';
+  type: 'text' | 'image' | 'video' | 'mixed' | 'fullscreen-background';
   backgroundColor?: string;
   textColor?: string;
   backgroundImage?: string;
@@ -37,13 +33,8 @@ export interface Slide {
   hideTitle?: boolean;
   hideContent?: boolean;
   order: number;
+  media?: Media;
   mediaElements?: MediaElement[];
-  // Legacy support
-  media?: {
-    type: 'image' | 'video';
-    url: string;
-    alt?: string;
-  };
   createdAt: Date;
   updatedAt: Date;
 }
