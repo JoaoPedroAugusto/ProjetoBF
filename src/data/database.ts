@@ -122,7 +122,7 @@ export const notificationsDB: Notification[] = [
 export const sectorsDB: SectorData[] = [
   {
     id: 'sugarcane',
-    name: 'Cana-de-Açúcar',
+    name: 'PISCA',
     production: 142350,
     revenue: 28470000,
     efficiency: 87,
@@ -135,7 +135,7 @@ export const sectorsDB: SectorData[] = [
   },
   {
     id: 'cotton',
-    name: 'Algodão',
+    name: 'Flowcot',
     production: 95200,
     revenue: 19040000,
     efficiency: 89,
@@ -148,7 +148,7 @@ export const sectorsDB: SectorData[] = [
   },
   {
     id: 'soy',
-    name: 'Soja',
+    name: 'Manejo Digital',
     production: 89000,
     revenue: 15680000,
     efficiency: 89,
@@ -161,7 +161,7 @@ export const sectorsDB: SectorData[] = [
   },
   {
     id: 'meat',
-    name: 'Carne',
+    name: 'Tracebeef',
     production: 18000,
     revenue: 8940000,
     efficiency: 78,
@@ -174,7 +174,7 @@ export const sectorsDB: SectorData[] = [
   },
   {
     id: 'tomato', 
-    name: 'Tomatec',
+    name: 'Tomatech',
     production: 9500,
     revenue: 2850000,
     efficiency: 92,
@@ -187,7 +187,7 @@ export const sectorsDB: SectorData[] = [
   },
   {
     id: 'cocoa',
-    name: 'Cacau',
+    name: 'Raízes do Futuro',
     production: 3200,
     revenue: 1920000,
     efficiency: 83,
@@ -200,7 +200,7 @@ export const sectorsDB: SectorData[] = [
   },
   {
     id: 'aquaculture',
-    name: 'Piscicultura',
+    name: 'Água Sense',
     production: 2800,
     revenue: 1680000,
     efficiency: 85,
@@ -213,7 +213,7 @@ export const sectorsDB: SectorData[] = [
   },
   {
     id: 'banana',
-    name: 'Banana',
+    name: 'Projeto Floresça',
     production: 5600,
     revenue: 1120000,
     efficiency: 88,
@@ -226,7 +226,7 @@ export const sectorsDB: SectorData[] = [
   },
   {
     id: 'sheep',
-    name: 'Culture Sheep',
+    name: 'Culture Sheep  ',
     production: 1200,
     revenue: 960000,
     efficiency: 79,

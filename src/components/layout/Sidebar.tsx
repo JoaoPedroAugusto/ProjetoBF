@@ -82,7 +82,7 @@ export const Sidebar = () => {
       {/* Setores Agrícolas - Área Rolável */}
       <div className="flex-1 flex flex-col min-h-0">
         <div className={`px-4 mb-2 flex-shrink-0 ${isCollapsed ? 'hidden' : 'block'}`}>
-          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Setores</h3>
+          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Startups</h3>
         </div>
         <nav className="flex-1 overflow-y-auto px-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
           <ul className="space-y-1 pb-4">
