@@ -282,40 +282,7 @@ export const SugarcanePage: React.FC = () => {
         </div>
 
         {/* Principais Características */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-green-500">
-            <div className="flex items-center mb-4">
-              <Shield className="h-8 w-8 text-green-600 mr-3" />
-              <h3 className="text-lg font-semibold text-gray-800">100% Rastreável</h3>
-            </div>
-            <p className="text-gray-700">
-              Cada lote de cana-de-açúcar pode ser rastreado em todas as fases da cadeia de suprimentos,
-              desde a origem no campo até o consumidor final.
-            </p>
-          </div>
-
-          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-500">
-            <div className="flex items-center mb-4">
-              <Database className="h-8 w-8 text-blue-600 mr-3" />
-              <h3 className="text-lg font-semibold text-gray-800">Blockchain Seguro</h3>
-            </div>
-            <p className="text-gray-700">
-              Todas as informações são criptografadas e distribuídas em uma rede descentralizada,
-              tornando-as à prova de fraudes e adulterações.
-            </p>
-          </div>
-
-          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-purple-500">
-            <div className="flex items-center mb-4">
-              <Brain className="h-8 w-8 text-purple-600 mr-3" />
-              <h3 className="text-lg font-semibold text-gray-800">IoT + IA</h3>
-            </div>
-            <p className="text-gray-700">
-              Sensores inteligentes coletam dados em tempo real, enquanto algoritmos de IA
-              processam informações para otimizar a produção.
-            </p>
-          </div>
-        </div>
+      
 
         {/* Tecnologias */}
         <div className="bg-white rounded-xl shadow-lg p-8 mb-12">
