@@ -173,8 +173,8 @@ export const sectorsDB: SectorData[] = [
     alerts: notificationsDB.filter(n => n.sector === 'carne')
   },
   {
-    id: 'tomato', 
-    name: 'Tomatec',
+    id: 'tomato',
+    name: 'Tomate',
     production: 9500,
     revenue: 2850000,
     efficiency: 92,

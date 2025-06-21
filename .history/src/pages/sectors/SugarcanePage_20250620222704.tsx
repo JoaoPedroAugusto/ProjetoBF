@@ -1,6 +1,10 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Wheat, TrendingUp, MapPin, Leaf, DollarSign, Award, Target, Shield, Zap, Database, Wifi, Brain, Eye, Heart, Users, Presentation } from 'lucide-react';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Wheat, TrendingUp, MapPin, Leaf, DollarSign, Award, Target, Shield, Zap, Database, Wifi, Brain, Eye, Heart, Users, Monitor } from 'lucide-react';
+
 import { PresentationManager } from '../../components/presentation';
 import { DashboardProdutor } from '../../components/dashboard/DashboardProdutor';
 import { DashboardUsina } from '../../components/dashboard/DashboardUsina';
@@ -51,7 +55,22 @@ export const SugarcanePage: React.FC = () => {
     );
   }
 
+<<<<<<< HEAD
   // O restante do conteúdo da página é renderizado por padrão
+=======
+  if (showDashboard === 'produtor') {
+    return <DashboardProdutor onBack={() => setShowDashboard(null)} />;
+  }
+
+  if (showDashboard === 'usina') {
+    return <DashboardUsina onBack={() => setShowDashboard(null)} />;
+  }
+
+  if (showDashboard === 'cliente') {
+    return <DashboardCliente onBack={() => setShowDashboard(null)} />;
+  }
+
+>>>>>>> 3dd2708e7bd0eb412fb4b923adff8c7c33720cb6
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50">
       {/* Hero Section com Banner */}
@@ -314,48 +333,45 @@ export const SugarcanePage: React.FC = () => {
             </div>
           </div>
 
-<<<<<<< HEAD
-=======
-          <div className="bg-gradient-to-r from-blue-50 to-green-50 rounded-lg p-6">
-            <h3 className="text-xl font-bold text-gray-800 mb-4 text-center">🎯 Exemplo Prático de Funcionamento</h3>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="text-center">
-                <div className="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Leaf className="h-6 w-6" />
-                </div>
-                <h4 className="font-semibold text-gray-800 mb-2">Campo</h4>
-                <p className="text-xs text-gray-600">Sensor detecta que a cana atingiu 18° Brix (teor de açúcar ideal)</p>
-              </div>
-              <div className="text-center">
-                <div className="w-12 h-12 bg-green-500 text-white rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Brain className="h-6 w-6" />
-                </div>
-                <h4 className="font-semibold text-gray-800 mb-2">IA</h4>
-                <p className="text-xs text-gray-600">Sistema recomenda colheita imediata e agenda máquinas disponíveis</p>
-              </div>
-              <div className="text-center">
-                <div className="w-12 h-12 bg-purple-500 text-white rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Database className="h-6 w-6" />
-                </div>
-                <h4 className="font-semibold text-gray-800 mb-2">Blockchain</h4>
-                <p className="text-xs text-gray-600">Registra data, hora, operador e qualidade da cana colhida</p>
-              </div>
-              <div className="text-center">
-                <div className="w-12 h-12 bg-orange-500 text-white rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Award className="h-6 w-6" />
-                </div>
-                <h4 className="font-semibold text-gray-800 mb-2">Certificação</h4>
-                <p className="text-xs text-gray-600">Gera automaticamente certificado digital de qualidade e origem</p>
-              </div>
-            </div>
-          </div>
->>>>>>> parent of 56d6299 (Update SugarcanePage.tsx)
         </div>
 
         ---
 
         {/* Principais Características */}
-      
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-green-500">
+            <div className="flex items-center mb-4">
+              <Shield className="h-8 w-8 text-green-600 mr-3" />
+              <h3 className="text-lg font-semibold text-gray-800">100% Rastreável</h3>
+            </div>
+            <p className="text-gray-700">
+              Cada lote de cana-de-açúcar pode ser rastreado em todas as fases da cadeia de suprimentos,
+              desde a origem no campo até o consumidor final.
+            </p>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-500">
+            <div className="flex items-center mb-4">
+              <Database className="h-8 w-8 text-blue-600 mr-3" />
+              <h3 className="text-lg font-semibold text-gray-800">Blockchain Seguro</h3>
+            </div>
+            <p className="text-gray-700">
+              Todas as informações são criptografadas e distribuídas em uma rede descentralizada,
+              tornando-as à prova de fraudes e adulterações.
+            </p>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-purple-500">
+            <div className="flex items-center mb-4">
+              <Brain className="h-8 w-8 text-purple-600 mr-3" />
+              <h3 className="text-lg font-semibold text-gray-800">IoT + IA</h3>
+            </div>
+            <p className="text-gray-700">
+              Sensores inteligentes coletam dados em tempo real, enquanto algoritmos de IA
+              processam informações para otimizar a produção.
+            </p>
+          </div>
+        </div>
 
         ---
 

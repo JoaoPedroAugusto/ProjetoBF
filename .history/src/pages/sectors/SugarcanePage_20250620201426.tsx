@@ -1,47 +1,36 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react'; // Added useCallback and useEffect
 import { Link } from 'react-router-dom';
 import { Wheat, TrendingUp, MapPin, Leaf, DollarSign, Award, Target, Shield, Zap, Database, Wifi, Brain, Eye, Heart, Users, Presentation } from 'lucide-react';
 import { PresentationManager } from '../../components/presentation';
-import { DashboardProdutor } from '../../components/dashboard/DashboardProdutor';
-import { DashboardUsina } from '../../components/dashboard/DashboardUsina';
-import { DashboardCliente } from '../../components/dashboard/DashboardCliente';
 
 export const SugarcanePage: React.FC = () => {
-  // O estado inicial showPresentation volta para 'false'
   const [showPresentation, setShowPresentation] = useState(false);
-  const [showDashboard, setShowDashboard] = useState<string | null>(null);
-  const [showUserSelection, setShowUserSelection] = useState(false);
-
-  // Mantemos isViewing e isEditing, pois a lógica de atalho os utiliza.
-  // Você pode ajustá-los de acordo com a lógica do seu aplicativo.
-  const [isViewing, setIsViewing] = useState(false);
+  // Assuming isViewing and isEditing are states that would control other aspects of the page
+  // For this example, I'll set them to false, but you would likely have these managed elsewhere
+  const [isViewing, setIsViewing] = useState(false); 
   const [isEditing, setIsEditing] = useState(false);
 
-  // Função para iniciar a apresentação
+  // This function would be defined elsewhere, likely passed as a prop or part of a context
+  // For this example, I'll create a dummy function
   const startPresentation = () => {
     setShowPresentation(true);
     console.log("Starting presentation...");
   };
 
   const handleKeyPress = useCallback((event: KeyboardEvent) => {
-    // Verifica se Shift + P foi pressionado
     if (event.shiftKey && (event.key === 'p' || event.key === 'P')) {
-      event.preventDefault(); // Evita o comportamento padrão do navegador, se houver
-      // Só inicia a apresentação se não estiver em modo de visualização ou edição
+      event.preventDefault();
       if (!isViewing && !isEditing) {
         startPresentation();
       }
     }
-  }, [isViewing, isEditing, startPresentation]); // Dependências do useCallback
+  }, [isViewing, isEditing, startPresentation]); // Added startPresentation to dependency array
 
   useEffect(() => {
-    // Adiciona o event listener ao montar o componente
     document.addEventListener('keydown', handleKeyPress);
-    // Remove o event listener ao desmontar o componente para evitar vazamento de memória
     return () => document.removeEventListener('keydown', handleKeyPress);
-  }, [handleKeyPress]); // Dependência do useEffect
+  }, [handleKeyPress]);
 
-  // Renderiza a PresentationManager se showPresentation for true
   if (showPresentation) {
     return (
       <PresentationManager
@@ -51,7 +40,6 @@ export const SugarcanePage: React.FC = () => {
     );
   }
 
-  // O restante do conteúdo da página é renderizado por padrão
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50">
       {/* Hero Section com Banner */}
@@ -77,105 +65,17 @@ export const SugarcanePage: React.FC = () => {
               <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-6 py-2">
                 <span className="font-semibold">IoT + IA</span>
               </div>
-<<<<<<< HEAD
               <button
-                onClick={() => setShowPresentation(true)} // Este botão também ativa a apresentação
+                onClick={() => setShowPresentation(true)}
                 className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-6 py-3 rounded-lg flex items-center space-x-2 transition-all duration-200 backdrop-blur-sm"
               >
                 <Presentation className="h-5 w-5" />
                 <span>Apresentação</span>
               </button>
-=======
-              
-              {/* Botão Demonstração com Modal de Seleção */}
-              <div className="relative">
-                <button
-                  onClick={() => setShowUserSelection(!showUserSelection)}
-                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg flex items-center space-x-2 transition-all duration-200 backdrop-blur-sm shadow-lg"
-                >
-                  <Monitor className="h-5 w-5" />
-                  <span>Demonstração</span>
-                </button>
-
-                {/* Modal de Seleção de Usuário */}
-                {showUserSelection && (
-                  <div className="absolute top-full mt-2 left-0 bg-white rounded-lg shadow-xl border border-gray-200 p-4 min-w-80 z-50">
-                    <h3 className="text-lg font-bold text-gray-800 mb-4">Selecione seu perfil:</h3>
-                    <div className="space-y-3">
-                      <button
-                        onClick={() => {
-                          setShowDashboard('produtor');
-                          setShowUserSelection(false);
-                        }}
-                        className="w-full text-left p-4 rounded-lg border border-green-200 hover:bg-green-50 transition-colors"
-                      >
-                        <div className="flex items-center">
-                          <Leaf className="h-6 w-6 text-green-600 mr-3" />
-                          <div>
-                            <h4 className="font-semibold text-gray-800">Produtor Rural</h4>
-                            <p className="text-sm text-gray-600">Monitoramento da plantação, alertas e histórico de entregas</p>
-                          </div>
-                        </div>
-                      </button>
-
-                      <button
-                        onClick={() => {
-                          setShowDashboard('usina');
-                          setShowUserSelection(false);
-                        }}
-                        className="w-full text-left p-4 rounded-lg border border-blue-200 hover:bg-blue-50 transition-colors"
-                      >
-                        <div className="flex items-center">
-                          <Shield className="h-6 w-6 text-blue-600 mr-3" />
-                          <div>
-                            <h4 className="font-semibold text-gray-800">Usina</h4>
-                            <p className="text-sm text-gray-600">Rastreabilidade, certificações e análise de qualidade</p>
-                          </div>
-                        </div>
-                      </button>
-
-                      <button
-                        onClick={() => {
-                          setShowDashboard('cliente');
-                          setShowUserSelection(false);
-                        }}
-                        className="w-full text-left p-4 rounded-lg border border-purple-200 hover:bg-purple-50 transition-colors"
-                      >
-                        <div className="flex items-center">
-                          <Users className="h-6 w-6 text-purple-600 mr-3" />
-                          <div>
-                            <h4 className="font-semibold text-gray-800">Cliente Final</h4>
-                            <p className="text-sm text-gray-600">Verificação de origem, certificações e sustentabilidade</p>
-                          </div>
-                        </div>
-                      </button>
-                    </div>
-                    <button
-                      onClick={() => setShowUserSelection(false)}
-                      className="mt-4 w-full text-center text-gray-500 hover:text-gray-700 text-sm"
-                    >
-                      Fechar
-                    </button>
-                  </div>
-                )}
-              </div>
->>>>>>> 3dd2708e7bd0eb412fb4b923adff8c7c33720cb6
             </div>
           </div>
         </div>
       </div>
-
-<<<<<<< HEAD
-      ---
-=======
-      {/* Overlay para fechar modal */}
-      {showUserSelection && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-25 z-40"
-          onClick={() => setShowUserSelection(false)}
-        ></div>
-      )}
->>>>>>> 3dd2708e7bd0eb412fb4b923adff8c7c33720cb6
 
       {/* Sobre a PISCA - Missão, Visão e Valores */}
       <div className="container mx-auto px-4 py-12">
@@ -236,8 +136,6 @@ export const SugarcanePage: React.FC = () => {
             </div>
           </div>
         </div>
-
-        ---
 
         {/* Como a PISCA Funciona */}
         <div className="bg-white rounded-xl shadow-lg p-8 mb-12">
@@ -314,50 +212,44 @@ export const SugarcanePage: React.FC = () => {
             </div>
           </div>
 
-<<<<<<< HEAD
-=======
-          <div className="bg-gradient-to-r from-blue-50 to-green-50 rounded-lg p-6">
-            <h3 className="text-xl font-bold text-gray-800 mb-4 text-center">🎯 Exemplo Prático de Funcionamento</h3>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="text-center">
-                <div className="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Leaf className="h-6 w-6" />
-                </div>
-                <h4 className="font-semibold text-gray-800 mb-2">Campo</h4>
-                <p className="text-xs text-gray-600">Sensor detecta que a cana atingiu 18° Brix (teor de açúcar ideal)</p>
-              </div>
-              <div className="text-center">
-                <div className="w-12 h-12 bg-green-500 text-white rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Brain className="h-6 w-6" />
-                </div>
-                <h4 className="font-semibold text-gray-800 mb-2">IA</h4>
-                <p className="text-xs text-gray-600">Sistema recomenda colheita imediata e agenda máquinas disponíveis</p>
-              </div>
-              <div className="text-center">
-                <div className="w-12 h-12 bg-purple-500 text-white rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Database className="h-6 w-6" />
-                </div>
-                <h4 className="font-semibold text-gray-800 mb-2">Blockchain</h4>
-                <p className="text-xs text-gray-600">Registra data, hora, operador e qualidade da cana colhida</p>
-              </div>
-              <div className="text-center">
-                <div className="w-12 h-12 bg-orange-500 text-white rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Award className="h-6 w-6" />
-                </div>
-                <h4 className="font-semibold text-gray-800 mb-2">Certificação</h4>
-                <p className="text-xs text-gray-600">Gera automaticamente certificado digital de qualidade e origem</p>
-              </div>
-            </div>
-          </div>
->>>>>>> parent of 56d6299 (Update SugarcanePage.tsx)
+
         </div>
 
-        ---
-
         {/* Principais Características */}
-      
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-green-500">
+            <div className="flex items-center mb-4">
+              <Shield className="h-8 w-8 text-green-600 mr-3" />
+              <h3 className="text-lg font-semibold text-gray-800">100% Rastreável</h3>
+            </div>
+            <p className="text-gray-700">
+              Cada lote de cana-de-açúcar pode ser rastreado em todas as fases da cadeia de suprimentos,
+              desde a origem no campo até o consumidor final.
+            </p>
+          </div>
 
-        ---
+          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-500">
+            <div className="flex items-center mb-4">
+              <Database className="h-8 w-8 text-blue-600 mr-3" />
+              <h3 className="text-lg font-semibold text-gray-800">Blockchain Seguro</h3>
+            </div>
+            <p className="text-gray-700">
+              Todas as informações são criptografadas e distribuídas em uma rede descentralizada,
+              tornando-as à prova de fraudes e adulterações.
+            </p>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-purple-500">
+            <div className="flex items-center mb-4">
+              <Brain className="h-8 w-8 text-purple-600 mr-3" />
+              <h3 className="text-lg font-semibold text-gray-800">IoT + IA</h3>
+            </div>
+            <p className="text-gray-700">
+              Sensores inteligentes coletam dados em tempo real, enquanto algoritmos de IA
+              processam informações para otimizar a produção.
+            </p>
+          </div>
+        </div>
 
         {/* Tecnologias */}
         <div className="bg-white rounded-xl shadow-lg p-8 mb-12">
@@ -408,8 +300,6 @@ export const SugarcanePage: React.FC = () => {
           </div>
         </div>
 
-        ---
-
         {/* Benefícios para a Cadeia Produtiva */}
         <div className="bg-white rounded-xl shadow-lg p-8 mb-12">
           <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">Benefícios para a Cadeia Produtiva</h2>
@@ -424,24 +314,24 @@ export const SugarcanePage: React.FC = () => {
               </div>
               <div className="space-y-4">
                 <div className="flex items-start">
-                  <Award className="h-5 w-5 text-green-600 mr-3 mt-1" />
+                  <Award className="h-5 w-5 text-green-600 mt-1 mr-3 flex-shrink-0" />
                   <div>
-                    <h4 className="font-semibold text-gray-800">Reconhecimento</h4>
-                    <p className="text-sm text-gray-700">Valorização das práticas sustentáveis e qualidade superior</p>
+                    <h4 className="font-semibold text-gray-900">Reconhecimento</h4>
+                    <p className="text-gray-600 text-sm">Valorização das práticas sustentáveis e qualidade superior</p>
                   </div>
                 </div>
                 <div className="flex items-start">
-                  <TrendingUp className="h-5 w-5 text-green-600 mr-3 mt-1" />
+                  <TrendingUp className="h-5 w-5 text-green-600 mt-1 mr-3 flex-shrink-0" />
                   <div>
-                    <h4 className="font-semibold text-gray-800">Otimização</h4>
-                    <p className="text-sm text-gray-700">Dados para melhorar produtividade e reduzir custos</p>
+                    <h4 className="font-semibold text-gray-900">Otimização</h4>
+                    <p className="text-gray-600 text-sm">Dados para melhorar produtividade e reduzir custos</p>
                   </div>
                 </div>
                 <div className="flex items-start">
-                  <MapPin className="h-5 w-5 text-green-600 mr-3 mt-1" />
+                  <MapPin className="h-5 w-5 text-green-600 mt-1 mr-3 flex-shrink-0" />
                   <div>
-                    <h4 className="font-semibold text-gray-800">Acesso a Mercados</h4>
-                    <p className="text-sm text-gray-700">Abertura de novos mercados premium e certificados</p>
+                    <h4 className="font-semibold text-gray-900">Acesso a Mercados</h4>
+                    <p className="text-gray-600 text-sm">Abertura de novos mercados premium e certificados</p>
                   </div>
                 </div>
               </div>
@@ -450,30 +340,30 @@ export const SugarcanePage: React.FC = () => {
             <div className="bg-blue-50 rounded-lg p-6">
               <div className="text-center mb-6">
                 <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Shield className="h-8 w-8 text-blue-600" />
+                  <Zap className="h-8 w-8 text-blue-600" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900">Para Usinas e Indústrias</h3>
               </div>
               <div className="space-y-4">
                 <div className="flex items-start">
-                  <Award className="h-5 w-5 text-blue-600 mr-3 mt-1" />
+                  <Shield className="h-5 w-5 text-blue-600 mt-1 mr-3 flex-shrink-0" />
                   <div>
-                    <h4 className="font-semibold text-gray-800">Conformidade</h4>
-                    <p className="text-sm text-gray-700">Atendimento a regulamentações e padrões internacionais</p>
+                    <h4 className="font-semibold text-gray-900">Conformidade</h4>
+                    <p className="text-gray-600 text-sm">Atendimento a regulamentações e padrões internacionais</p>
                   </div>
                 </div>
                 <div className="flex items-start">
-                  <TrendingUp className="h-5 w-5 text-blue-600 mr-3 mt-1" />
+                  <TrendingUp className="h-5 w-5 text-blue-600 mt-1 mr-3 flex-shrink-0" />
                   <div>
-                    <h4 className="font-semibold text-gray-800">Eficiência</h4>
-                    <p className="text-sm text-gray-700">Otimização de processos e redução de desperdícios</p>
+                    <h4 className="font-semibold text-gray-900">Eficiência</h4>
+                    <p className="text-gray-600 text-sm">Otimização de processos e redução de desperdícios</p>
                   </div>
                 </div>
                 <div className="flex items-start">
-                  <Award className="h-5 w-5 text-blue-600 mr-3 mt-1" />
+                  <Award className="h-5 w-5 text-blue-600 mt-1 mr-3 flex-shrink-0" />
                   <div>
-                    <h4 className="font-semibold text-gray-800">Marca Forte</h4>
-                    <p className="text-sm text-gray-700">Diferenciação competitiva e valor agregado</p>
+                    <h4 className="font-semibold text-gray-900">Marca Forte</h4>
+                    <p className="text-gray-600 text-sm">Diferenciação competitiva e valor agregado</p>
                   </div>
                 </div>
               </div>
@@ -482,30 +372,30 @@ export const SugarcanePage: React.FC = () => {
             <div className="bg-purple-50 rounded-lg p-6">
               <div className="text-center mb-6">
                 <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Users className="h-8 w-8 text-purple-600" />
+                  <Shield className="h-8 w-8 text-purple-600" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900">Para Consumidores</h3>
               </div>
               <div className="space-y-4">
                 <div className="flex items-start">
-                  <Shield className="h-5 w-5 text-purple-600 mr-3 mt-1" />
+                  <Shield className="h-5 w-5 text-purple-600 mt-1 mr-3 flex-shrink-0" />
                   <div>
-                    <h4 className="font-semibold text-gray-800">Confiança</h4>
-                    <p className="text-sm text-gray-700">Garantia de origem e autenticidade do produto</p>
+                    <h4 className="font-semibold text-gray-900">Confiança</h4>
+                    <p className="text-gray-600 text-sm">Garantia de origem e autenticidade do produto</p>
                   </div>
                 </div>
                 <div className="flex items-start">
-                  <Heart className="h-5 w-5 text-purple-600 mr-3 mt-1" />
+                  <Leaf className="h-5 w-5 text-purple-600 mt-1 mr-3 flex-shrink-0" />
                   <div>
-                    <h4 className="font-semibold text-gray-800">Escolha Consciente</h4>
-                    <p className="text-sm text-gray-700">Decisões informadas sobre sustentabilidade</p>
+                    <h4 className="font-semibold text-gray-900">Escolha Consciente</h4>
+                    <p className="text-gray-600 text-sm">Decisões informadas sobre sustentabilidade</p>
                   </div>
                 </div>
                 <div className="flex items-start">
-                  <Award className="h-5 w-5 text-purple-600 mr-3 mt-1" />
+                  <Award className="h-5 w-5 text-purple-600 mt-1 mr-3 flex-shrink-0" />
                   <div>
-                    <h4 className="font-semibold text-gray-800">Qualidade</h4>
-                    <p className="text-sm text-gray-700">Acesso a produtos de qualidade comprovada</p>
+                    <h4 className="font-semibold text-gray-900">Qualidade</h4>
+                    <p className="text-gray-600 text-sm">Acesso a produtos de qualidade comprovada</p>
                   </div>
                 </div>
               </div>
@@ -513,44 +403,36 @@ export const SugarcanePage: React.FC = () => {
           </div>
         </div>
 
-<<<<<<< HEAD
-        ---
-
         {/* Certificações */}
-=======
-        {/* Certificações e Conformidade */}
->>>>>>> 3dd2708e7bd0eb412fb4b923adff8c7c33720cb6
         <div className="bg-white rounded-xl shadow-lg p-8 mb-12">
           <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">Certificações e Conformidade</h2>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-            <div className="bg-green-50 rounded-lg p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="border-l-4 border-green-500 pl-6">
               <div className="flex items-center mb-4">
                 <Award className="h-8 w-8 text-green-600 mr-3" />
                 <h3 className="text-xl font-bold text-gray-800">Bonsucro</h3>
               </div>
-              <p className="text-gray-700 mb-4">
+              <p className="text-gray-700">
                 Certificação global líder para a cana-de-açúcar sustentável. Avalia a sustentabilidade dos produtos
                 fabricados a partir da cana-de-açúcar, considerando indicadores de produção, consumo de energia e água,
                 e emissão de gases de efeito estufa.
               </p>
             </div>
 
-            <div className="bg-blue-50 rounded-lg p-6">
+            <div className="border-l-4 border-blue-500 pl-6">
               <div className="flex items-center mb-4">
                 <Shield className="h-8 w-8 text-blue-600 mr-3" />
                 <h3 className="text-xl font-bold text-gray-800">ISCC</h3>
               </div>
-              <p className="text-gray-700 mb-4">
+              <p className="text-gray-700">
                 Sistema de certificação internacional que abrange a sustentabilidade e a rastreabilidade de biomassa
                 e biocombustíveis, incluindo a cana-de-açúcar. Garante que a produção atende a rigorosos critérios
                 ambientais, sociais e de governança.
               </p>
             </div>
           </div>
-
-<<<<<<< HEAD
-        ---
+        </div>
 
         {/* ODS */}
         <div className="bg-white rounded-xl shadow-lg p-8 mb-12">
@@ -586,52 +468,21 @@ export const SugarcanePage: React.FC = () => {
               <Target className="h-8 w-8 text-green-600 mx-auto mb-2" />
               <h4 className="font-semibold text-gray-800">ODS 13</h4>
               <p className="text-sm text-gray-600">Ação Contra a Mudança do Clima</p>
-=======
-          <div className="bg-gradient-to-r from-green-100 to-blue-100 rounded-lg p-6">
-            <h3 className="text-xl font-bold text-gray-800 mb-4 text-center">Objetivos de Desenvolvimento Sustentável (ODS)</h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 text-center">
-              <div className="bg-white rounded-lg p-3">
-                <div className="text-2xl font-bold text-green-600 mb-1">2</div>
-                <p className="text-xs text-gray-700">Fome Zero e Agricultura Sustentável</p>
-              </div>
-              <div className="bg-white rounded-lg p-3">
-                <div className="text-2xl font-bold text-yellow-600 mb-1">7</div>
-                <p className="text-xs text-gray-700">Energia Limpa e Acessível</p>
-              </div>
-              <div className="bg-white rounded-lg p-3">
-                <div className="text-2xl font-bold text-red-600 mb-1">8</div>
-                <p className="text-xs text-gray-700">Trabalho Decente e Crescimento Econômico</p>
-              </div>
-              <div className="bg-white rounded-lg p-3">
-                <div className="text-2xl font-bold text-orange-600 mb-1">9</div>
-                <p className="text-xs text-gray-700">Indústria, Inovação e Infraestrutura</p>
-              </div>
-              <div className="bg-white rounded-lg p-3">
-                <div className="text-2xl font-bold text-yellow-600 mb-1">12</div>
-                <p className="text-xs text-gray-700">Consumo e Produção Responsáveis</p>
-              </div>
-              <div className="bg-white rounded-lg p-3">
-                <div className="text-2xl font-bold text-green-600 mb-1">13</div>
-                <p className="text-xs text-gray-700">Ação Contra a Mudança do Clima</p>
-              </div>
->>>>>>> 3dd2708e7bd0eb412fb4b923adff8c7c33720cb6
             </div>
           </div>
         </div>
 
-        ---
-
         {/* Análise de Custos e Lucratividade */}
-        <div className="bg-white rounded-xl shadow-lg p-8">
-          <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">Análise de Custos e Lucratividade</h2>
+        <div className="bg-white rounded-xl shadow-lg p-8 mb-12">
+          <div className="flex items-center mb-6">
+            <DollarSign className="h-8 w-8 text-green-600 mr-3" />
+            <h2 className="text-3xl font-bold text-gray-800">Análise de Custos e Lucratividade</h2>
+          </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div className="bg-red-50 rounded-lg p-6">
-              <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center">
-                <DollarSign className="h-6 w-6 text-red-600 mr-3" />
-                Investimento Inicial
-              </h3>
-              <div className="space-y-4">
+            <div>
+              <h3 className="text-xl font-bold text-gray-800 mb-4">Investimento Inicial</h3>
+              <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <span className="text-gray-700">Hardware (IoT)</span>
                   <span className="font-semibold text-gray-800">R$ 50.000 - R$ 200.000</span>
@@ -644,42 +495,45 @@ export const SugarcanePage: React.FC = () => {
                   <span className="text-gray-700">Infraestrutura Cloud</span>
                   <span className="font-semibold text-gray-800">R$ 30.000 - R$ 150.000/ano</span>
                 </div>
-                <div className="border-t pt-4">
+                <div className="border-t pt-3">
                   <div className="flex justify-between items-center">
                     <span className="font-bold text-gray-800">Total Estimado</span>
-                    <span className="font-bold text-red-600 text-lg">R$ 200.000 - R$ 930.000</span>
+                    <span className="font-bold text-green-600">R$ 200.000 - R$ 930.000</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="bg-green-50 rounded-lg p-6">
-              <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center">
-                <TrendingUp className="h-6 w-6 text-green-600 mr-3" />
-                Retorno sobre Investimento
-              </h3>
+            <div>
+              <h3 className="text-xl font-bold text-gray-800 mb-4">Retorno sobre Investimento</h3>
               <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-700">Aumento do Valor do Produto</span>
-                  <span className="font-semibold text-green-600">15% a 30% premium</span>
+                <div className="bg-green-50 rounded-lg p-4">
+                  <div className="flex items-center mb-2">
+                    <TrendingUp className="h-5 w-5 text-green-600 mr-2" />
+                    <span className="font-semibold text-gray-800">Aumento do Valor do Produto</span>
+                  </div>
+                  <p className="text-sm text-gray-700">15% a 30% de premium por produtos certificados</p>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-700">Redução de Custos</span>
-                  <span className="font-semibold text-green-600">15-20% economia</span>
+                <div className="bg-blue-50 rounded-lg p-4">
+                  <div className="flex items-center mb-2">
+                    <Zap className="h-5 w-5 text-blue-600 mr-2" />
+                    <span className="font-semibold text-gray-800">Redução de Custos</span>
+                  </div>
+                  <p className="text-sm text-gray-700">15-20% economia em insumos e operações</p>
                 </div>
-                <div className="border-t pt-4">
-                  <div className="flex justify-between items-center">
-                    <span className="font-bold text-gray-800">ROI Estimado</span>
-                    <span className="font-bold text-green-600 text-lg">20% a 50% margem</span>
+                <div className="bg-purple-50 rounded-lg p-4">
+                  <div className="flex items-center mb-2">
+                    <Award className="h-5 w-5 text-purple-600 mr-2" />
+                    <div>
+                      <h4 className="font-semibold text-gray-900">ROI Estimado</h4>
+                      <p className="text-sm text-gray-700">20% a 50% de aumento na margem de lucro</p>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-<<<<<<< HEAD
-
-        ---
 
         {/* Navigation */}
         <div className="text-center space-x-4">
@@ -696,10 +550,7 @@ export const SugarcanePage: React.FC = () => {
             Voltar ao Início
           </Link>
         </div>
-=======
->>>>>>> 3dd2708e7bd0eb412fb4b923adff8c7c33720cb6
       </div>
     </div>
   );
 };
-
