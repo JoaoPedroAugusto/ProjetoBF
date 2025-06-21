@@ -36,6 +36,12 @@ export const SugarcanePage: React.FC = () => {
     return () => document.removeEventListener('keydown', handleKeyPress);
   }, [handleKeyPress]);
 
+  // Função para voltar ao seletor de usuário
+  const handleBack = () => {
+    setShowDashboard(null);
+    setShowUserSelection(true);
+  };
+
   if (showPresentation) {
     return (
       <PresentationManager
@@ -46,15 +52,15 @@ export const SugarcanePage: React.FC = () => {
   }
 
   if (showDashboard === 'produtor') {
-    return <DashboardProdutor onClose={() => setShowDashboard(null)} />;
+    return <DashboardProdutor onClose={() => setShowDashboard(null)} onBack={handleBack} onNext={() => setShowDashboard('usina')} />;
   }
 
   if (showDashboard === 'usina') {
-    return <DashboardUsina onClose={() => setShowDashboard(null)} />;
+    return <DashboardUsina onClose={() => setShowDashboard(null)} onBack={handleBack} onNext={() => setShowDashboard('cliente')} />;
   }
 
   if (showDashboard === 'cliente') {
-    return <DashboardCliente onClose={() => setShowDashboard(null)} />;
+    return <DashboardCliente onClose={() => setShowDashboard(null)} onBack={handleBack} onNext={() => setShowDashboard('produtor')} />;
   }
 
   return (

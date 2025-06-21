@@ -21,11 +21,13 @@ import {
   Globe
 } from 'lucide-react';
 
-interface DashboardClienteProps {
+export interface DashboardClienteProps {
   onBack: () => void;
+  onNext: () => void;
+  onClose?: () => void;
 }
 
-export const DashboardCliente: React.FC<DashboardClienteProps> = ({ onBack }) => {
+export const DashboardCliente: React.FC<DashboardClienteProps> = ({ onBack, onNext, onClose }) => {
   const [produtoSelecionado, setProdutoSelecionado] = useState('PROD-2024-001');
 
   // Dados do produto para o consumidor
@@ -439,6 +441,20 @@ export const DashboardCliente: React.FC<DashboardClienteProps> = ({ onBack }) =>
               </div>
             </div>
           </div>
+        </div>
+
+        <div style={{ display: 'flex', gap: 8, marginTop: 24 }}>
+          <button onClick={onBack} className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-lg transition-colors">
+            Voltar
+          </button>
+          <button onClick={onNext} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+            Próximo
+          </button>
+          {onClose && (
+            <button onClick={onClose} className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors">
+              Fechar
+            </button>
+          )}
         </div>
       </div>
     </div>

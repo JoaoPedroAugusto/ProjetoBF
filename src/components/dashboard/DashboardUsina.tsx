@@ -20,11 +20,13 @@ import {
   Target
 } from 'lucide-react';
 
-interface DashboardUsinaProps {
+export interface DashboardUsinaProps {
   onBack: () => void;
+  onNext: () => void;
+  onClose?: () => void;
 }
 
-export const DashboardUsina: React.FC<DashboardUsinaProps> = ({ onBack }) => {
+export const DashboardUsina: React.FC<DashboardUsinaProps> = ({ onBack, onNext, onClose }) => {
   const [loteSelected, setLoteSelected] = useState('LOTE-2024-001');
 
   // Dados de rastreabilidade
@@ -442,6 +444,20 @@ export const DashboardUsina: React.FC<DashboardUsinaProps> = ({ onBack }) => {
               <p className="text-sm text-gray-600">rastreabilidade</p>
             </div>
           </div>
+        </div>
+
+        <div style={{ display: 'flex', gap: 8, marginTop: 24 }}>
+          <button onClick={onBack} className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg transition-colors">
+            Voltar
+          </button>
+          <button onClick={onNext} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+            Próximo
+          </button>
+          {onClose && (
+            <button onClick={onClose} className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors">
+              Fechar
+            </button>
+          )}
         </div>
       </div>
     </div>
