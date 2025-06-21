@@ -537,7 +537,6 @@ export const SugarcanePage: React.FC = () => {
             </div>
           </div>
 
-<<<<<<< HEAD
         ---
 
         {/* ODS */}
@@ -574,7 +573,6 @@ export const SugarcanePage: React.FC = () => {
               <Target className="h-8 w-8 text-green-600 mx-auto mb-2" />
               <h4 className="font-semibold text-gray-800">ODS 13</h4>
               <p className="text-sm text-gray-600">Ação Contra a Mudança do Clima</p>
-=======
           <div className="bg-gradient-to-r from-green-100 to-blue-100 rounded-lg p-6">
             <h3 className="text-xl font-bold text-gray-800 mb-4 text-center">Objetivos de Desenvolvimento Sustentável (ODS)</h3>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 text-center">
@@ -602,7 +600,6 @@ export const SugarcanePage: React.FC = () => {
                 <div className="text-2xl font-bold text-green-600 mb-1">13</div>
                 <p className="text-xs text-gray-700">Ação Contra a Mudança do Clima</p>
               </div>
->>>>>>> 3dd2708e7bd0eb412fb4b923adff8c7c33720cb6
             </div>
           </div>
         </div>
@@ -665,7 +662,6 @@ export const SugarcanePage: React.FC = () => {
             </div>
           </div>
         </div>
-<<<<<<< HEAD
 
         ---
 
@@ -684,8 +680,6 @@ export const SugarcanePage: React.FC = () => {
             Voltar ao Início
           </Link>
         </div>
-=======
->>>>>>> 3dd2708e7bd0eb412fb4b923adff8c7c33720cb6
       </div>
     </div>
   );

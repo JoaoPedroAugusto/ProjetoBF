@@ -77,6 +77,7 @@ export const SugarcanePage: React.FC = () => {
               <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-6 py-2">
                 <span className="font-semibold">IoT + IA</span>
               </div>
+<<<<<<< HEAD
               <button
                 onClick={() => setShowPresentation(true)} // Este botão também ativa a apresentação
                 className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-6 py-3 rounded-lg flex items-center space-x-2 transition-all duration-200 backdrop-blur-sm"
@@ -84,6 +85,7 @@ export const SugarcanePage: React.FC = () => {
                 <Presentation className="h-5 w-5" />
                 <span>Apresentação</span>
               </button>
+=======
               
               {/* Botão Demonstração com Modal de Seleção */}
               <div className="relative">
@@ -157,12 +159,15 @@ export const SugarcanePage: React.FC = () => {
                   </div>
                 )}
               </div>
+>>>>>>> 3dd2708e7bd0eb412fb4b923adff8c7c33720cb6
             </div>
           </div>
         </div>
       </div>
 
+<<<<<<< HEAD
       ---
+=======
       {/* Overlay para fechar modal */}
       {showUserSelection && (
         <div 
@@ -170,6 +175,7 @@ export const SugarcanePage: React.FC = () => {
           onClick={() => setShowUserSelection(false)}
         ></div>
       )}
+>>>>>>> 3dd2708e7bd0eb412fb4b923adff8c7c33720cb6
 
       {/* Sobre a PISCA - Missão, Visão e Valores */}
       <div className="container mx-auto px-4 py-12">
@@ -308,6 +314,8 @@ export const SugarcanePage: React.FC = () => {
             </div>
           </div>
 
+<<<<<<< HEAD
+=======
           <div className="bg-gradient-to-r from-blue-50 to-green-50 rounded-lg p-6">
             <h3 className="text-xl font-bold text-gray-800 mb-4 text-center">🎯 Exemplo Prático de Funcionamento</h3>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -341,6 +349,7 @@ export const SugarcanePage: React.FC = () => {
               </div>
             </div>
           </div>
+>>>>>>> parent of 56d6299 (Update SugarcanePage.tsx)
         </div>
 
         ---
@@ -504,10 +513,13 @@ export const SugarcanePage: React.FC = () => {
           </div>
         </div>
 
+<<<<<<< HEAD
         ---
 
         {/* Certificações */}
+=======
         {/* Certificações e Conformidade */}
+>>>>>>> 3dd2708e7bd0eb412fb4b923adff8c7c33720cb6
         <div className="bg-white rounded-xl shadow-lg p-8 mb-12">
           <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">Certificações e Conformidade</h2>
 
