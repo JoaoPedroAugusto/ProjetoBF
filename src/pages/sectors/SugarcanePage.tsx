@@ -314,6 +314,42 @@ export const SugarcanePage: React.FC = () => {
             </div>
           </div>
 
+<<<<<<< HEAD
+=======
+          <div className="bg-gradient-to-r from-blue-50 to-green-50 rounded-lg p-6">
+            <h3 className="text-xl font-bold text-gray-800 mb-4 text-center">🎯 Exemplo Prático de Funcionamento</h3>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="text-center">
+                <div className="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Leaf className="h-6 w-6" />
+                </div>
+                <h4 className="font-semibold text-gray-800 mb-2">Campo</h4>
+                <p className="text-xs text-gray-600">Sensor detecta que a cana atingiu 18° Brix (teor de açúcar ideal)</p>
+              </div>
+              <div className="text-center">
+                <div className="w-12 h-12 bg-green-500 text-white rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Brain className="h-6 w-6" />
+                </div>
+                <h4 className="font-semibold text-gray-800 mb-2">IA</h4>
+                <p className="text-xs text-gray-600">Sistema recomenda colheita imediata e agenda máquinas disponíveis</p>
+              </div>
+              <div className="text-center">
+                <div className="w-12 h-12 bg-purple-500 text-white rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Database className="h-6 w-6" />
+                </div>
+                <h4 className="font-semibold text-gray-800 mb-2">Blockchain</h4>
+                <p className="text-xs text-gray-600">Registra data, hora, operador e qualidade da cana colhida</p>
+              </div>
+              <div className="text-center">
+                <div className="w-12 h-12 bg-orange-500 text-white rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Award className="h-6 w-6" />
+                </div>
+                <h4 className="font-semibold text-gray-800 mb-2">Certificação</h4>
+                <p className="text-xs text-gray-600">Gera automaticamente certificado digital de qualidade e origem</p>
+              </div>
+            </div>
+          </div>
+>>>>>>> parent of 56d6299 (Update SugarcanePage.tsx)
         </div>
 
         ---
