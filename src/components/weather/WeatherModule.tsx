@@ -1,15 +1,48 @@
 import React, { useState, useEffect } from 'react';
-import { Cloud, Sun, CloudRain, Wind, Thermometer, Droplets, Eye, Gauge } from 'lucide-react';
+import { Cloud, Sun, CloudRain, Wind, Thermometer, Droplets, Eye, Gauge, Sprout, Beaker } from 'lucide-react';
+import { Tabs } from './Tabs';
+import { CultureSelector, culturas } from './CultureSelector';
+import { TemperatureTrends } from './TemperatureTrends';
+import { PrecipitationAnalysis } from './PrecipitationAnalysis';
+import { CurrentVsIdeal } from './CurrentVsIdeal';
+import { PhytosanitaryRisks } from './PhytosanitaryRisks';
+import { AgroclimatePerformance } from './AgroclimatePerformance';
+import { AgroclimateIndices } from './AgroclimateIndices';
+import { IrrigationRecommendations } from './IrrigationRecommendations';
+import { PhytosanitaryMonitoring } from './PhytosanitaryMonitoring';
+import { CultureAlerts } from './CultureAlerts';
+import { SmartAlertSystem } from './SmartAlertSystem';
+
+interface WeatherData {
+  temperature: number;
+  humidity: number;
+  windSpeed: number;
+  pressure: number;
+  visibility: number;
+  uvIndex: number;
+  condition: string;
+  // Novos dados meteorológicos expandidos
+  temperaturaSolo: number;
+  umidadeSolo: number;
+  evapotranspiracao: number;
+  pontoOrvalho: number;
+}
 
 export const WeatherModule = () => {
-  const [currentWeather, setCurrentWeather] = useState({
+  const [selectedCulture, setSelectedCulture] = useState('soja');
+  const [currentWeather, setCurrentWeather] = useState<WeatherData>({
     temperature: 28,
     humidity: 65,
     windSpeed: 12,
     pressure: 1013,
     visibility: 10,
     uvIndex: 8,
-    condition: 'sunny'
+    condition: 'sunny',
+    // Novos dados
+    temperaturaSolo: 25,
+    umidadeSolo: 45,
+    evapotranspiracao: 4.2,
+    pontoOrvalho: 18
   });
 
   const [forecast, setForecast] = useState([
@@ -20,7 +53,7 @@ export const WeatherModule = () => {
     { day: 'Sábado', temp: 29, condition: 'sunny', humidity: 55 }
   ]);
 
-  const getWeatherIcon = (condition) => {
+  const getWeatherIcon = (condition: string) => {
     switch (condition) {
       case 'sunny':
         return <Sun className="h-8 w-8 text-yellow-500" />;
@@ -33,14 +66,9 @@ export const WeatherModule = () => {
     }
   };
 
-  return (
+  // Aba Visão Geral
+  const VisaoGeralTab = () => (
     <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Meteorologia</h1>
-        <p className="text-gray-600">Condições climáticas atuais e previsão para os próximos dias</p>
-      </div>
-
       {/* Current Weather */}
       <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg text-white p-8">
         <div className="flex items-center justify-between mb-6">
@@ -54,7 +82,7 @@ export const WeatherModule = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
           <div className="bg-white/10 rounded-lg p-4 text-center">
             <Droplets className="h-6 w-6 mx-auto mb-2 text-blue-200" />
             <div className="text-sm text-blue-100">Umidade</div>
@@ -87,8 +115,31 @@ export const WeatherModule = () => {
 
           <div className="bg-white/10 rounded-lg p-4 text-center">
             <Thermometer className="h-6 w-6 mx-auto mb-2 text-blue-200" />
-            <div className="text-sm text-blue-100">Sensação</div>
-            <div className="text-lg font-semibold">30°C</div>
+            <div className="text-sm text-blue-100">Temp. Solo</div>
+            <div className="text-lg font-semibold">{currentWeather.temperaturaSolo}°C</div>
+          </div>
+
+          <div className="bg-white/10 rounded-lg p-4 text-center">
+            <Sprout className="h-6 w-6 mx-auto mb-2 text-blue-200" />
+            <div className="text-sm text-blue-100">Umid. Solo</div>
+            <div className="text-lg font-semibold">{currentWeather.umidadeSolo}%</div>
+          </div>
+
+          <div className="bg-white/10 rounded-lg p-4 text-center">
+            <Beaker className="h-6 w-6 mx-auto mb-2 text-blue-200" />
+            <div className="text-sm text-blue-100">Evapotrans.</div>
+            <div className="text-lg font-semibold">{currentWeather.evapotranspiracao} mm</div>
+          </div>
+        </div>
+
+        {/* Ponto de Orvalho */}
+        <div className="mt-4 bg-white/10 rounded-lg p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Droplets className="h-5 w-5 text-blue-200" />
+              <span className="text-blue-100">Ponto de Orvalho</span>
+            </div>
+            <span className="text-lg font-semibold">{currentWeather.pontoOrvalho}°C</span>
           </div>
         </div>
       </div>
@@ -109,64 +160,89 @@ export const WeatherModule = () => {
           ))}
         </div>
       </div>
+    </div>
+  );
 
-      {/* Weather Alerts */}
+  // Aba Análises (agora com componentes avançados)
+  const AnalisesTab = () => (
+    <div className="p-6 space-y-8">
+      {/* Tendências de Temperatura */}
+      <TemperatureTrends />
+      
+      {/* Análise de Precipitação e Umidade */}
+      <PrecipitationAnalysis />
+      
+      {/* Comparação Atual vs Ideal */}
+      <CurrentVsIdeal cultura={selectedCulture} />
+      
+      {/* Riscos Fitossanitários */}
+      <PhytosanitaryRisks cultura={selectedCulture} />
+      
+      {/* Performance Agroclimática */}
+      <AgroclimatePerformance cultura={selectedCulture} />
+    </div>
+  );
+
+  // Aba Recomendações (agora com componentes completos)
+  const RecomendacoesTab = () => (
+    <div className="p-6 space-y-8">
+      {/* Índices Agroclimáticos */}
+      <AgroclimateIndices cultura={selectedCulture} />
+      
+      {/* Recomendações de Irrigação */}
+      <IrrigationRecommendations cultura={selectedCulture} />
+      
+      {/* Monitoramento Fitossanitário */}
+      <PhytosanitaryMonitoring cultura={selectedCulture} />
+      
+      {/* Alertas Específicos por Cultura */}
+      <CultureAlerts cultura={selectedCulture} />
+    </div>
+  );
+
+  const tabs = [
+    {
+      id: 'visao-geral',
+      label: 'Visão Geral',
+      content: <VisaoGeralTab />
+    },
+    {
+      id: 'analises',
+      label: 'Análises',
+      content: <AnalisesTab />
+    },
+    {
+      id: 'recomendacoes',
+      label: 'Recomendações',
+      content: <RecomendacoesTab />
+    }
+  ];
+
+  return (
+    <div className="p-6 space-y-6">
+      {/* Header */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <h3 className="text-xl font-bold text-gray-900 mb-6">Alertas Meteorológicos</h3>
-        <div className="space-y-4">
-          <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg">
-            <div className="flex items-start">
-              <div className="flex-shrink-0">
-                <Sun className="h-5 w-5 text-yellow-600" />
-              </div>
-              <div className="ml-3">
-                <h4 className="text-sm font-medium text-yellow-800">Alerta de Calor</h4>
-                <p className="text-sm text-yellow-700 mt-1">
-                  Temperaturas acima de 30°C previstas para os próximos 3 dias. Recomenda-se aumentar a irrigação.
-                </p>
-              </div>
-            </div>
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Meteorologia Agrícola</h1>
+            <p className="text-gray-600">Sistema avançado de análise climática e recomendações por cultura</p>
           </div>
-
-          <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r-lg">
-            <div className="flex items-start">
-              <div className="flex-shrink-0">
-                <CloudRain className="h-5 w-5 text-blue-600" />
-              </div>
-              <div className="ml-3">
-                <h4 className="text-sm font-medium text-blue-800">Previsão de Chuva</h4>
-                <p className="text-sm text-blue-700 mt-1">
-                  Possibilidade de chuva na quinta-feira. Considere ajustar o cronograma de aplicação de defensivos.
-                </p>
-              </div>
-            </div>
+          
+          {/* Culture Selector */}
+          <div className="lg:w-80">
+            <CultureSelector
+              selectedCulture={selectedCulture}
+              onCultureChange={setSelectedCulture}
+            />
           </div>
         </div>
       </div>
 
-      {/* Agricultural Recommendations */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <h3 className="text-xl font-bold text-gray-900 mb-6">Recomendações Agrícolas</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-4">
-            <h4 className="font-semibold text-gray-800">Irrigação</h4>
-            <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-              <p className="text-sm text-green-800">
-                <strong>Recomendação:</strong> Aumentar irrigação em 20% devido às altas temperaturas previstas.
-              </p>
-            </div>
-          </div>
+      {/* Sistema de Alertas Inteligentes */}
+      <SmartAlertSystem cultura={selectedCulture} />
 
-          <div className="space-y-4">
-            <h4 className="font-semibold text-gray-800">Aplicação de Defensivos</h4>
-            <div className="bg-amber-50 p-4 rounded-lg border border-amber-200">
-              <p className="text-sm text-amber-800">
-                <strong>Atenção:</strong> Evitar aplicações na quinta-feira devido à previsão de chuva.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Tabs */}
+      <Tabs tabs={tabs} defaultTab="visao-geral" className="shadow-sm" />
     </div>
   );
 };
