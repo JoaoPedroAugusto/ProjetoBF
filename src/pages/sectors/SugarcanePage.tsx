@@ -52,7 +52,7 @@ export const SugarcanePage: React.FC = () => {
   }
 
   if (showDashboard === 'produtor') {
-    return <DashboardProdutor onClose={() => setShowDashboard(null)} onBack={handleBack} onNext={() => setShowDashboard('usina')} />;
+    return <DashboardProdutor onClose={() => setShowDashboard(null)} onNext={() => setShowDashboard('usina')} />;
   }
 
   if (showDashboard === 'usina') {

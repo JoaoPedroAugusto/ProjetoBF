@@ -17,12 +17,12 @@ import {
 } from 'lucide-react';
 
 export interface DashboardProdutorProps {
-  onBack: () => void;
+  
   onNext: () => void;
   onClose?: () => void; // Opcional, se quiser botão de fechar
 }
 
-export const DashboardProdutor: React.FC<DashboardProdutorProps> = ({ onBack, onNext, onClose }) => {
+export const DashboardProdutor: React.FC<DashboardProdutorProps> = ({  onNext, onClose }) => {
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
@@ -148,12 +148,7 @@ export const DashboardProdutor: React.FC<DashboardProdutorProps> = ({ onBack, on
               </p>
             </div>
             <div style={{ display: 'flex', gap: 8 }}>
-              <button
-                onClick={onBack}
-                className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg transition-colors"
-              >
-                Voltar
-              </button>
+             
               <button
                 onClick={onNext}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors"
