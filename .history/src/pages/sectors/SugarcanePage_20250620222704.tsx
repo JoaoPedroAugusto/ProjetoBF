@@ -1,6 +1,10 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Wheat, TrendingUp, MapPin, Leaf, DollarSign, Award, Target, Shield, Zap, Database, Wifi, Brain, Eye, Heart, Users, Presentation } from 'lucide-react';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Wheat, TrendingUp, MapPin, Leaf, DollarSign, Award, Target, Shield, Zap, Database, Wifi, Brain, Eye, Heart, Users, Monitor } from 'lucide-react';
+
 import { PresentationManager } from '../../components/presentation';
 import { DashboardProdutor } from '../../components/dashboard/DashboardProdutor';
 import { DashboardUsina } from '../../components/dashboard/DashboardUsina';
@@ -51,7 +55,22 @@ export const SugarcanePage: React.FC = () => {
     );
   }
 
+<<<<<<< HEAD
   // O restante do conteúdo da página é renderizado por padrão
+=======
+  if (showDashboard === 'produtor') {
+    return <DashboardProdutor onBack={() => setShowDashboard(null)} />;
+  }
+
+  if (showDashboard === 'usina') {
+    return <DashboardUsina onBack={() => setShowDashboard(null)} />;
+  }
+
+  if (showDashboard === 'cliente') {
+    return <DashboardCliente onBack={() => setShowDashboard(null)} />;
+  }
+
+>>>>>>> 3dd2708e7bd0eb412fb4b923adff8c7c33720cb6
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50">
       {/* Hero Section com Banner */}
