@@ -1,42 +1,36 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react'; // Added useCallback and useEffect
 import { Link } from 'react-router-dom';
 import { Wheat, TrendingUp, MapPin, Leaf, DollarSign, Award, Target, Shield, Zap, Database, Wifi, Brain, Eye, Heart, Users, Presentation } from 'lucide-react';
 import { PresentationManager } from '../../components/presentation';
 
 export const SugarcanePage: React.FC = () => {
-  // O estado inicial showPresentation volta para 'false'
   const [showPresentation, setShowPresentation] = useState(false);
-
-  // Mantemos isViewing e isEditing, pois a lógica de atalho os utiliza.
-  // Você pode ajustá-los de acordo com a lógica do seu aplicativo.
-  const [isViewing, setIsViewing] = useState(false);
+  // Assuming isViewing and isEditing are states that would control other aspects of the page
+  // For this example, I'll set them to false, but you would likely have these managed elsewhere
+  const [isViewing, setIsViewing] = useState(false); 
   const [isEditing, setIsEditing] = useState(false);
 
-  // Função para iniciar a apresentação
+  // This function would be defined elsewhere, likely passed as a prop or part of a context
+  // For this example, I'll create a dummy function
   const startPresentation = () => {
     setShowPresentation(true);
     console.log("Starting presentation...");
   };
 
   const handleKeyPress = useCallback((event: KeyboardEvent) => {
-    // Verifica se Shift + P foi pressionado
     if (event.shiftKey && (event.key === 'p' || event.key === 'P')) {
-      event.preventDefault(); // Evita o comportamento padrão do navegador, se houver
-      // Só inicia a apresentação se não estiver em modo de visualização ou edição
+      event.preventDefault();
       if (!isViewing && !isEditing) {
         startPresentation();
       }
     }
-  }, [isViewing, isEditing, startPresentation]); // Dependências do useCallback
+  }, [isViewing, isEditing, startPresentation]); // Added startPresentation to dependency array
 
   useEffect(() => {
-    // Adiciona o event listener ao montar o componente
     document.addEventListener('keydown', handleKeyPress);
-    // Remove o event listener ao desmontar o componente para evitar vazamento de memória
     return () => document.removeEventListener('keydown', handleKeyPress);
-  }, [handleKeyPress]); // Dependência do useEffect
+  }, [handleKeyPress]);
 
-  // Renderiza a PresentationManager se showPresentation for true
   if (showPresentation) {
     return (
       <PresentationManager
@@ -46,7 +40,6 @@ export const SugarcanePage: React.FC = () => {
     );
   }
 
-  // O restante do conteúdo da página é renderizado por padrão
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50">
       {/* Hero Section com Banner */}
@@ -73,7 +66,7 @@ export const SugarcanePage: React.FC = () => {
                 <span className="font-semibold">IoT + IA</span>
               </div>
               <button
-                onClick={() => setShowPresentation(true)} // Este botão também ativa a apresentação
+                onClick={() => setShowPresentation(true)}
                 className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-6 py-3 rounded-lg flex items-center space-x-2 transition-all duration-200 backdrop-blur-sm"
               >
                 <Presentation className="h-5 w-5" />
@@ -83,8 +76,6 @@ export const SugarcanePage: React.FC = () => {
           </div>
         </div>
       </div>
-
-      ---
 
       {/* Sobre a PISCA - Missão, Visão e Valores */}
       <div className="container mx-auto px-4 py-12">
@@ -145,8 +136,6 @@ export const SugarcanePage: React.FC = () => {
             </div>
           </div>
         </div>
-
-        ---
 
         {/* Como a PISCA Funciona */}
         <div className="bg-white rounded-xl shadow-lg p-8 mb-12">
@@ -223,9 +212,8 @@ export const SugarcanePage: React.FC = () => {
             </div>
           </div>
 
-        </div>
 
-        ---
+        </div>
 
         {/* Principais Características */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
@@ -262,8 +250,6 @@ export const SugarcanePage: React.FC = () => {
             </p>
           </div>
         </div>
-
-        ---
 
         {/* Tecnologias */}
         <div className="bg-white rounded-xl shadow-lg p-8 mb-12">
@@ -313,8 +299,6 @@ export const SugarcanePage: React.FC = () => {
             </div>
           </div>
         </div>
-
-        ---
 
         {/* Benefícios para a Cadeia Produtiva */}
         <div className="bg-white rounded-xl shadow-lg p-8 mb-12">
@@ -419,8 +403,6 @@ export const SugarcanePage: React.FC = () => {
           </div>
         </div>
 
-        ---
-
         {/* Certificações */}
         <div className="bg-white rounded-xl shadow-lg p-8 mb-12">
           <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">Certificações e Conformidade</h2>
@@ -451,8 +433,6 @@ export const SugarcanePage: React.FC = () => {
             </div>
           </div>
         </div>
-
-        ---
 
         {/* ODS */}
         <div className="bg-white rounded-xl shadow-lg p-8 mb-12">
@@ -491,8 +471,6 @@ export const SugarcanePage: React.FC = () => {
             </div>
           </div>
         </div>
-
-        ---
 
         {/* Análise de Custos e Lucratividade */}
         <div className="bg-white rounded-xl shadow-lg p-8 mb-12">
@@ -556,8 +534,6 @@ export const SugarcanePage: React.FC = () => {
             </div>
           </div>
         </div>
-
-        ---
 
         {/* Navigation */}
         <div className="text-center space-x-4">
