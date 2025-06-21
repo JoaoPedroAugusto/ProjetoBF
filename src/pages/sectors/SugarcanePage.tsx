@@ -66,17 +66,17 @@ export const SugarcanePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50">
       {/* Hero Section with Banner */}
-      <div className="relative h-96 bg-cover bg-center" style={{ backgroundImage: "url('/src/public/images/sugarcane/banner_pisca_trace.jpg')" }}>
+      <div className="relative h-96 bg-cover bg-center" style={{ backgroundImage: "url('/src/public/img/banner_pisca.png')" }}>
         <div className="absolute inset-0 bg-black opacity-60"></div>
         <div className="relative container mx-auto px-4 py-16 h-full flex items-center">
           <div className="text-white">
             <div className="flex items-center mb-6">
-              <Wheat className="h-12 w-12 mr-4" />
-              <h1 className="text-4xl md:text-6xl font-bold">PISCA Trace: Cana-de-Açúcar</h1>
+              
+              <h1 className="text-4xl md:text-6xl font-bold">PISCA</h1>
             </div>
             <p className="text-xl md:text-2xl max-w-4xl leading-relaxed">
               Revolucionando a rastreabilidade da cana-de-açúcar com tecnologias de ponta: Blockchain, IoT e IA.
-              Garantimos a origem, sustentabilidade e qualidade do produto, proporcionando transparência total da fazenda à gôndola.
+              Garantimos a origem, sustentabilidade e qualidade do produto.   
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
               <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-6 py-2">
@@ -88,14 +88,6 @@ export const SugarcanePage: React.FC = () => {
               <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-6 py-2">
                 <span className="font-semibold">IoT + IA</span>
               </div>
-              <button
-                onClick={() => setShowPresentation(true)}
-                className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-6 py-3 rounded-lg flex items-center space-x-2 transition-all duration-200 backdrop-blur-sm"
-              >
-                <Presentation className="h-5 w-5" />
-                <span>Apresentação</span>
-              </button>
-              
               {/* Demo Button with User Selection Modal */}
               <div className="relative">
                 <button
@@ -247,34 +239,38 @@ export const SugarcanePage: React.FC = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
             <div>
-              <h3 className="text-xl font-bold text-gray-800 mb-6">🔄 Fluxo de Dados em Tempo Real</h3>
+              <h3 className="text-xl font-bold text-gray-800 mb-6" style={{ marginBottom: '40px' }}>🔄 Fluxo de Dados em Tempo Real</h3>
               <div className="space-y-4">
                 <div className="flex items-start">
                   <div className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold mr-4 mt-1">1</div>
                   <div>
                     <h4 className="font-semibold text-gray-800">Coleta Automatizada</h4>
-                    <p className="text-gray-600 text-sm">Sensores IoT no campo capturam dados de solo, clima, crescimento e aplicação de insumos a cada 15 minutos</p>
+                    <p className="text-gray-600 text-sm" style={{ marginBottom: '40px' }}>
+                      Sensores IoT no campo capturam dados de solo, clima, crescimento e aplicação de insumos a cada 15 minutos
+                    </p>
+
+
                   </div>
                 </div>
                 <div className="flex items-start">
                   <div className="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold mr-4 mt-1">2</div>
                   <div>
                     <h4 className="font-semibold text-gray-800">Processamento Inteligente</h4>
-                    <p className="text-gray-600 text-sm">IA analisa os dados, detecta padrões e gera insights para otimização da produção</p>
+                    <p className="text-gray-600 text-sm" style={{ marginBottom: '40px' }}>IA analisa os dados, detecta padrões e gera insights para otimização da produção</p>
                   </div>
                 </div>
                 <div className="flex items-start">
                   <div className="w-8 h-8 bg-purple-500 text-white rounded-full flex items-center justify-center text-sm font-bold mr-4 mt-1">3</div>
                   <div>
                     <h4 className="font-semibold text-gray-800">Registro Blockchain</h4>
-                    <p className="text-gray-600 text-sm">Todas as informações são criptografadas e registradas de forma imutável na blockchain</p>
+                    <p className="text-gray-600 text-sm" style={{ marginBottom: '40px' }}>Todas as informações são criptografadas e registradas de forma imutável na blockchain</p>
                   </div>
                 </div>
                 <div className="flex items-start">
                   <div className="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm font-bold mr-4 mt-1">4</div>
                   <div>
                     <h4 className="font-semibold text-gray-800">Certificação Automática</h4>
-                    <p className="text-gray-600 text-sm">Sistema valida automaticamente conformidade com padrões Bonsucro e ISCC</p>
+                    <p className="text-gray-600 text-sm" style={{ marginBottom: '40px' }}>Sistema valida automaticamente conformidade com padrões Bonsucro e ISCC</p>
                   </div>
                 </div>
               </div>

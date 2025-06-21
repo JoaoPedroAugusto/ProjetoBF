@@ -403,8 +403,9 @@ export const DashboardProdutor: React.FC<DashboardProdutorProps> = ({  onNext, o
               ))}
             </div>
           </div>
-        </div>
+        </div> 
       </div>
+      
     </div>
   );
 };
