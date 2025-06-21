@@ -245,7 +245,7 @@ export const HomePage = () => {
             <div>
               <h4 className="font-semibold mb-4">Setores</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><Link to="/sectors/cana-de-acucar" className="hover:text-white transition-colors">Cana-de-Açúcar</Link></li>
+                <li><Link to="/sectors/cana-de-acucar" className="hover:text-white transition-colors">PISCA</Link></li>
                 <li><Link to="/sectors/soja" className="hover:text-white transition-colors">Soja</Link></li>
                 <li><Link to="/sectors/algodao" className="hover:text-white transition-colors">Algodão</Link></li>
               </ul>
