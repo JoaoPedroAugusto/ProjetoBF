@@ -1,97 +1,219 @@
-import React, { useState } from 'react'; // Import useState
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Flower, TrendingUp, MapPin, Leaf, Presentation } from 'lucide-react'; // Import Presentation icon
+import { Flower, TrendingUp, MapPin, Leaf, Presentation, Users, Target, Award } from 'lucide-react';
 import { ThreeDModelView } from '../../components/3d/ThreeDModelView';
-import { PresentationManager } from '../../components/presentation'; // Import PresentationManager
+import { PresentationManager } from '../../components/presentation';
 
 export const SheepPage: React.FC = () => {
-  const [showPresentation, setShowPresentation] = useState(false); // State to control presentation view
+  const [showPresentation, setShowPresentation] = useState(false);
 
-  // Conditionally render the PresentationManager if showPresentation is true
   if (showPresentation) {
     return (
       <PresentationManager
-        sectorId="sheep" // Use the appropriate sectorId for Sheep farming
+        sectorId="sheep"
         sectorName="Ovinocultura"
       />
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">
-      {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-purple-600 to-pink-600 text-white">
-        <div className="absolute inset-0 bg-black opacity-20"></div>
-        <div className="relative container mx-auto px-4 py-16">
-          <div className="flex items-center justify-between mb-6"> {/* Added justify-between */}
-            <div className="flex items-center">
-              <Flower className="h-12 w-12 mr-4" /> {/* Assuming 'Flower' icon is a placeholder for sheep, you might want to change this */}
-              <h1 className="text-4xl md:text-6xl font-bold">Ovinocultura</h1>
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50">
+      {/* Hero Section with Banner */}
+      <div
+        className="relative h-96 bg-cover bg-center"
+        style={{
+          backgroundImage: "url('/src/public/img/Banner_culture_sheep.png')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      >
+        <div className="absolute inset-0 bg-black opacity-60"></div>
+        <div className="relative container mx-auto px-4 py-16 h-full flex items-center">
+          <div className="text-white">
+            <div className="max-w-4xl">
+              
+              
+              
+              <button
+                onClick={() => setShowPresentation(true)}
+                className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-8 py-4 rounded-lg flex items-center space-x-2 transition-all duration-200 backdrop-blur-sm font-semibold"
+              >
+                <Presentation className="h-5 w-5" />
+                <span>Ver Apresentação</span>
+              </button>
             </div>
-            {/* Button to activate the presentation */}
-            <button
-              onClick={() => setShowPresentation(true)}
-              className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-6 py-3 rounded-lg flex items-center space-x-2 transition-all duration-200 backdrop-blur-sm"
-            >
-              <Presentation className="h-5 w-5" />
-              <span>Apresentação</span>
-            </button>
           </div>
-          <p className="text-xl md:text-2xl max-w-3xl leading-relaxed">
-            A criação de ovelhas envolve a criação de ovelhas para lã, carne (cordeiro e carneiro) e produção de leite.
-          </p>
         </div>
       </div>
 
-      {/* Statistics Section */}
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-purple-500">
-            <div className="flex items-center mb-4">
-              <TrendingUp className="h-8 w-8 text-purple-600 mr-3" />
-              <h3 className="text-lg font-semibold text-gray-800">Produção Global</h3>
-            </div>
-            <p className="text-3xl font-bold text-purple-600">9.3 milhões</p>
-            <p className="text-gray-600">toneladas de carne anuais</p>
+      {/* Value Proposition Section */}
+      <div className="container mx-auto px-4 py-16">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-bold text-gray-800 mb-6">Por que escolher a Culture Sheep?</h2>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            Descubra como nossa abordagem inovadora está revolucionando a ovinocultura brasileira, oferecendo soluções que realmente funcionam para pequenos produtores.
+          </p>
+        </div>
+
+        {/* Mission, Vision, Values Section */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+          <div className="bg-white rounded-xl shadow-lg p-8 text-center hover:shadow-xl transition-shadow">
+            <Target className="h-12 w-12 text-green-600 mx-auto mb-4" />
+            <h3 className="text-xl font-bold text-gray-800 mb-4">Nossa Missão</h3>
+            <p className="text-gray-600 leading-relaxed">
+              Revolucionar a ovinocultura brasileira, proporcionando soluções nutricionais inteligentes e personalizadas que transformam resultados.
+            </p>
           </div>
 
-          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-pink-500">
-            <div className="flex items-center mb-4">
-              <MapPin className="h-8 w-8 text-pink-600 mr-3" />
-              <h3 className="text-lg font-semibold text-gray-800">Principais Regiões</h3>
-            </div>
-            <ul className="space-y-1 text-gray-700">
-              <li>• China</li>
-              <li>• Austrália</li>
-              <li>• Nova Zelândia</li>
-              <li>• Reino Unido</li>
-              <li>• Turquia</li>
-            </ul>
+          <div className="bg-white rounded-xl shadow-lg p-8 text-center hover:shadow-xl transition-shadow">
+            <Award className="h-12 w-12 text-emerald-600 mx-auto mb-4" />
+            <h3 className="text-xl font-bold text-gray-800 mb-4">Nossa Visão</h3>
+            <p className="text-gray-600 leading-relaxed">
+              Ser a plataforma líder em nutrição ovina inteligente da América Latina, transformando fazendas em operações de alta performance.
+            </p>
           </div>
 
-          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-rose-500">
-            <div className="flex items-center mb-4">
-              <Leaf className="h-8 w-8 text-rose-600 mr-3" />
-              <h3 className="text-lg font-semibold text-gray-800">Crescimento Anual</h3>
-            </div>
-            <p className="text-3xl font-bold text-rose-600">1.9%</p>
-            <p className="text-gray-600">taxa de crescimento</p>
+          <div className="bg-white rounded-xl shadow-lg p-8 text-center hover:shadow-xl transition-shadow">
+            <Leaf className="h-12 w-12 text-teal-600 mx-auto mb-4" />
+            <h3 className="text-xl font-bold text-gray-800 mb-4">Nossos Valores</h3>
+            <p className="text-gray-600 leading-relaxed">
+              Inovação, tecnologia, personalização, bem-estar animal, confiança e transparência em cada solução que oferecemos.
+            </p>
           </div>
         </div>
 
-        {/* 3D Model Section */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-12">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">Modelo 3D Interativo</h2>
-          <div className="h-96 bg-gray-100 rounded-lg overflow-hidden">
-            <ThreeDModelView sectorId="sheep" />
+        {/* Services Section */}
+        <div className="bg-gradient-to-r from-green-100 to-emerald-100 rounded-2xl p-10 mb-16">
+          <h2 className="text-3xl font-bold text-center text-gray-800 mb-10">Nossas Soluções Exclusivas</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div className="bg-white rounded-xl p-8 shadow-md hover:shadow-lg transition-shadow">
+              <div className="flex items-start space-x-4">
+                <Users className="h-10 w-10 text-green-600 mt-1" />
+                <div>
+                  <h3 className="text-2xl font-semibold text-gray-800 mb-3">Consultorias Personalizadas</h3>
+                  <p className="text-gray-600 leading-relaxed">
+                    Desenvolvemos planos nutricionais únicos para cada rebanho, considerando suas características específicas e objetivos de produção. Nossa abordagem personalizada garante resultados superiores e otimização de custos.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-white rounded-xl p-8 shadow-md hover:shadow-lg transition-shadow">
+              <div className="flex items-start space-x-4">
+                <Leaf className="h-10 w-10 text-emerald-600 mt-1" />
+                <div>
+                  <h3 className="text-2xl font-semibold text-gray-800 mb-3">Soluções Sustentáveis</h3>
+                  <p className="text-gray-600 leading-relaxed">
+                    Nossos kits de nutrição utilizam insumos e embalagens sustentáveis, com fornecedores responsáveis e formulações puras. Construa uma ovinocultura mais verde e lucrativa.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Market Opportunity */}
+        <div className="bg-white rounded-2xl shadow-lg p-10 mb-16">
+          <h2 className="text-3xl font-bold text-center text-gray-800 mb-10">Uma Oportunidade de Mercado Única</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center p-6 border-l-4 border-green-500">
+              <TrendingUp className="h-12 w-12 text-green-600 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-gray-800 mb-2">Mercado em Expansão</h3>
+              <p className="text-gray-600 mb-2">Centro-Oeste em destaque:</p>
+              <p className="text-3xl font-bold text-green-600">Crescimento</p>
+              <p className="text-gray-600">acelerado nos últimos anos</p>
+            </div>
+
+            <div className="text-center p-6 border-l-4 border-emerald-500">
+              <MapPin className="h-12 w-12 text-emerald-600 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-gray-800 mb-2">Regiões Estratégicas</h3>
+              <div className="space-y-2 text-gray-700">
+                <p>🏆 Nordeste (maior rebanho)</p>
+                <p>🏆 Sul (tradição)</p>
+                <p>🚀 Centro-Oeste (crescimento)</p>
+                <p>🎯 Mato Grosso (nosso foco)</p>
+              </div>
+            </div>
+
+            <div className="text-center p-6 border-l-4 border-teal-500">
+              <Users className="h-12 w-12 text-teal-600 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-gray-800 mb-2">Nosso Público-Alvo</h3>
+              <p className="text-3xl font-bold text-teal-600">Pequenos</p>
+              <p className="text-gray-600 mb-2">produtores rurais</p>
+              <p className="text-sm text-gray-500">com orientação técnica especializada</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Problems and Solutions */}
+        <div className="bg-gradient-to-r from-red-50 to-orange-50 rounded-2xl p-10 mb-16">
+          <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
+            Os Desafios que Resolvemos
+          </h2>
+          <p className="text-xl text-center text-gray-600 mb-10 max-w-3xl mx-auto">
+            Identificamos os principais obstáculos que impedem a ovinocultura de atingir seu potencial máximo e desenvolvemos soluções específicas para cada um deles.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="bg-white rounded-xl p-8 text-center shadow-md hover:shadow-lg transition-shadow">
+              <div className="bg-red-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
+                <span className="text-red-600 font-bold text-2xl">1</span>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-800 mb-4">Manejo Nutricional Inadequado</h3>
+              <p className="text-gray-600 leading-relaxed">
+                A falta de conhecimento técnico especializado resulta em nutrição inadequada, afetando diretamente a produtividade e saúde do rebanho.
+              </p>
+            </div>
+            <div className="bg-white rounded-xl p-8 text-center shadow-md hover:shadow-lg transition-shadow">
+              <div className="bg-orange-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
+                <span className="text-orange-600 font-bold text-2xl">2</span>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-800 mb-4">Alimentação Genérica</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Gastos desnecessários com alimentação não personalizada levam a desperdícios financeiros e resultados abaixo do esperado.
+              </p>
+            </div>
+            <div className="bg-white rounded-xl p-8 text-center shadow-md hover:shadow-lg transition-shadow">
+              <div className="bg-yellow-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
+                <span className="text-yellow-600 font-bold text-2xl">3</span>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-800 mb-4">Custos Elevados</h3>
+              <p className="text-gray-600 leading-relaxed">
+                A dificuldade de acesso a soluções adequadas para pequenos produtores cria barreiras para o crescimento sustentável.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Call to Action Section */}
+        <div className="bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl shadow-xl p-12 text-center text-white">
+          <h2 className="text-4xl font-bold mb-6">Pronto para Revolucionar Sua Ovinocultura?</h2>
+          <p className="text-xl mb-8 leading-relaxed max-w-4xl mx-auto">
+            Não perca mais tempo com soluções genéricas que não atendem às necessidades específicas do seu rebanho.
+            Descubra como a Culture Sheep pode transformar sua produção, otimizar custos e garantir resultados excepcionais.
+            O futuro da sua ovinocultura começa agora!
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              to="/contato"
+              className="inline-flex items-center bg-white text-green-600 px-10 py-4 rounded-lg hover:bg-gray-100 transition-colors font-bold text-lg shadow-lg"
+            >
+              Quero Conhecer as Soluções
+            </Link>
+            <button
+              onClick={() => setShowPresentation(true)}
+              className="inline-flex items-center bg-transparent border-2 border-white text-white px-10 py-4 rounded-lg hover:bg-white hover:text-green-600 transition-colors font-bold text-lg"
+            >
+              <Presentation className="h-5 w-5 mr-2" />
+              Ver Apresentação Completa
+            </button>
           </div>
         </div>
 
         {/* Navigation */}
-        <div className="text-center">
+        <div className="text-center mt-12">
           <Link
             to="/"
-            className="inline-flex items-center bg-purple-600 text-white px-8 py-3 rounded-lg hover:bg-purple-700 transition-colors font-semibold"
+            className="inline-flex items-center bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold"
           >
             Voltar ao Início
           </Link>
@@ -100,3 +222,5 @@ export const SheepPage: React.FC = () => {
     </div>
   );
 };
+
+// End of SheepPage.tsx
