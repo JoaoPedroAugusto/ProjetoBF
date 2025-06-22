@@ -1,21 +1,27 @@
 import React, { useState } from 'react'; // Import useState
 import { Link } from 'react-router-dom';
-import { Fish, TrendingUp, MapPin, Leaf, Presentation } from 'lucide-react'; // Import Presentation icon
+import { Fish, TrendingUp, MapPin, Leaf, Presentation, Monitor } from 'lucide-react'; // Import Presentation icon
 import { ThreeDModelView } from '../../components/3d/ThreeDModelView';
 import { PresentationManager } from '../../components/presentation'; // Import PresentationManager
+import { AquaponicsMonitoringDashboard } from '../../components/dashboard/AquaponicsMonitoringDashboard';
 
 export const AquaculturePage: React.FC = () => {
-  const [showPresentation, setShowPresentation] = useState(false); // State to control presentation view
+  const [showPresentation, setShowPresentation] = useState(false);
+  const [showDashboard, setShowDashboard] = useState(false);
 
-  // If showPresentation is true, render the PresentationManager
   if (showPresentation) {
     return (
       <PresentationManager
-        sectorId="aquaculture" // Use the appropriate sectorId for Aquaculture
+        sectorId="aquaculture"
         sectorName="Piscicultura"
       />
     );
   }
+
+  if (showDashboard) {
+    return <AquaponicsMonitoringDashboard onBack={() => setShowDashboard(false)} />;
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50">
       {/* Hero Section */}
@@ -34,6 +40,13 @@ export const AquaculturePage: React.FC = () => {
             >
               <Presentation className="h-5 w-5" />
               <span>Apresentação</span>
+            </button>
+            <button
+              onClick={() => setShowDashboard(true)}
+              className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-6 py-3 rounded-lg flex items-center space-x-2 transition-all duration-200 backdrop-blur-sm"
+            >
+              <Monitor className="h-5 w-5" />
+              <span>Dashboard</span>
             </button>
           </div>
 
@@ -146,4 +159,3 @@ export const AquaculturePage: React.FC = () => {
     </div>
   );
 };
-   

@@ -75,13 +75,6 @@ export const BananaPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-12">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">Modelo 3D Interativo</h2>
-          <div className="h-96 bg-gray-100 rounded-lg overflow-hidden">
-            <ThreeDModelView sectorId="banana" />
-          </div>
-        </div>
-
         <div className="text-center">
           <Link
             to="/"
