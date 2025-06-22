@@ -55,17 +55,17 @@ export const HomePage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-green-600 via-green-700 to-green-800 text-white">
+      <section className="bg-gradient-to-br from-green-600 via-green-700 to-green-800 dark:from-green-800 dark:via-green-900 dark:to-gray-900 text-white">
         <div className="max-w-7xl mx-auto px-6 py-20">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <h1 className="text-5xl font-bold mb-6 leading-tight">
                 Plataforma Inteligente para o
-                <span className="text-green-200"> Agronegócio</span>
+                <span className="text-green-200 dark:text-green-300"> Agronegócio</span>
               </h1>
-              <p className="text-xl text-green-100 mb-8 leading-relaxed">
+              <p className="text-xl text-green-100 dark:text-green-200 mb-8 leading-relaxed">
                 Transforme sua operação agrícola com tecnologia de ponta. 
                 Monitore, analise e otimize todos os seus setores produtivos 
                 em uma única plataforma integrada.
@@ -73,30 +73,30 @@ export const HomePage = () => {
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link
                   to="/dashboard"
-                  className="bg-white text-green-700 px-8 py-4 rounded-lg font-semibold hover:bg-green-50 transition-colors flex items-center justify-center group"
+                  className="bg-white text-green-700 dark:bg-gray-100 dark:text-green-800 px-8 py-4 rounded-lg font-semibold hover:bg-green-50 dark:hover:bg-gray-200 transition-colors flex items-center justify-center group"
                 >
                   Acessar Dashboard
                   <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
                 <Link
                   to="/analytics"
-                  className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-green-700 transition-colors flex items-center justify-center"
+                  className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-green-700 dark:hover:bg-gray-100 dark:hover:text-green-800 transition-colors flex items-center justify-center"
                 >
                   Ver Analytics
                 </Link>
               </div>
             </div>
             
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
+            <div className="bg-white/10 dark:bg-gray-800/30 backdrop-blur-sm rounded-2xl p-8 border border-white/20 dark:border-gray-600/30">
               <h3 className="text-2xl font-bold mb-6 text-center">Visão Geral da Plataforma</h3>
               <div className="grid grid-cols-2 gap-6">
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-green-200">{stats.sectorsCount}</div>
-                  <div className="text-sm text-green-100">Setores Ativos</div>
+                  <div className="text-3xl font-bold text-green-200 dark:text-green-300">{stats.sectorsCount}</div>
+                  <div className="text-sm text-green-100 dark:text-green-200">Setores Ativos</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-green-200">{stats.totalWorkers}</div>
-                  <div className="text-sm text-green-100">Colaboradores</div>
+                  <div className="text-3xl font-bold text-green-200 dark:text-green-300">{stats.totalWorkers}</div>
+                  <div className="text-sm text-green-100 dark:text-green-200">Colaboradores</div>
                 </div>
                 <div className="text-center">
                   <div className="text-3xl font-bold text-green-200">{(stats.totalArea / 1000).toFixed(1)}k</div>
@@ -116,10 +116,10 @@ export const HomePage = () => {
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
               Recursos Avançados para Sua Operação
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
               Nossa plataforma oferece ferramentas completas para monitoramento, 
               análise e otimização de todos os aspectos do seu agronegócio.
             </p>
@@ -127,12 +127,12 @@ export const HomePage = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => (
-              <div key={index} className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 hover:shadow-lg transition-shadow group">
-                <div className={`w-16 h-16 bg-${feature.color}-100 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
-                  <feature.icon className={`h-8 w-8 text-${feature.color}-600`} />
+              <div key={index} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-8 hover:shadow-lg dark:hover:shadow-gray-900/20 transition-shadow group">
+                <div className={`w-16 h-16 bg-${feature.color}-100 dark:bg-${feature.color}-900/20 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
+                  <feature.icon className={`h-8 w-8 text-${feature.color}-600 dark:text-${feature.color}-400`} />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-4">{feature.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{feature.description}</p>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">{feature.title}</h3>
+                <p className="text-gray-600 dark:text-gray-400 leading-relaxed">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -140,14 +140,14 @@ export const HomePage = () => {
       </section>
 
       {/* Stats Section */}
-      <section className="bg-white py-20">
+      <section className="bg-white dark:bg-gray-800 py-20">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-4xl font-bold text-gray-900 mb-6">
+              <h2 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-6">
                 Resultados Comprovados
               </h2>
-              <p className="text-xl text-gray-600 mb-8">
+              <p className="text-xl text-gray-600 dark:text-gray-400 mb-8">
                 Empresas que utilizam nossa plataforma obtêm resultados 
                 excepcionais em produtividade, sustentabilidade e rentabilidade.
               </p>
@@ -155,36 +155,36 @@ export const HomePage = () => {
               <div className="space-y-4">
                 {benefits.map((benefit, index) => (
                   <div key={index} className="flex items-center space-x-3">
-                    <CheckCircle className="h-6 w-6 text-green-600 flex-shrink-0" />
-                    <span className="text-gray-700 font-medium">{benefit}</span>
+                    <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400 flex-shrink-0" />
+                    <span className="text-gray-700 dark:text-gray-300 font-medium">{benefit}</span>
                   </div>
                 ))}
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-6">
-              <div className="bg-gradient-to-br from-green-50 to-green-100 p-8 rounded-xl border border-green-200">
-                <TrendingUp className="h-12 w-12 text-green-600 mb-4" />
-                <div className="text-3xl font-bold text-green-900 mb-2">R$ {(stats.totalRevenue / 1000000).toFixed(0)}M</div>
-                <div className="text-green-700 font-medium">Receita Total Anual</div>
+              <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 p-8 rounded-xl border border-green-200 dark:border-green-700">
+                <TrendingUp className="h-12 w-12 text-green-600 dark:text-green-400 mb-4" />
+                <div className="text-3xl font-bold text-green-900 dark:text-green-100 mb-2">R$ {(stats.totalRevenue / 1000000).toFixed(0)}M</div>
+                <div className="text-green-700 dark:text-green-300 font-medium">Receita Total Anual</div>
               </div>
 
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-8 rounded-xl border border-blue-200">
-                <BarChart3 className="h-12 w-12 text-blue-600 mb-4" />
-                <div className="text-3xl font-bold text-blue-900 mb-2">{(stats.totalProduction / 1000).toFixed(0)}k</div>
-                <div className="text-blue-700 font-medium">Toneladas Produzidas</div>
+              <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 p-8 rounded-xl border border-blue-200 dark:border-blue-700">
+                <BarChart3 className="h-12 w-12 text-blue-600 dark:text-blue-400 mb-4" />
+                <div className="text-3xl font-bold text-blue-900 dark:text-blue-100 mb-2">{(stats.totalProduction / 1000).toFixed(0)}k</div>
+                <div className="text-blue-700 dark:text-blue-300 font-medium">Toneladas Produzidas</div>
               </div>
 
-              <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-8 rounded-xl border border-purple-200">
-                <Award className="h-12 w-12 text-purple-600 mb-4" />
-                <div className="text-3xl font-bold text-purple-900 mb-2">{stats.avgSustainability}</div>
-                <div className="text-purple-700 font-medium">Score Sustentabilidade</div>
+              <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 p-8 rounded-xl border border-purple-200 dark:border-purple-700">
+                <Award className="h-12 w-12 text-purple-600 dark:text-purple-400 mb-4" />
+                <div className="text-3xl font-bold text-purple-900 dark:text-purple-100 mb-2">{stats.avgSustainability}</div>
+                <div className="text-purple-700 dark:text-purple-300 font-medium">Score Sustentabilidade</div>
               </div>
 
-              <div className="bg-gradient-to-br from-amber-50 to-amber-100 p-8 rounded-xl border border-amber-200">
-                <Leaf className="h-12 w-12 text-amber-600 mb-4" />
-                <div className="text-3xl font-bold text-amber-900 mb-2">{(stats.totalArea / 1000).toFixed(1)}k</div>
-                <div className="text-amber-700 font-medium">Hectares Monitorados</div>
+              <div className="bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-800/20 p-8 rounded-xl border border-amber-200 dark:border-amber-700">
+                <Leaf className="h-12 w-12 text-amber-600 dark:text-amber-400 mb-4" />
+                <div className="text-3xl font-bold text-amber-900 dark:text-amber-100 mb-2">{(stats.totalArea / 1000).toFixed(1)}k</div>
+                <div className="text-amber-700 dark:text-amber-300 font-medium">Hectares Monitorados</div>
               </div>
             </div>
           </div>
@@ -192,7 +192,7 @@ export const HomePage = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="bg-gradient-to-r from-green-600 to-green-700 py-20">
+      <section className="bg-gradient-to-r from-green-600 to-green-700 dark:from-green-800 dark:to-green-900 py-20">
         <div className="max-w-4xl mx-auto text-center px-6">
           <h2 className="text-4xl font-bold text-white mb-6">
             Pronto para Transformar Seu Agronegócio?

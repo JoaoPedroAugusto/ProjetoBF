@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Presentation, Play, Edit, Settings, Eye } from 'lucide-react';
+import { Presentation, Play, Edit, Settings, Eye, ArrowLeft } from 'lucide-react';
 import { SlideViewer } from './SlideViewer';
 import { SlideEditor } from './SlideEditor';
 import { Slide, SlidePresentation, PresentationSettings } from '../../types/presentation';
@@ -231,7 +231,7 @@ export const PresentationManager: React.FC<PresentationManagerProps> = ({
       <div className="flex items-center justify-center p-8">
         <div className="text-center">
           <Presentation className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-          <p className="text-gray-600">Carregando apresentação...</p>
+          <p className="text-gray-600 dark:text-gray-400">Carregando apresentação...</p>
         </div>
       </div>
     );
@@ -252,23 +252,36 @@ export const PresentationManager: React.FC<PresentationManagerProps> = ({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-white rounded-lg shadow-lg p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
         <div className="flex justify-between items-start">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">
-              {currentPresentation.title}
-            </h1>
-            <p className="text-gray-600 mb-4">
-              {currentPresentation.description}
-            </p>
-            <div className="flex items-center space-x-4 text-sm text-gray-500">
-              <span>{currentPresentation.slides.length} slides</span>
-              <span>•</span>
-              <span>Última atualização: {currentPresentation.updatedAt.toLocaleDateString('pt-BR')}</span>
-              <span>•</span>
-              <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium">
-                Pressione Shift + P para apresentar
-              </span>
+          <div className="flex items-start space-x-4">
+            {/* Botão de voltar */}
+            {onClose && (
+              <button
+                onClick={onClose}
+                className="bg-gray-200 hover:bg-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+              >
+                <ArrowLeft className="h-5 w-5" />
+                <span>Voltar</span>
+              </button>
+            )}
+            
+            <div>
+              <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-200 mb-2">
+                {currentPresentation.title}
+              </h1>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">
+                {currentPresentation.description}
+              </p>
+              <div className="flex items-center space-x-4 text-sm text-gray-500">
+                <span>{currentPresentation.slides.length} slides</span>
+                <span>•</span>
+                <span>Última atualização: {currentPresentation.updatedAt.toLocaleDateString('pt-BR')}</span>
+                <span>•</span>
+                <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium">
+                  Pressione Shift + P para apresentar
+                </span>
+              </div>
             </div>
           </div>
           
@@ -309,8 +322,8 @@ export const PresentationManager: React.FC<PresentationManagerProps> = ({
 
       {/* Preview dos Slides */}
       {!isEditing && (
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h2 className="text-xl font-bold text-gray-800 mb-4">Preview dos Slides</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+          <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4">Preview dos Slides</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {currentPresentation.slides.map((slide, index) => (
               <div 
@@ -407,8 +420,8 @@ export const PresentationManager: React.FC<PresentationManagerProps> = ({
       )}
 
       {/* Configurações */}
-      <div className="bg-white rounded-lg shadow-lg p-6">
-        <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+        <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
           <Settings className="h-5 w-5 mr-2" />
           Configurações da Apresentação
         </h2>

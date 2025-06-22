@@ -779,9 +779,9 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
   const selectedElement = editingSlide?.mediaElements?.find(el => el.id === selectedMediaElement);
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">Editor de Slides</h2>
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200">Editor de Slides</h2>
         <div className="flex space-x-3">
           <button
             onClick={() => setShowMediaLibrary(true)}
@@ -807,8 +807,8 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
       <div className="mb-4 bg-gray-50 p-3 rounded-lg">
         <div className="flex justify-between items-center mb-2">
           <div className="flex items-center space-x-2">
-            <HardDrive className="h-4 w-4 text-gray-600" />
-            <span className="text-sm text-gray-600">Uso do Armazenamento</span>
+            <HardDrive className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+            <span className="text-sm text-gray-600 dark:text-gray-400">Uso do Armazenamento</span>
             {storageStats.percentage > 90 && (
               <AlertTriangle className="h-4 w-4 text-red-500" />
             )}
@@ -852,14 +852,14 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
       {/* Lista de Slides */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
         {slides.map((slide, index) => (
-          <div key={slide.id} className="border rounded-lg p-4 bg-gray-50 hover:bg-gray-100 transition-colors">
+          <div key={slide.id} className="border rounded-lg p-4 bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 transition-colors">
             <div className="flex justify-between items-start mb-2">
               <span className="text-sm text-gray-500 font-medium">Slide {index + 1}</span>
               <div className="flex space-x-1">
                 <button
                   onClick={() => handleMoveSlide(slide.id, 'up')}
                   disabled={index === 0}
-                  className="text-gray-400 hover:text-gray-600 disabled:opacity-30 p-1"
+                  className="text-gray-400 hover:text-gray-600 dark:text-gray-400 disabled:opacity-30 p-1"
                   title="Mover para cima"
                 >
                   ↑
@@ -867,7 +867,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                 <button
                   onClick={() => handleMoveSlide(slide.id, 'down')}
                   disabled={index === slides.length - 1}
-                  className="text-gray-400 hover:text-gray-600 disabled:opacity-30 p-1"
+                  className="text-gray-400 hover:text-gray-600 dark:text-gray-400 disabled:opacity-30 p-1"
                   title="Mover para baixo"
                 >
                   ↓
@@ -875,8 +875,8 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
               </div>
             </div>
             
-            <h3 className="font-semibold text-gray-800 mb-2 truncate">{slide.title}</h3>
-            <p className="text-sm text-gray-600 mb-3 line-clamp-2">{slide.content}</p>
+            <h3 className="font-semibold text-gray-800 dark:text-gray-200 mb-2 truncate">{slide.title}</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">{slide.content}</p>
             
             {/* Preview das mídias */}
             {slide.mediaElements && slide.mediaElements.length > 0 && (
@@ -907,7 +907,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                   </div>
                 ))}
                 {slide.mediaElements.length > 4 && (
-                  <div className="w-full h-12 bg-gray-100 rounded flex items-center justify-center text-xs text-gray-500">
+                  <div className="w-full h-12 bg-gray-100 dark:bg-gray-700 rounded flex items-center justify-center text-xs text-gray-500">
                     +{slide.mediaElements.length - 4}
                   </div>
                 )}
@@ -937,13 +937,13 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
       {/* Media Library Modal */}
       {showMediaLibrary && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[80vh] overflow-y-auto">
+          <div className="bg-white dark:bg-gray-800 rounded-lg max-w-4xl w-full max-h-[80vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-xl font-bold">Biblioteca de Mídia</h3>
                 <button
                   onClick={() => setShowMediaLibrary(false)}
-                  className="text-gray-400 hover:text-gray-600"
+                  className="text-gray-400 hover:text-gray-600 dark:text-gray-400"
                 >
                   <X className="h-6 w-6" />
                 </button>
@@ -960,7 +960,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
               {mediaLibrary.length === 0 ? (
                 <div className="text-center py-8">
                   <Database className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-600">Nenhuma mídia salva ainda</p>
+                  <p className="text-gray-600 dark:text-gray-400">Nenhuma mídia salva ainda</p>
                   <p className="text-sm text-gray-500">Faça upload de imagens ou vídeos para começar</p>
                 </div>
               ) : (
@@ -969,7 +969,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                     .sort((a, b) => b.lastUsed.getTime() - a.lastUsed.getTime())
                     .map((item) => (
                     <div key={item.id} className="border rounded-lg p-3 hover:border-blue-400 transition-colors">
-                      <div className="aspect-video bg-gray-100 rounded mb-2 overflow-hidden">
+                      <div className="aspect-video bg-gray-100 dark:bg-gray-700 rounded mb-2 overflow-hidden">
                         {item.type === 'image' ? (
                           <img 
                             src={item.url} 
@@ -1022,7 +1022,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
       {/* Modal de Edição */}
       {editingSlide && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-7xl w-full max-h-[95vh] overflow-y-auto">
+          <div className="bg-white dark:bg-gray-800 rounded-lg max-w-7xl w-full max-h-[95vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-xl font-bold">
@@ -1034,7 +1034,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                     setIsCreating(false);
                     setSelectedMediaElement(null);
                   }}
-                  className="text-gray-400 hover:text-gray-600 p-2"
+                  className="text-gray-400 hover:text-gray-600 dark:text-gray-400 p-2"
                 >
                   <X className="h-6 w-6" />
                 </button>
@@ -1067,7 +1067,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                       </button>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <label className="text-xs text-gray-600">Grid:</label>
+                      <label className="text-xs text-gray-600 dark:text-gray-400">Grid:</label>
                       <select
                         value={gridSize}
                         onChange={(e) => setGridSize(parseInt(e.target.value))}
@@ -1315,7 +1315,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                                     className={`p-1 rounded ${
                                       videoPreviewStates.get(element.id) 
                                         ? 'text-green-600 hover:text-green-800' 
-                                        : 'text-gray-400 hover:text-gray-600'
+                                        : 'text-gray-400 hover:text-gray-600 dark:text-gray-400'
                                     }`}
                                     title="Play/Pause Preview"
                                   >
@@ -1334,7 +1334,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                                   className={`p-1 ${
                                     element.isFullscreen
                                       ? 'text-blue-600 hover:text-blue-800'
-                                      : 'text-gray-400 hover:text-gray-600'
+                                      : 'text-gray-400 hover:text-gray-600 dark:text-gray-400'
                                   }`}
                                   title="Tela Cheia"
                                 >
@@ -1352,7 +1352,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                                   className={`p-1 ${
                                     lockedElements.has(element.id)
                                       ? 'text-red-600 hover:text-red-800'
-                                      : 'text-gray-400 hover:text-gray-600'
+                                      : 'text-gray-400 hover:text-gray-600 dark:text-gray-400'
                                   }`}
                                   title="Bloquear/Desbloquear"
                                 >
@@ -1462,7 +1462,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                         <button
                           onClick={() => bringToFront(selectedElement.id)}
                           disabled={lockedElements.has(selectedElement.id)}
-                          className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-2 py-1 rounded text-xs flex items-center justify-center space-x-1 disabled:opacity-50"
+                          className="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 text-gray-700 px-2 py-1 rounded text-xs flex items-center justify-center space-x-1 disabled:opacity-50"
                         >
                           <Layers className="h-3 w-3" />
                           <span>Frente</span>
@@ -1470,7 +1470,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                         <button
                           onClick={() => sendToBack(selectedElement.id)}
                           disabled={lockedElements.has(selectedElement.id)}
-                          className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-2 py-1 rounded text-xs flex items-center justify-center space-x-1 disabled:opacity-50"
+                          className="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 text-gray-700 px-2 py-1 rounded text-xs flex items-center justify-center space-x-1 disabled:opacity-50"
                         >
                           <Layers className="h-3 w-3" />
                           <span>Trás</span>
@@ -1479,7 +1479,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
 
                       {/* Controles de movimento */}
                       <div>
-                        <label className="block text-xs text-gray-600 mb-2">Movimento ({gridSize}px)</label>
+                        <label className="block text-xs text-gray-600 dark:text-gray-400 mb-2">Movimento ({gridSize}px)</label>
                         <div className="grid grid-cols-3 gap-1">
                           <div></div>
                           <button
@@ -1521,7 +1521,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
 
                       {/* Controles de alinhamento */}
                       <div>
-                        <label className="block text-xs text-gray-600 mb-2">Alinhamento</label>
+                        <label className="block text-xs text-gray-600 dark:text-gray-400 mb-2">Alinhamento</label>
                         <div className="grid grid-cols-3 gap-1">
                           <button
                             onClick={() => alignElement(selectedElement.id, 'left')}
@@ -1571,7 +1571,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                       {/* Controles de posição e tamanho precisos */}
                       <div className="grid grid-cols-2 gap-2">
                         <div>
-                          <label className="block text-xs text-gray-600 mb-1">Largura</label>
+                          <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">Largura</label>
                           <div className="flex">
                             <input
                               type="number"
@@ -1599,7 +1599,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                           </div>
                         </div>
                         <div>
-                          <label className="block text-xs text-gray-600 mb-1">Altura</label>
+                          <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">Altura</label>
                           <div className="flex">
                             <input
                               type="number"
@@ -1627,7 +1627,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                           </div>
                         </div>
                         <div>
-                          <label className="block text-xs text-gray-600 mb-1">Posição X</label>
+                          <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">Posição X</label>
                           <div className="flex">
                             <input
                               type="number"
@@ -1655,7 +1655,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                           </div>
                         </div>
                         <div>
-                          <label className="block text-xs text-gray-600 mb-1">Posição Y</label>
+                          <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">Posição Y</label>
                           <div className="flex">
                             <input
                               type="number"
@@ -1687,7 +1687,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                       {/* Controles de estilo */}
                       <div className="space-y-3">
                         <div>
-                          <label className="block text-xs text-gray-600 mb-1">
+                          <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">
                             Opacidade: {Math.round((selectedElement.opacity || 1) * 100)}%
                           </label>
                           <input
@@ -1704,7 +1704,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                           />
                         </div>
                         <div>
-                          <label className="block text-xs text-gray-600 mb-1">
+                          <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">
                             Rotação: {selectedElement.rotation || 0}°
                           </label>
                           <div className="flex items-center space-x-2">
@@ -1740,7 +1740,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                           </div>
                         </div>
                         <div>
-                          <label className="block text-xs text-gray-600 mb-1">
+                          <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">
                             Borda: {selectedElement.borderRadius || 0}px
                           </label>
                           <input
@@ -2023,7 +2023,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
                     setIsCreating(false);
                     setSelectedMediaElement(null);
                   }}
-                  className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                  className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:text-gray-200 transition-colors"
                 >
                   Cancelar
                 </button>

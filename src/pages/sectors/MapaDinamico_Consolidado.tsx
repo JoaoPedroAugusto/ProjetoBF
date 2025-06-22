@@ -160,24 +160,24 @@ interface InfoCardProps {
 }
 
 const InfoCard: React.FC<InfoCardProps> = ({ title, value, icon, unit, color = 'text-blue-600' }) => (
-  <div className="bg-white p-4 rounded-lg shadow-sm flex items-center space-x-3">
+  <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm flex items-center space-x-3">
     <div className={`p-2 rounded-full bg-opacity-20 ${color}`}>
       {icon}
     </div>
     <div>
       <p className="text-sm text-gray-500">{title}</p>
-      <p className="text-lg font-semibold text-gray-800">{value}{unit && <span className="text-sm font-normal"> {unit}</span>}</p>
+      <p className="text-lg font-semibold text-gray-800 dark:text-gray-200">{value}{unit && <span className="text-sm font-normal"> {unit}</span>}</p>
     </div>
   </div>
 );
 
 const InfoPanel: React.FC = () => {
   return (
-    <div className="p-4 text-gray-600">
+    <div className="p-4 text-gray-600 dark:text-gray-400">
       <div className="flex items-center justify-center h-full text-center">
         <div>
           <Info className="h-12 w-12 text-blue-400 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-gray-700 mb-2">Selecione uma Região</h3>
+          <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">Selecione uma Região</h3>
           <p className="text-gray-500">Clique em uma das regiões no mapa 3D para ver detalhes sobre o acesso à água e outras informações.</p>
         </div>
       </div>
@@ -187,28 +187,28 @@ const InfoPanel: React.FC = () => {
 
 const MapLegend: React.FC = () => {
   return (
-    <div className="bg-white/90 backdrop-blur-sm p-3 rounded-lg shadow-md border border-gray-200">
-      <h4 className="text-sm font-semibold text-gray-800 mb-2">Acesso à Água</h4>
+    <div className="bg-white dark:bg-gray-800/90 backdrop-blur-sm p-3 rounded-lg shadow-md border border-gray-200">
+      <h4 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">Acesso à Água</h4>
       <div className="space-y-1">
         <div className="flex items-center">
           <span className="block w-4 h-4 rounded-full bg-green-500 mr-2"></span>
-          <span className="text-xs text-gray-700">Ótimo (80-100%)</span>
+          <span className="text-xs text-gray-700 dark:text-gray-300">Ótimo (80-100%)</span>
         </div>
         <div className="flex items-center">
           <span className="block w-4 h-4 rounded-full bg-blue-500 mr-2"></span>
-          <span className="text-xs text-gray-700">Bom (60-79%)</span>
+          <span className="text-xs text-gray-700 dark:text-gray-300">Bom (60-79%)</span>
         </div>
         <div className="flex items-center">
           <span className="block w-4 h-4 rounded-full bg-yellow-500 mr-2"></span>
-          <span className="text-xs text-gray-700">Moderado (40-59%)</span>
+          <span className="text-xs text-gray-700 dark:text-gray-300">Moderado (40-59%)</span>
         </div>
         <div className="flex items-center">
           <span className="block w-4 h-4 rounded-full bg-orange-500 mr-2"></span>
-          <span className="text-xs text-gray-700">Deficiente (20-39%)</span>
+          <span className="text-xs text-gray-700 dark:text-gray-300">Deficiente (20-39%)</span>
         </div>
         <div className="flex items-center">
           <span className="block w-4 h-4 rounded-full bg-red-500 mr-2"></span>
-          <span className="text-xs text-gray-700">Crítico (0-19%)</span>
+          <span className="text-xs text-gray-700 dark:text-gray-300">Crítico (0-19%)</span>
         </div>
       </div>
     </div>
@@ -241,7 +241,7 @@ const RegionDetail: React.FC<RegionDetailProps> = ({ region }) => {
         <div className="bg-blue-50 p-3 rounded-lg flex items-center space-x-3">
           <Droplets className="h-6 w-6 text-blue-600" />
           <div>
-            <p className="text-sm text-gray-600">Acesso à Água</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Acesso à Água</p>
             <p className={`text-lg font-semibold ${waterStatus.color}`}>{waterAccessLevel}% ({waterStatus.text})</p>
           </div>
         </div>
@@ -249,7 +249,7 @@ const RegionDetail: React.FC<RegionDetailProps> = ({ region }) => {
         <div className="bg-green-50 p-3 rounded-lg flex items-center space-x-3">
           <CloudRain className="h-6 w-6 text-green-600" />
           <div>
-            <p className="text-sm text-gray-600">Precipitação (últimas 24h)</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Precipitação (últimas 24h)</p>
             <p className="text-lg font-semibold text-green-800">{precipitation} mm</p>
           </div>
         </div>
@@ -257,7 +257,7 @@ const RegionDetail: React.FC<RegionDetailProps> = ({ region }) => {
         <div className="bg-red-50 p-3 rounded-lg flex items-center space-x-3">
           <Thermometer className="h-6 w-6 text-red-600" />
           <div>
-            <p className="text-sm text-gray-600">Temperatura Média</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Temperatura Média</p>
             <p className="text-lg font-semibold text-red-800">{temperature}°C</p>
           </div>
         </div>
@@ -265,7 +265,7 @@ const RegionDetail: React.FC<RegionDetailProps> = ({ region }) => {
         <div className="bg-yellow-50 p-3 rounded-lg flex items-center space-x-3">
           <Sprout className="h-6 w-6 text-yellow-600" />
           <div>
-            <p className="text-sm text-gray-600">Umidade do Solo</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Umidade do Solo</p>
             <p className="text-lg font-semibold text-yellow-800">{soilMoisture}%</p>
           </div>
         </div>
@@ -283,14 +283,14 @@ const SolutionRecommendations: React.FC = () => {
   return (
     <div className="space-y-6">
       <h3 className="text-2xl font-bold text-gray-900">Recomendações de Soluções</h3>
-      <p className="text-gray-600">Com base nos dados, aqui estão algumas recomendações para otimizar o acesso à água e a produtividade:</p>
+      <p className="text-gray-600 dark:text-gray-400">Com base nos dados, aqui estão algumas recomendações para otimizar o acesso à água e a produtividade:</p>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="bg-blue-50 p-4 rounded-lg shadow-sm flex items-start space-x-3">
           <Lightbulb className="h-6 w-6 text-blue-600 flex-shrink-0" />
           <div>
             <h4 className="text-lg font-semibold text-blue-800">Monitoramento Inteligente</h4>
-            <p className="text-sm text-gray-700">Utilize sensores de solo e estações meteorológicas para monitorar em tempo real a umidade do solo e as condições climáticas.</p>
+            <p className="text-sm text-gray-700 dark:text-gray-300">Utilize sensores de solo e estações meteorológicas para monitorar em tempo real a umidade do solo e as condições climáticas.</p>
           </div>
         </div>
 
@@ -298,7 +298,7 @@ const SolutionRecommendations: React.FC = () => {
           <Leaf className="h-6 w-6 text-green-600 flex-shrink-0" />
           <div>
             <h4 className="text-lg font-semibold text-green-800">Irrigação de Precisão</h4>
-            <p className="text-sm text-gray-700">Adote sistemas de irrigação que entregam água diretamente às raízes das plantas, minimizando o desperdício e otimizando o uso da água.</p>
+            <p className="text-sm text-gray-700 dark:text-gray-300">Adote sistemas de irrigação que entregam água diretamente às raízes das plantas, minimizando o desperdício e otimizando o uso da água.</p>
           </div>
         </div>
 
@@ -306,7 +306,7 @@ const SolutionRecommendations: React.FC = () => {
           <DollarSign className="h-6 w-6 text-yellow-600 flex-shrink-0" />
           <div>
             <h4 className="text-lg font-semibold text-yellow-800">Análise de Custo-Benefício</h4>
-            <p className="text-sm text-gray-700">Avalie o retorno sobre o investimento de novas tecnologias e práticas, garantindo que as soluções sejam economicamente viáveis.</p>
+            <p className="text-sm text-gray-700 dark:text-gray-300">Avalie o retorno sobre o investimento de novas tecnologias e práticas, garantindo que as soluções sejam economicamente viáveis.</p>
           </div>
         </div>
 
@@ -314,7 +314,7 @@ const SolutionRecommendations: React.FC = () => {
           <Target className="h-6 w-6 text-purple-600 flex-shrink-0" />
           <div>
             <h4 className="text-lg font-semibold text-purple-800">Manejo Integrado</h4>
-            <p className="text-sm text-gray-700">Combine diferentes estratégias, como rotação de culturas e uso de variedades resistentes, para melhorar a resiliência e a produtividade.</p>
+            <p className="text-sm text-gray-700 dark:text-gray-300">Combine diferentes estratégias, como rotação de culturas e uso de variedades resistentes, para melhorar a resiliência e a produtividade.</p>
           </div>
         </div>
       </div>
@@ -335,8 +335,8 @@ const WaterAccessChart: React.FC<WaterAccessChartProps> = ({ region }) => {
   ];
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow-sm">
-      <h4 className="text-lg font-semibold text-gray-800 mb-4">Dados Detalhados da Região</h4>
+    <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+      <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Dados Detalhados da Região</h4>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data} margin={{
           top: 5,
@@ -381,7 +381,7 @@ const MapaDinamico: React.FC = () => {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-xl text-gray-600">Carregando dados das regiões...</p>
+          <p className="text-xl text-gray-600 dark:text-gray-400">Carregando dados das regiões...</p>
         </div>
       </div>
     );
@@ -394,7 +394,7 @@ const MapaDinamico: React.FC = () => {
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
             Mapa Dinâmico de Acesso à Água - Algodão
           </h1>
-          <p className="text-lg text-gray-600 mb-6">
+          <p className="text-lg text-gray-600 dark:text-gray-400 mb-6">
             Visualização interativa dos dados de acesso à água nas regiões de cultivo
           </p>
           
@@ -415,8 +415,8 @@ const MapaDinamico: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Painel de informações */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">Informações da Região</h2>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">Informações da Região</h2>
               {selectedRegion ? (
                 <RegionDetail region={selectedRegion} />
               ) : (
@@ -425,7 +425,7 @@ const MapaDinamico: React.FC = () => {
             </div>
             
             {selectedRegion && (
-              <div className="bg-white rounded-lg shadow-lg p-6">
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
                 <WaterAccessChart region={selectedRegion} />
               </div>
             )}
@@ -433,12 +433,12 @@ const MapaDinamico: React.FC = () => {
 
           {/* Área do mapa */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg shadow-lg p-6 relative">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 relative">
               <div className="absolute top-4 right-4 z-10">
                 <MapLegend />
               </div>
               
-              <div className="h-96 bg-gray-100 rounded-lg flex items-center justify-center">
+              <div className="h-96 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center">
                 <div className="text-center text-gray-500">
                   <Map className="h-16 w-16 mx-auto mb-4" />
                   <p className="text-lg">Mapa 3D Interativo</p>
@@ -665,24 +665,24 @@ interface InfoCardProps {
 }
 
 const InfoCard: React.FC<InfoCardProps> = ({ title, value, icon, unit, color = 'text-blue-600' }) => (
-  <div className="bg-white p-4 rounded-lg shadow-sm flex items-center space-x-3">
+  <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm flex items-center space-x-3">
     <div className={`p-2 rounded-full bg-opacity-20 ${color}`}>
       {icon}
     </div>
     <div>
       <p className="text-sm text-gray-500">{title}</p>
-      <p className="text-lg font-semibold text-gray-800">{value}{unit && <span className="text-sm font-normal"> {unit}</span>}</p>
+      <p className="text-lg font-semibold text-gray-800 dark:text-gray-200">{value}{unit && <span className="text-sm font-normal"> {unit}</span>}</p>
     </div>
   </div>
 );
 
 const InfoPanel: React.FC = () => {
   return (
-    <div className="p-4 text-gray-600">
+    <div className="p-4 text-gray-600 dark:text-gray-400">
       <div className="flex items-center justify-center h-full text-center">
         <div>
           <Info className="h-12 w-12 text-blue-400 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-gray-700 mb-2">Selecione uma Região</h3>
+          <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">Selecione uma Região</h3>
           <p className="text-gray-500">Clique em uma das regiões no mapa 3D para ver detalhes sobre o acesso à água e outras informações.</p>
         </div>
       </div>
@@ -692,28 +692,28 @@ const InfoPanel: React.FC = () => {
 
 const MapLegend: React.FC = () => {
   return (
-    <div className="bg-white/90 backdrop-blur-sm p-3 rounded-lg shadow-md border border-gray-200">
-      <h4 className="text-sm font-semibold text-gray-800 mb-2">Acesso à Água</h4>
+    <div className="bg-white dark:bg-gray-800/90 backdrop-blur-sm p-3 rounded-lg shadow-md border border-gray-200">
+      <h4 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">Acesso à Água</h4>
       <div className="space-y-1">
         <div className="flex items-center">
           <span className="block w-4 h-4 rounded-full bg-green-500 mr-2"></span>
-          <span className="text-xs text-gray-700">Ótimo (80-100%)</span>
+          <span className="text-xs text-gray-700 dark:text-gray-300">Ótimo (80-100%)</span>
         </div>
         <div className="flex items-center">
           <span className="block w-4 h-4 rounded-full bg-blue-500 mr-2"></span>
-          <span className="text-xs text-gray-700">Bom (60-79%)</span>
+          <span className="text-xs text-gray-700 dark:text-gray-300">Bom (60-79%)</span>
         </div>
         <div className="flex items-center">
           <span className="block w-4 h-4 rounded-full bg-yellow-500 mr-2"></span>
-          <span className="text-xs text-gray-700">Moderado (40-59%)</span>
+          <span className="text-xs text-gray-700 dark:text-gray-300">Moderado (40-59%)</span>
         </div>
         <div className="flex items-center">
           <span className="block w-4 h-4 rounded-full bg-orange-500 mr-2"></span>
-          <span className="text-xs text-gray-700">Deficiente (20-39%)</span>
+          <span className="text-xs text-gray-700 dark:text-gray-300">Deficiente (20-39%)</span>
         </div>
         <div className="flex items-center">
           <span className="block w-4 h-4 rounded-full bg-red-500 mr-2"></span>
-          <span className="text-xs text-gray-700">Crítico (0-19%)</span>
+          <span className="text-xs text-gray-700 dark:text-gray-300">Crítico (0-19%)</span>
         </div>
       </div>
     </div>
@@ -746,7 +746,7 @@ const RegionDetail: React.FC<RegionDetailProps> = ({ region }) => {
         <div className="bg-blue-50 p-3 rounded-lg flex items-center space-x-3">
           <Droplets className="h-6 w-6 text-blue-600" />
           <div>
-            <p className="text-sm text-gray-600">Acesso à Água</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Acesso à Água</p>
             <p className={`text-lg font-semibold ${waterStatus.color}`}>{waterAccessLevel}% ({waterStatus.text})</p>
           </div>
         </div>
@@ -754,7 +754,7 @@ const RegionDetail: React.FC<RegionDetailProps> = ({ region }) => {
         <div className="bg-green-50 p-3 rounded-lg flex items-center space-x-3">
           <CloudRain className="h-6 w-6 text-green-600" />
           <div>
-            <p className="text-sm text-gray-600">Precipitação (últimas 24h)</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Precipitação (últimas 24h)</p>
             <p className="text-lg font-semibold text-green-800">{precipitation} mm</p>
           </div>
         </div>
@@ -762,7 +762,7 @@ const RegionDetail: React.FC<RegionDetailProps> = ({ region }) => {
         <div className="bg-red-50 p-3 rounded-lg flex items-center space-x-3">
           <Thermometer className="h-6 w-6 text-red-600" />
           <div>
-            <p className="text-sm text-gray-600">Temperatura Média</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Temperatura Média</p>
             <p className="text-lg font-semibold text-red-800">{temperature}°C</p>
           </div>
         </div>
@@ -770,7 +770,7 @@ const RegionDetail: React.FC<RegionDetailProps> = ({ region }) => {
         <div className="bg-yellow-50 p-3 rounded-lg flex items-center space-x-3">
           <Sprout className="h-6 w-6 text-yellow-600" />
           <div>
-            <p className="text-sm text-gray-600">Umidade do Solo</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Umidade do Solo</p>
             <p className="text-lg font-semibold text-yellow-800">{soilMoisture}%</p>
           </div>
         </div>
@@ -804,14 +804,14 @@ const SolutionRecommendations: React.FC = () => {
   return (
     <div className="space-y-6">
       <h3 className="text-2xl font-bold text-gray-900">Recomendações de Soluções</h3>
-      <p className="text-gray-600">Com base nos dados, aqui estão algumas recomendações para otimizar o acesso à água e a produtividade:</p>
+      <p className="text-gray-600 dark:text-gray-400">Com base nos dados, aqui estão algumas recomendações para otimizar o acesso à água e a produtividade:</p>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="bg-blue-50 p-4 rounded-lg shadow-sm flex items-start space-x-3">
           <Lightbulb className="h-6 w-6 text-blue-600 flex-shrink-0" />
           <div>
             <h4 className="text-lg font-semibold text-blue-800">Monitoramento Inteligente</h4>
-            <p className="text-sm text-gray-700">Utilize sensores de solo e estações meteorológicas para monitorar em tempo real a umidade do solo e as condições climáticas.</p>
+            <p className="text-sm text-gray-700 dark:text-gray-300">Utilize sensores de solo e estações meteorológicas para monitorar em tempo real a umidade do solo e as condições climáticas.</p>
           </div>
         </div>
 
@@ -819,7 +819,7 @@ const SolutionRecommendations: React.FC = () => {
           <Leaf className="h-6 w-6 text-green-600 flex-shrink-0" />
           <div>
             <h4 className="text-lg font-semibold text-green-800">Irrigação de Precisão</h4>
-            <p className="text-sm text-gray-700">Adote sistemas de irrigação que entregam água diretamente às raízes das plantas, minimizando o desperdício e otimizando o uso da água.</p>
+            <p className="text-sm text-gray-700 dark:text-gray-300">Adote sistemas de irrigação que entregam água diretamente às raízes das plantas, minimizando o desperdício e otimizando o uso da água.</p>
           </div>
         </div>
 
@@ -827,7 +827,7 @@ const SolutionRecommendations: React.FC = () => {
           <DollarSign className="h-6 w-6 text-yellow-600 flex-shrink-0" />
           <div>
             <h4 className="text-lg font-semibold text-yellow-800">Análise de Custo-Benefício</h4>
-            <p className="text-sm text-gray-700">Avalie o retorno sobre o investimento de novas tecnologias e práticas, garantindo que as soluções sejam economicamente viáveis.</p>
+            <p className="text-sm text-gray-700 dark:text-gray-300">Avalie o retorno sobre o investimento de novas tecnologias e práticas, garantindo que as soluções sejam economicamente viáveis.</p>
           </div>
         </div>
 
@@ -835,7 +835,7 @@ const SolutionRecommendations: React.FC = () => {
           <Target className="h-6 w-6 text-purple-600 flex-shrink-0" />
           <div>
             <h4 className="text-lg font-semibold text-purple-800">Manejo Integrado</h4>
-            <p className="text-sm text-gray-700">Combine diferentes estratégias, como rotação de culturas e uso de variedades resistentes, para melhorar a resiliência e a produtividade.</p>
+            <p className="text-sm text-gray-700 dark:text-gray-300">Combine diferentes estratégias, como rotação de culturas e uso de variedades resistentes, para melhorar a resiliência e a produtividade.</p>
           </div>
         </div>
       </div>
@@ -856,8 +856,8 @@ const WaterAccessChart: React.FC<WaterAccessChartProps> = ({ region }) => {
   ];
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow-sm">
-      <h4 className="text-lg font-semibold text-gray-800 mb-4">Dados Detalhados da Região</h4>
+    <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+      <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Dados Detalhados da Região</h4>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data} margin={{
           top: 5,
@@ -894,7 +894,7 @@ const MapaDinamico: React.FC = () => {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-xl text-gray-600">Carregando dados das regiões...</p>
+          <p className="text-xl text-gray-600 dark:text-gray-400">Carregando dados das regiões...</p>
         </div>
       </div>
     );
@@ -907,7 +907,7 @@ const MapaDinamico: React.FC = () => {
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
             Mapa Dinâmico de Acesso à Água - Algodão
           </h1>
-          <p className="text-lg text-gray-600 mb-6">
+          <p className="text-lg text-gray-600 dark:text-gray-400 mb-6">
             Visualização interativa dos dados de acesso à água nas regiões de cultivo
           </p>
           
@@ -928,8 +928,8 @@ const MapaDinamico: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Painel de informações */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">Informações da Região</h2>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">Informações da Região</h2>
               {selectedRegion ? (
                 <RegionDetail region={selectedRegion} />
               ) : (
@@ -938,7 +938,7 @@ const MapaDinamico: React.FC = () => {
             </div>
             
             {selectedRegion && (
-              <div className="bg-white rounded-lg shadow-lg p-6">
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
                 <WaterAccessChart region={selectedRegion} />
               </div>
             )}
@@ -946,12 +946,12 @@ const MapaDinamico: React.FC = () => {
 
           {/* Área do mapa */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg shadow-lg p-6 relative">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 relative">
               <div className="absolute top-4 right-4 z-10">
                 <MapLegend />
               </div>
               
-              <div className="h-96 bg-gray-100 rounded-lg flex items-center justify-center">
+              <div className="h-96 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center">
                 <div className="text-center text-gray-500">
                   <Map className="h-16 w-16 mx-auto mb-4" />
                   <p className="text-lg">Mapa 3D Interativo</p>

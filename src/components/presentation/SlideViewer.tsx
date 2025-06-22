@@ -320,7 +320,7 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
 
   if (!currentSlide) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gray-900 text-white">
+      <div className="flex items-center justify-center h-screen bg-gray-900 dark:bg-black text-white">
         <p>Nenhum slide encontrado</p>
       </div>
     );

@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Bell, Search, User, LogOut, Settings, ChevronDown } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useSidebar } from '../../contexts/SidebarContext';
 import { LoginModal } from '../auth/LoginModal';
 import { DataService } from '../../data/database';
 import { useNavigate } from 'react-router-dom';
 
 export const Header = () => {
   const { user, logout } = useAuth();
+  const { isCollapsed } = useSidebar();
   const navigate = useNavigate();
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -101,7 +103,9 @@ export const Header = () => {
 
   return (
     <>
-      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 fixed top-0 right-0 left-72 z-30 h-20">
+      <header className={`bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 fixed top-0 right-0 z-30 h-20 transition-all duration-300 ${
+        isCollapsed ? 'left-16' : 'left-72'
+      }`}>
         <div className="flex items-center justify-between h-full">
           {/* Left Section - Search */}
           <div className="flex items-center space-x-4 flex-1">

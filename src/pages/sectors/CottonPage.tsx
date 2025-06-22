@@ -20,10 +20,10 @@ const MapContainer3D: React.FC<{ onSelectRegion: (region: RegionData | null) => 
   return (
     <div className="relative w-full h-full bg-sky-50">
       {isLoading && (
-        <div className="absolute inset-0 bg-gray-100/80 flex items-center justify-center z-50">
+        <div className="absolute inset-0 bg-gray-100 dark:bg-gray-700/80 flex items-center justify-center z-50">
           <div className="flex flex-col items-center">
             <div className="h-10 w-10 border-4 border-t-blue-500 border-blue-200 rounded-full animate-spin"></div>
-            <p className="mt-4 text-gray-600 font-medium">Carregando mapa 3D...</p>
+            <p className="mt-4 text-gray-600 dark:text-gray-400 font-medium">Carregando mapa 3D...</p>
           </div>
         </div>
       )}
@@ -54,7 +54,7 @@ const MapContainer3D: React.FC<{ onSelectRegion: (region: RegionData | null) => 
       </div>
 
       <div className="absolute top-4 right-4 z-20 flex flex-col gap-2">
-        <div className="bg-white/90 backdrop-blur-sm p-2 rounded-lg shadow-md">
+        <div className="bg-white dark:bg-gray-800/90 backdrop-blur-sm p-2 rounded-lg shadow-md">
           <div className="space-y-1">
             <select 
               value={seasonType} 
@@ -81,22 +81,23 @@ export const CottonPage = () => {
       <PresentationManager 
         sectorId="cotton" 
         sectorName="Algodão"
+        onClose={() => setShowPresentation(false)}
       />
     );
   }
 
   return (
-    <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
+    <div className="p-6 space-y-6 bg-gray-50 dark:bg-gray-900 min-h-screen">
       {/* Header */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center">
-            <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mr-4">
-              <Leaf className="h-6 w-6 text-blue-600" />
+            <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center mr-4">
+              <Leaf className="h-6 w-6 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Algodão</h1>
-              <p className="text-gray-600 mt-1">Monitoramento e gestão da produção de algodão</p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Algodão</h1>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">Monitoramento e gestão da produção de algodão</p>
             </div>
           </div>
           <div className="flex space-x-3">
@@ -104,8 +105,8 @@ export const CottonPage = () => {
               onClick={() => setShowMap3D(!showMap3D)}
               className={`${
                 showMap3D 
-                  ? 'bg-red-600 hover:bg-red-700' 
-                  : 'bg-green-600 hover:bg-green-700'
+                  ? 'bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800' 
+                  : 'bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800'
               } text-white px-6 py-3 rounded-lg flex items-center space-x-2 transition-colors`}
             >
               {showMap3D ? <X className="h-5 w-5" /> : <Map className="h-5 w-5" />}
@@ -113,7 +114,7 @@ export const CottonPage = () => {
             </button>
             <button
               onClick={() => setShowPresentation(true)}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center space-x-2 transition-colors"
+              className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white px-6 py-3 rounded-lg flex items-center space-x-2 transition-colors"
             >
               <Presentation className="h-5 w-5" />
               <span>Apresentação</span>
@@ -123,30 +124,30 @@ export const CottonPage = () => {
 
         {/* Quick Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-6 rounded-xl border border-blue-200">
+          <div className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 p-6 rounded-xl border border-blue-200 dark:border-blue-700">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-blue-600">Área Plantada</p>
-                <p className="text-2xl font-bold text-blue-900">1.850 hectares</p>
+                <p className="text-sm font-medium text-blue-600 dark:text-blue-400">Área Plantada</p>
+                <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">1.850 hectares</p>
               </div>
-              <div className="w-12 h-12 bg-blue-200 rounded-lg flex items-center justify-center">
-                <Activity className="h-6 w-6 text-blue-700" />
+              <div className="w-12 h-12 bg-blue-200 dark:bg-blue-800/50 rounded-lg flex items-center justify-center">
+                <Activity className="h-6 w-6 text-blue-700 dark:text-blue-300" />
               </div>
             </div>
             <div className="mt-4 flex items-center">
-              <TrendingUp className="h-4 w-4 text-green-600 mr-1" />
-              <span className="text-sm text-green-600 font-medium">+12% vs mês anterior</span>
+              <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400 mr-1" />
+              <span className="text-sm text-green-600 dark:text-green-400 font-medium">+12% vs mês anterior</span>
             </div>
           </div>
 
-          <div className="bg-gradient-to-r from-green-50 to-green-100 p-6 rounded-xl border border-green-200">
+          <div className="bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 p-6 rounded-xl border border-green-200 dark:border-green-700">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-green-600">Produção Estimada</p>
-                <p className="text-2xl font-bold text-green-900">4.250 toneladas</p>
+                <p className="text-sm font-medium text-green-600 dark:text-green-400">Produção Estimada</p>
+                <p className="text-2xl font-bold text-green-900 dark:text-green-100">4.250 toneladas</p>
               </div>
-              <div className="w-12 h-12 bg-green-200 rounded-lg flex items-center justify-center">
-                <BarChart3 className="h-6 w-6 text-green-700" />
+              <div className="w-12 h-12 bg-green-200 dark:bg-green-800/50 rounded-lg flex items-center justify-center">
+                <BarChart3 className="h-6 w-6 text-green-700 dark:text-green-300" />
               </div>
             </div>
             <div className="mt-4 flex items-center">
@@ -191,13 +192,13 @@ export const CottonPage = () => {
 
       {/* Área do Mapa 3D - Carregado na mesma página */}
       {showMap3D && (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-green-50">
             <h2 className="text-xl font-bold text-gray-900 flex items-center">
               <Map className="h-6 w-6 text-blue-600 mr-2" />
               Mapa 3D Dinâmico - Acesso à Água
             </h2>
-            <p className="text-gray-600 mt-1">Visualização interativa dos dados de acesso à água nas regiões de cultivo</p>
+            <p className="text-gray-600 dark:text-gray-400 mt-1">Visualização interativa dos dados de acesso à água nas regiões de cultivo</p>
           </div>
           
           <div className="flex" style={{ height: '600px' }}>
@@ -209,7 +210,7 @@ export const CottonPage = () => {
             </div>
 
             {/* Painel de Informações */}
-            <div className="w-80 border-l border-gray-200 bg-white overflow-y-auto">
+            <div className="w-80 border-l border-gray-200 bg-white dark:bg-gray-800 overflow-y-auto">
               <MapAppProvider>
                 {selectedRegion ? (
                   <RegionDetail region={selectedRegion} />
@@ -223,34 +224,34 @@ export const CottonPage = () => {
       )}
 
       {/* Condições Climáticas */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Condições Climáticas Atuais</h3>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="flex items-center space-x-3 p-4 bg-red-50 rounded-lg border border-red-100">
             <Thermometer className="h-8 w-8 text-red-500" />
             <div>
-              <p className="text-sm text-gray-600">Temperatura</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Temperatura</p>
               <p className="text-xl font-bold text-gray-900">28°C</p>
             </div>
           </div>
           <div className="flex items-center space-x-3 p-4 bg-blue-50 rounded-lg border border-blue-100">
             <Droplets className="h-8 w-8 text-blue-500" />
             <div>
-              <p className="text-sm text-gray-600">Umidade</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Umidade</p>
               <p className="text-xl font-bold text-gray-900">65%</p>
             </div>
           </div>
           <div className="flex items-center space-x-3 p-4 bg-gray-50 rounded-lg border border-gray-100">
             <Wind className="h-8 w-8 text-gray-500" />
             <div>
-              <p className="text-sm text-gray-600">Vento</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Vento</p>
               <p className="text-xl font-bold text-gray-900">12 km/h</p>
             </div>
           </div>
           <div className="flex items-center space-x-3 p-4 bg-green-50 rounded-lg border border-green-100">
             <Calendar className="h-8 w-8 text-green-500" />
             <div>
-              <p className="text-sm text-gray-600">Última Chuva</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Última Chuva</p>
               <p className="text-xl font-bold text-gray-900">3 dias</p>
             </div>
           </div>
@@ -259,7 +260,7 @@ export const CottonPage = () => {
 
       {/* Alertas e Recomendações */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
             <AlertTriangle className="h-5 w-5 text-orange-500 mr-2" />
             Alertas Ativos
@@ -276,7 +277,7 @@ export const CottonPage = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
             <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
             Recomendações
