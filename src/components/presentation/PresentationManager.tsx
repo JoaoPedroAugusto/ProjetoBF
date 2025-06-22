@@ -4,7 +4,7 @@ import { SlideViewer } from './SlideViewer';
 import { SlideEditor } from './SlideEditor';
 import { Slide, SlidePresentation, PresentationSettings } from '../../types/presentation';
 import { mediaStorage } from '../../utils/mediaStorage';
-import { CustomDialog } from './customDiaolg';
+import { CustomDialog } from "./CustomDiaolg";
 
 interface PresentationManagerProps {
   sectorId: string;

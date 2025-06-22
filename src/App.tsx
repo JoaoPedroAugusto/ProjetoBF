@@ -1,5 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
+import { SidebarProvider, useSidebar } from './contexts/SidebarContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import { Sidebar } from './components/layout/Sidebar';
 import { Header } from './components/layout/Header';
 import { HomePage } from './pages/HomePage';
@@ -22,34 +24,46 @@ const sectorPages = {
   'sheep': SheepPage,
 };
 
+const AppContent = () => {
+  const { isCollapsed } = useSidebar();
+  
+  return (
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
+      <Sidebar />
+      <div className={`flex-1 flex flex-col transition-all duration-300 ${isCollapsed ? 'ml-16' : 'ml-72'}`}>
+        <Header />
+        <main className="flex-1 overflow-auto pt-20 p-6">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/analytics" element={<Analytics />} />
+            <Route path="/weather" element={<WeatherModule />} />
+            <Route path="/3d-model" element={<ThreeDModelView />} />
+            {Object.entries(sectorPages).map(([sectorId, Component]) => (
+              <Route 
+                key={sectorId} 
+                path={`/sectors/${sectorId}`} 
+                element={<Component />} 
+              />
+            ))}
+          </Routes>
+        </main>
+      </div>
+    </div>
+  );
+};
+
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <div className="flex h-screen bg-gray-50">
-          <Sidebar />
-          <div className="flex-1 flex flex-col ml-72">
-            <Header />
-            <main className="flex-1 overflow-auto pt-20 p-6">
-              <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/analytics" element={<Analytics />} />
-                <Route path="/weather" element={<WeatherModule />} />
-                <Route path="/3d-model" element={<ThreeDModelView />} />
-                {Object.entries(sectorPages).map(([sectorId, Component]) => (
-                  <Route 
-                    key={sectorId} 
-                    path={`/sectors/${sectorId}`} 
-                    element={<Component />} 
-                  />
-                ))}
-              </Routes>
-            </main>
-          </div>
-        </div>
-      </Router>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <SidebarProvider>
+          <Router>
+            <AppContent />
+          </Router>
+        </SidebarProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 
