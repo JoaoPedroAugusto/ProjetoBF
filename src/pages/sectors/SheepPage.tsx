@@ -1,11 +1,19 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Flower, TrendingUp, MapPin, Leaf, Presentation, Users, Target, Award } from 'lucide-react';
+import { Flower, TrendingUp, MapPin, Leaf, Presentation, Users, Target, Award, Play } from 'lucide-react';
 import { ThreeDModelView } from '../../components/3d/ThreeDModelView';
 import { PresentationManager } from '../../components/presentation';
+import { CultureSheepDemo } from '../../components/CultureSheepDemo';
 
 export const SheepPage: React.FC = () => {
   const [showPresentation, setShowPresentation] = useState(false);
+  const [showDemo, setShowDemo] = useState(false);
+
+  if (showDemo) {
+    return (
+      <CultureSheepDemo onClose={() => setShowDemo(false)} />
+    );
+  }
 
   if (showPresentation) {
     return (
@@ -32,16 +40,25 @@ export const SheepPage: React.FC = () => {
         <div className="relative container mx-auto px-4 py-16 h-full flex items-center">
           <div className="text-white">
             <div className="max-w-4xl">
-              
-              
-              
-              <button
-                onClick={() => setShowPresentation(true)}
-                className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-8 py-4 rounded-lg flex items-center space-x-2 transition-all duration-200 backdrop-blur-sm font-semibold"
-              >
-                <Presentation className="h-5 w-5" />
-                <span>Ver Apresentação</span>
-              </button>
+
+
+
+              <div className="flex flex-col sm:flex-row gap-4">
+                <button
+                  onClick={() => setShowPresentation(true)}
+                  className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-8 py-4 rounded-lg flex items-center space-x-2 transition-all duration-200 backdrop-blur-sm font-semibold"
+                >
+                  <Presentation className="h-5 w-5" />
+                  <span>Ver Apresentação</span>
+                </button>
+                <button
+                  onClick={() => setShowDemo(true)}
+                  className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-lg flex items-center space-x-2 transition-all duration-200 font-semibold shadow-lg"
+                >
+                  <Play className="h-5 w-5" />
+                  <span>Demonstração Interativa</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -199,6 +216,13 @@ export const SheepPage: React.FC = () => {
             >
               Quero Conhecer as Soluções
             </Link>
+            <button
+              onClick={() => setShowDemo(true)}
+              className="inline-flex items-center bg-green-700 text-white px-10 py-4 rounded-lg hover:bg-green-800 transition-colors font-bold text-lg shadow-lg"
+            >
+              <Play className="h-5 w-5 mr-2" />
+              Demonstração Interativa
+            </button>
             <button
               onClick={() => setShowPresentation(true)}
               className="inline-flex items-center bg-transparent border-2 border-white text-white px-10 py-4 rounded-lg hover:bg-white hover:text-green-600 transition-colors font-bold text-lg"
