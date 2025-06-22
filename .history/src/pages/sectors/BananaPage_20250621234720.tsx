@@ -16,6 +16,7 @@ import {
   Phone,
   ArrowRight
 } from 'lucide-react';
+import { ThreeDModelView } from '../../components/3d/ThreeDModelView';
 import { PresentationManager } from '../../components/presentation';
 
 export const BananaPage: React.FC = () => {
@@ -405,6 +406,15 @@ export const BananaPage: React.FC = () => {
                 </a>
               </div>
             </div>
+          </div>
+
+          <div className="text-center mt-10">
+            <Link
+              to="/noticias"
+              className="inline-flex items-center bg-yellow-500 text-white px-8 py-3 rounded-lg hover:bg-yellow-600 transition-colors font-semibold"
+            >
+              Ver Todas as Notícias
+            </Link>
           </div>
         </div>
 

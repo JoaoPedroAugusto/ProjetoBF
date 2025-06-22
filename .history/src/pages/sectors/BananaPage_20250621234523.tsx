@@ -42,7 +42,6 @@ export const BananaPage: React.FC = () => {
               <div>
                 <h1 className="text-4xl md:text-6xl font-bold">Bananicultura</h1>
                 <h2 className="text-xl md:text-2xl font-light mt-2">Protegendo o Futuro da Banana em Mato Grosso</h2>
-              </div>
             </div>
             <button
               onClick={() => setShowPresentation(true)}
@@ -356,7 +355,6 @@ export const BananaPage: React.FC = () => {
           </div>
         </div>
 
-        {/* News Section */}
         <div className="container mx-auto px-4 py-12">
           <h2 className="text-4xl font-bold text-gray-800 mb-6 text-center">Últimas Notícias e Artigos</h2>
           <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed text-center mb-10">
@@ -365,6 +363,7 @@ export const BananaPage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-shadow duration-300 hover:shadow-xl">
+              {/* CORREÇÃO: Removido '../../public/' */}
               <img src="/img/news1.jpg" alt="Pesquisadores de MT avançam em estudo de variedades resistentes" className="w-full h-48 object-cover" />
               <div className="p-6">
                 <h3 className="text-xl font-semibold text-gray-800 mb-2">
@@ -379,6 +378,7 @@ export const BananaPage: React.FC = () => {
             </div>
 
             <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-shadow duration-300 hover:shadow-xl">
+              {/* CORREÇÃO: Removido '../../public/' */}
               <img src="/img/news2.jpg" alt="Cultivo de banana foi discutido em seminário realizado em Tangará da Serra" className="w-full h-48 object-cover" />
               <div className="p-6">
                 <h3 className="text-xl font-semibold text-gray-800 mb-2">
@@ -393,6 +393,7 @@ export const BananaPage: React.FC = () => {
             </div>
 
             <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-shadow duration-300 hover:shadow-xl">
+              {/* CORREÇÃO: Removido '../../public/' */}
               <img src="/img/news3.jpg" alt="Governo fará campanha para evitar ingresso de fungo que ameaça plantações de banana" className="w-full h-48 object-cover" />
               <div className="p-6">
                 <h3 className="text-xl font-semibold text-gray-800 mb-2">
@@ -405,6 +406,15 @@ export const BananaPage: React.FC = () => {
                 </a>
               </div>
             </div>
+          </div>
+        </div>
+          <div className="text-center mt-10">
+            <Link
+              to="/noticias"
+              className="inline-flex items-center bg-yellow-500 text-white px-8 py-3 rounded-lg hover:bg-yellow-600 transition-colors font-semibold"
+            >
+              Ver Todas as Notícias
+            </Link>
           </div>
         </div>
 

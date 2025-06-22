@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  Banana as BananaIcon, 
-  TrendingUp, 
-  MapPin, 
-  Leaf, 
-  Presentation, 
-  Users, 
-  Target, 
+import {
+  Banana as BananaIcon,
+  TrendingUp,
+  MapPin,
+  Leaf,
+  Presentation,
+  Users,
+  Target,
   Award,
   Shield,
   AlertTriangle,
@@ -23,8 +23,8 @@ export const BananaPage: React.FC = () => {
 
   if (showPresentation) {
     return (
-      <PresentationManager 
-        sectorId="banana" 
+      <PresentationManager
+        sectorId="banana"
         sectorName="Bananicultura"
       />
     );
@@ -63,7 +63,7 @@ export const BananaPage: React.FC = () => {
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-gray-800 mb-6">Projeto Floresça</h2>
           <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
-            Uma startup sem fins lucrativos dedicada a proteger a bananicultura de Mato Grosso do Mal-do-Panamá (TR4), 
+            Uma startup sem fins lucrativos dedicada a proteger a bananicultura de Mato Grosso do Mal-do-Panamá (TR4),
             fortalecendo a agricultura familiar e promovendo soluções inovadoras e sustentáveis.
           </p>
         </div>
@@ -74,7 +74,7 @@ export const BananaPage: React.FC = () => {
             <Target className="h-12 w-12 text-yellow-600 mx-auto mb-4" />
             <h3 className="text-xl font-bold text-gray-800 mb-4">Nossa Missão</h3>
             <p className="text-gray-600 leading-relaxed">
-              Fortalecer a agricultura familiar e a cadeia produtiva da banana em MT, atuando na conscientização, 
+              Fortalecer a agricultura familiar e a cadeia produtiva da banana em MT, atuando na conscientização,
               prevenção e disseminação de soluções inovadoras.
             </p>
           </div>
@@ -83,7 +83,7 @@ export const BananaPage: React.FC = () => {
             <Award className="h-12 w-12 text-orange-600 mx-auto mb-4" />
             <h3 className="text-xl font-bold text-gray-800 mb-4">Nossa Visão</h3>
             <p className="text-gray-600 leading-relaxed">
-              Construir um futuro mais seguro para os produtores e para o agronegócio mato-grossense através 
+              Construir um futuro mais seguro para os produtores e para o agronegócio mato-grossense através
               da informação e ação conjunta.
             </p>
           </div>
@@ -92,7 +92,7 @@ export const BananaPage: React.FC = () => {
             <Leaf className="h-12 w-12 text-green-600 mx-auto mb-4" />
             <h3 className="text-xl font-bold text-gray-800 mb-4">Nossos Valores</h3>
             <p className="text-gray-600 leading-relaxed">
-              Compromisso social, inovação científica, sustentabilidade agrícola e colaboração para 
+              Compromisso social, inovação científica, sustentabilidade agrícola e colaboração para
               um impacto ampliado na comunidade.
             </p>
           </div>
@@ -139,10 +139,10 @@ export const BananaPage: React.FC = () => {
             O Mal-do-Panamá: Uma Ameaça Global
           </h2>
           <p className="text-xl text-center text-gray-600 mb-10 max-w-4xl mx-auto">
-            O Fusarium oxysporum f. sp. cubense (Foc) Raça 4 Tropical (TR4) é uma das doenças mais devastadoras 
+            O Fusarium oxysporum f. sp. cubense (Foc) Raça 4 Tropical (TR4) é uma das doenças mais devastadoras
             para a cultura da banana em todo o mundo, representando um desafio sem precedentes.
           </p>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-white rounded-xl p-8 text-center shadow-md hover:shadow-lg transition-shadow">
               <div className="bg-red-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
@@ -153,7 +153,7 @@ export const BananaPage: React.FC = () => {
                 Amarelecimento e murcha das folhas mais velhas, começando pelas bordas e progredindo para o centro.
               </p>
             </div>
-            
+
             <div className="bg-white rounded-xl p-8 text-center shadow-md hover:shadow-lg transition-shadow">
               <div className="bg-orange-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
                 <AlertTriangle className="h-8 w-8 text-orange-600" />
@@ -163,7 +163,7 @@ export const BananaPage: React.FC = () => {
                 Rachadura na base do pseudocaule e descoloração vascular interna (avermelhada/marrom).
               </p>
             </div>
-            
+
             <div className="bg-white rounded-xl p-8 text-center shadow-md hover:shadow-lg transition-shadow">
               <div className="bg-yellow-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
                 <Users className="h-8 w-8 text-yellow-600" />
@@ -182,7 +182,7 @@ export const BananaPage: React.FC = () => {
           <p className="text-xl text-center text-gray-600 mb-12 max-w-4xl mx-auto">
             Desenvolvemos e promovemos um conjunto de soluções baseadas em pesquisa e tecnologia para proteger sua lavoura.
           </p>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-8 text-center hover:shadow-lg transition-shadow">
               <Shield className="h-12 w-12 text-blue-600 mx-auto mb-4" />
@@ -258,7 +258,7 @@ export const BananaPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
             <div>
               <p className="text-lg text-gray-700 leading-relaxed mb-6">
-                Mato Grosso, com sua crescente produção de banana, é vulnerável à entrada e disseminação do TR4. 
+                Mato Grosso, com sua crescente produção de banana, é vulnerável à entrada e disseminação do TR4.
                 A chegada desta doença pode significar perdas econômicas severas para produtores rurais.
               </p>
               <div className="space-y-4">
@@ -292,7 +292,7 @@ export const BananaPage: React.FC = () => {
         <div className="bg-gradient-to-r from-yellow-500 to-orange-500 rounded-2xl shadow-xl p-12 text-center text-white">
           <h2 className="text-4xl font-bold mb-6">Sua Lavoura Protegida. Seu Futuro Garantido.</h2>
           <p className="text-xl mb-8 leading-relaxed max-w-4xl mx-auto">
-            Junte-se a nós nesta luta contra o Mal-do-Panamá. A informação e a ação conjunta são as chaves 
+            Junte-se a nós nesta luta contra o Mal-do-Panamá. A informação e a ação conjunta são as chaves
             para proteger a bananicultura de Mato Grosso. Não espere a doença chegar - previna-se agora!
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -317,7 +317,7 @@ export const BananaPage: React.FC = () => {
         <div className="bg-gray-50 rounded-2xl p-10 mb-16 mt-16">
           <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">Parcerias Estratégicas</h2>
           <p className="text-xl text-center text-gray-600 mb-10 max-w-4xl mx-auto">
-            Trabalhamos em conjunto com instituições de pesquisa, órgãos governamentais e empresas do setor 
+            Trabalhamos em conjunto com instituições de pesquisa, órgãos governamentais e empresas do setor
             para fortalecer a defesa contra o TR4.
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center justify-items-center">
@@ -356,7 +356,6 @@ export const BananaPage: React.FC = () => {
           </div>
         </div>
 
-        {/* News Section */}
         <div className="container mx-auto px-4 py-12">
           <h2 className="text-4xl font-bold text-gray-800 mb-6 text-center">Últimas Notícias e Artigos</h2>
           <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed text-center mb-10">
@@ -365,6 +364,7 @@ export const BananaPage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-shadow duration-300 hover:shadow-xl">
+              {/* CORREÇÃO: Removido '../../public/' */}
               <img src="/img/news1.jpg" alt="Pesquisadores de MT avançam em estudo de variedades resistentes" className="w-full h-48 object-cover" />
               <div className="p-6">
                 <h3 className="text-xl font-semibold text-gray-800 mb-2">
@@ -379,6 +379,7 @@ export const BananaPage: React.FC = () => {
             </div>
 
             <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-shadow duration-300 hover:shadow-xl">
+              {/* CORREÇÃO: Removido '../../public/' */}
               <img src="/img/news2.jpg" alt="Cultivo de banana foi discutido em seminário realizado em Tangará da Serra" className="w-full h-48 object-cover" />
               <div className="p-6">
                 <h3 className="text-xl font-semibold text-gray-800 mb-2">
@@ -393,6 +394,7 @@ export const BananaPage: React.FC = () => {
             </div>
 
             <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-shadow duration-300 hover:shadow-xl">
+              {/* CORREÇÃO: Removido '../../public/' */}
               <img src="/img/news3.jpg" alt="Governo fará campanha para evitar ingresso de fungo que ameaça plantações de banana" className="w-full h-48 object-cover" />
               <div className="p-6">
                 <h3 className="text-xl font-semibold text-gray-800 mb-2">
@@ -407,18 +409,27 @@ export const BananaPage: React.FC = () => {
             </div>
           </div>
         </div>
-
-        {/* Navigation */}
-        <div className="text-center mt-12">
+        <div className="text-center mt-10">
           <Link
-            to="/"
+            to="/noticias"
             className="inline-flex items-center bg-yellow-500 text-white px-8 py-3 rounded-lg hover:bg-yellow-600 transition-colors font-semibold"
           >
-            Voltar ao Início
+            Ver Todas as Notícias
           </Link>
         </div>
       </div>
+
+      {/* Navigation */}
+      <div className="text-center mt-12">
+        <Link
+          to="/"
+          className="inline-flex items-center bg-yellow-500 text-white px-8 py-3 rounded-lg hover:bg-yellow-600 transition-colors font-semibold"
+        >
+          Voltar ao Início
+        </Link>
+      </div>
     </div>
+    </div >
   );
 };
 

@@ -16,6 +16,7 @@ import {
   Phone,
   ArrowRight
 } from 'lucide-react';
+import { ThreeDModelView } from '../../components/3d/ThreeDModelView';
 import { PresentationManager } from '../../components/presentation';
 
 export const BananaPage: React.FC = () => {

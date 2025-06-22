@@ -12,10 +12,11 @@ import {
   Shield,
   AlertTriangle,
   Microscope,
+  Seedling,
   BookOpen,
-  Phone,
-  ArrowRight
+  Phone
 } from 'lucide-react';
+import { ThreeDModelView } from '../../components/3d/ThreeDModelView';
 import { PresentationManager } from '../../components/presentation';
 
 export const BananaPage: React.FC = () => {
@@ -33,33 +34,43 @@ export const BananaPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-orange-50">
       {/* Hero Section with Banner */}
-      <div className="relative bg-gradient-to-r from-yellow-500 to-orange-500 text-white">
-        <div className="absolute inset-0 bg-black opacity-20"></div>
-        <div className="relative container mx-auto px-4 py-16">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center">
-              <BananaIcon className="h-12 w-12 mr-4" />
-              <div>
-                <h1 className="text-4xl md:text-6xl font-bold">Bananicultura</h1>
-                <h2 className="text-xl md:text-2xl font-light mt-2">Protegendo o Futuro da Banana em Mato Grosso</h2>
+      <div
+        className="relative h-96 bg-cover bg-center"
+        style={{
+          backgroundImage: "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1200 400\"><rect fill=\"%23f59e0b\" width=\"1200\" height=\"400\"/><path fill=\"%23fbbf24\" d=\"M0,200 Q300,100 600,200 T1200,200 V400 H0 Z\"/></svg>')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-yellow-600 to-orange-600 opacity-80"></div>
+        <div className="relative container mx-auto px-4 py-16 h-full flex items-center">
+          <div className="text-white">
+            <div className="max-w-4xl">
+              <div className="flex items-center mb-6">
+                <BananaIcon className="h-16 w-16 mr-6" />
+                <div>
+                  <h1 className="text-5xl md:text-6xl font-bold mb-2">Bananicultura</h1>
+                  <h2 className="text-2xl md:text-3xl font-light">Protegendo o Futuro da Banana em Mato Grosso</h2>
+                </div>
               </div>
+              <p className="text-xl md:text-2xl max-w-3xl leading-relaxed mb-8">
+                Combatendo o Mal-do-Panamá com ciência, inovação e soluções sustentáveis para proteger a produção de banana.
+              </p>
+              <button
+                onClick={() => setShowPresentation(true)}
+                className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-8 py-4 rounded-lg flex items-center space-x-2 transition-all duration-200 backdrop-blur-sm font-semibold"
+              >
+                <Presentation className="h-5 w-5" />
+                <span>Ver Apresentação</span>
+              </button>
             </div>
-            <button
-              onClick={() => setShowPresentation(true)}
-              className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-6 py-3 rounded-lg flex items-center space-x-2 transition-all duration-200 backdrop-blur-sm"
-            >
-              <Presentation className="h-5 w-5" />
-              <span>Apresentação</span>
-            </button>
           </div>
-          <p className="text-xl md:text-2xl max-w-3xl leading-relaxed">
-            Combatendo o Mal-do-Panamá com ciência, inovação e soluções sustentáveis para proteger a produção de banana em Mato Grosso.
-          </p>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-12">
-        {/* Projeto Floresça Introduction */}
+      {/* Projeto Floresça Introduction */}
+      <div className="container mx-auto px-4 py-16">
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-gray-800 mb-6">Projeto Floresça</h2>
           <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
@@ -207,7 +218,7 @@ export const BananaPage: React.FC = () => {
             </div>
 
             <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-8 text-center hover:shadow-lg transition-shadow">
-              <Leaf className="h-12 w-12 text-green-600 mx-auto mb-4" />
+              <Seedling className="h-12 w-12 text-green-600 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-gray-800 mb-4">Variedades Resistentes</h3>
               <p className="text-gray-600 leading-relaxed mb-4">
                 Pesquisa e disponibilização de cultivares com maior resistência ou tolerância ao TR4.
@@ -356,60 +367,8 @@ export const BananaPage: React.FC = () => {
           </div>
         </div>
 
-        {/* News Section */}
-        <div className="container mx-auto px-4 py-12">
-          <h2 className="text-4xl font-bold text-gray-800 mb-6 text-center">Últimas Notícias e Artigos</h2>
-          <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed text-center mb-10">
-            Fique por dentro das pesquisas, descobertas e ações voltadas à sanidade e ao fortalecimento da bananicultura em Mato Grosso e no mundo.
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-shadow duration-300 hover:shadow-xl">
-              <img src="/img/news1.jpg" alt="Pesquisadores de MT avançam em estudo de variedades resistentes" className="w-full h-48 object-cover" />
-              <div className="p-6">
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                  <a href="#" className="hover:text-yellow-600 transition-colors">Pesquisadores de MT avançam em estudo de variedades resistentes</a>
-                </h3>
-                <p className="text-sm text-gray-500 mb-4">15 de Maio de 2025</p>
-                <p className="text-gray-600 mb-4">Artigo detalha as últimas descobertas sobre cultivares de banana que mostram promissora resistência ao TR4.</p>
-                <a href="https://www.empaer.mt.gov.br/-/18754717-pesquisa-da-empaer-desenvolve-variedade-de-banana-voltada-a-agricultura-familiar" className="text-yellow-600 hover:text-yellow-700 font-semibold flex items-center">
-                  Ler mais <ArrowRight className="ml-2 w-4 h-4" />
-                </a>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-shadow duration-300 hover:shadow-xl">
-              <img src="/img/news2.jpg" alt="Cultivo de banana foi discutido em seminário realizado em Tangará da Serra" className="w-full h-48 object-cover" />
-              <div className="p-6">
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                  <a href="#" className="hover:text-yellow-600 transition-colors">Cultivo de banana foi discutido em seminário realizado em Tangará da Serra</a>
-                </h3>
-                <p className="text-sm text-gray-500 mb-4">08 de Maio de 2025</p>
-                <p className="text-gray-600 mb-4">A Secretaria Municipal de Agricultura, Pecuária e Abastecimento (SEAPA), através de uma parceria envolvendo a Prefeitura Municipal de Tangará da Serra e a Empaer-MT, promoveu juntamente com a Unemat, o Dia de Campo: Cultivo da Banana.</p>
-                <a href="https://tangaradaserra.mt.gov.br/noticia/cultivo-de-banana-foi-discutido-em-seminario-realizado-em-tangara-da-serra/" className="text-yellow-600 hover:text-yellow-700 font-semibold flex items-center">
-                  Ler mais <ArrowRight className="ml-2 w-4 h-4" />
-                </a>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-shadow duration-300 hover:shadow-xl">
-              <img src="/img/news3.jpg" alt="Governo fará campanha para evitar ingresso de fungo que ameaça plantações de banana" className="w-full h-48 object-cover" />
-              <div className="p-6">
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                  <a href="#" className="hover:text-yellow-600 transition-colors">Governo fará campanha para evitar ingresso de fungo que ameaça plantações de banana</a>
-                </h3>
-                <p className="text-sm text-gray-500 mb-4">01 de Maio de 2025</p>
-                <p className="text-gray-600 mb-4">Conheça as ações do governo do estado para conscientizar os produtores sobre os riscos do TR4.</p>
-                <a href="https://www.cnabrasil.org.br/noticias/governo-fara-campanha-para-evitar-ingresso-de-fungo-que-ameaca-plantacoes-de-banana" className="text-yellow-600 hover:text-yellow-700 font-semibold flex items-center">
-                  Ler mais <ArrowRight className="ml-2 w-4 h-4" />
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* Navigation */}
-        <div className="text-center mt-12">
+        <div className="text-center">
           <Link
             to="/"
             className="inline-flex items-center bg-yellow-500 text-white px-8 py-3 rounded-lg hover:bg-yellow-600 transition-colors font-semibold"

@@ -16,6 +16,7 @@ import {
   Phone,
   ArrowRight
 } from 'lucide-react';
+import { ThreeDModelView } from '../../components/3d/ThreeDModelView';
 import { PresentationManager } from '../../components/presentation';
 
 export const BananaPage: React.FC = () => {
@@ -365,7 +366,7 @@ export const BananaPage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-shadow duration-300 hover:shadow-xl">
-              <img src="/img/news1.jpg" alt="Pesquisadores de MT avançam em estudo de variedades resistentes" className="w-full h-48 object-cover" />
+              <img src="../../public//img/news1.jpg" alt="Pesquisadores de MT avançam em estudo de variedades resistentes" className="w-full h-48 object-cover" />
               <div className="p-6">
                 <h3 className="text-xl font-semibold text-gray-800 mb-2">
                   <a href="#" className="hover:text-yellow-600 transition-colors">Pesquisadores de MT avançam em estudo de variedades resistentes</a>
@@ -379,7 +380,7 @@ export const BananaPage: React.FC = () => {
             </div>
 
             <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-shadow duration-300 hover:shadow-xl">
-              <img src="/img/news2.jpg" alt="Cultivo de banana foi discutido em seminário realizado em Tangará da Serra" className="w-full h-48 object-cover" />
+              <img src="/image/news2.jpg" alt="Cultivo de banana foi discutido em seminário realizado em Tangará da Serra" className="w-full h-48 object-cover" />
               <div className="p-6">
                 <h3 className="text-xl font-semibold text-gray-800 mb-2">
                   <a href="#" className="hover:text-yellow-600 transition-colors">Cultivo de banana foi discutido em seminário realizado em Tangará da Serra</a>
@@ -393,7 +394,7 @@ export const BananaPage: React.FC = () => {
             </div>
 
             <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-shadow duration-300 hover:shadow-xl">
-              <img src="/img/news3.jpg" alt="Governo fará campanha para evitar ingresso de fungo que ameaça plantações de banana" className="w-full h-48 object-cover" />
+              <img src="/image/news3.jpg" alt="Governo fará campanha para evitar ingresso de fungo que ameaça plantações de banana" className="w-full h-48 object-cover" />
               <div className="p-6">
                 <h3 className="text-xl font-semibold text-gray-800 mb-2">
                   <a href="#" className="hover:text-yellow-600 transition-colors">Governo fará campanha para evitar ingresso de fungo que ameaça plantações de banana</a>
@@ -405,6 +406,15 @@ export const BananaPage: React.FC = () => {
                 </a>
               </div>
             </div>
+          </div>
+
+          <div className="text-center mt-10">
+            <Link
+              to="/noticias"
+              className="inline-flex items-center bg-yellow-500 text-white px-8 py-3 rounded-lg hover:bg-yellow-600 transition-colors font-semibold"
+            >
+              Ver Todas as Notícias
+            </Link>
           </div>
         </div>
 

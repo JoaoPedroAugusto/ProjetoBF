@@ -16,6 +16,7 @@ import {
   Phone,
   ArrowRight
 } from 'lucide-react';
+import { ThreeDModelView } from '../../components/3d/ThreeDModelView';
 import { PresentationManager } from '../../components/presentation';
 
 export const BananaPage: React.FC = () => {
@@ -363,48 +364,59 @@ export const BananaPage: React.FC = () => {
             Fique por dentro das pesquisas, descobertas e ações voltadas à sanidade e ao fortalecimento da bananicultura em Mato Grosso e no mundo.
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-shadow duration-300 hover:shadow-xl">
-              <img src="/img/news1.jpg" alt="Pesquisadores de MT avançam em estudo de variedades resistentes" className="w-full h-48 object-cover" />
-              <div className="p-6">
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                  <a href="#" className="hover:text-yellow-600 transition-colors">Pesquisadores de MT avançam em estudo de variedades resistentes</a>
-                </h3>
-                <p className="text-sm text-gray-500 mb-4">15 de Maio de 2025</p>
-                <p className="text-gray-600 mb-4">Artigo detalha as últimas descobertas sobre cultivares de banana que mostram promissora resistência ao TR4.</p>
-                <a href="https://www.empaer.mt.gov.br/-/18754717-pesquisa-da-empaer-desenvolve-variedade-de-banana-voltada-a-agricultura-familiar" className="text-yellow-600 hover:text-yellow-700 font-semibold flex items-center">
-                  Ler mais <ArrowRight className="ml-2 w-4 h-4" />
-                </a>
-              </div>
-            </div>
+<div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+  <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-shadow duration-300 hover:shadow-xl">
+    {/* Caminho corrigido aqui */}
+    <img src="/img/news1.jpg" alt="Pesquisadores de MT avançam em estudo de variedades resistentes" className="w-full h-48 object-cover" />
+    <div className="p-6">
+      <h3 className="text-xl font-semibold text-gray-800 mb-2">
+        <a href="#" className="hover:text-yellow-600 transition-colors">Pesquisadores de MT avançam em estudo de variedades resistentes</a>
+      </h3>
+      <p className="text-sm text-gray-500 mb-4">15 de Maio de 2025</p>
+      <p className="text-gray-600 mb-4">Artigo detalha as últimas descobertas sobre cultivares de banana que mostram promissora resistência ao TR4.</p>
+      <a href="https://www.empaer.mt.gov.br/-/18754717-pesquisa-da-empaer-desenvolve-variedade-de-banana-voltada-a-agricultura-familiar" className="text-yellow-600 hover:text-yellow-700 font-semibold flex items-center">
+        Ler mais <ArrowRight className="ml-2 w-4 h-4" />
+      </a>
+    </div>
+  </div>
 
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-shadow duration-300 hover:shadow-xl">
-              <img src="/img/news2.jpg" alt="Cultivo de banana foi discutido em seminário realizado em Tangará da Serra" className="w-full h-48 object-cover" />
-              <div className="p-6">
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                  <a href="#" className="hover:text-yellow-600 transition-colors">Cultivo de banana foi discutido em seminário realizado em Tangará da Serra</a>
-                </h3>
-                <p className="text-sm text-gray-500 mb-4">08 de Maio de 2025</p>
-                <p className="text-gray-600 mb-4">A Secretaria Municipal de Agricultura, Pecuária e Abastecimento (SEAPA), através de uma parceria envolvendo a Prefeitura Municipal de Tangará da Serra e a Empaer-MT, promoveu juntamente com a Unemat, o Dia de Campo: Cultivo da Banana.</p>
-                <a href="https://tangaradaserra.mt.gov.br/noticia/cultivo-de-banana-foi-discutido-em-seminario-realizado-em-tangara-da-serra/" className="text-yellow-600 hover:text-yellow-700 font-semibold flex items-center">
-                  Ler mais <ArrowRight className="ml-2 w-4 h-4" />
-                </a>
-              </div>
-            </div>
+  <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-shadow duration-300 hover:shadow-xl">
+    {/* Caminho corrigido aqui */}
+    <img src="/img/news2.jpg" alt="Cultivo de banana foi discutido em seminário realizado em Tangará da Serra" className="w-full h-48 object-cover" />
+    <div className="p-6">
+      <h3 className="text-xl font-semibold text-gray-800 mb-2">
+        <a href="#" className="hover:text-yellow-600 transition-colors">Cultivo de banana foi discutido em seminário realizado em Tangará da Serra</a>
+      </h3>
+      <p className="text-sm text-gray-500 mb-4">08 de Maio de 2025</p>
+      <p className="text-gray-600 mb-4">A Secretaria Municipal de Agricultura, Pecuária e Abastecimento (SEAPA), através de uma parceria envolvendo a Prefeitura Municipal de Tangará da Serra e a Empaer-MT, promoveu juntamente com a Unemat, o Dia de Campo: Cultivo da Banana.</p>
+      <a href="https://tangaradaserra.mt.gov.br/noticia/cultivo-de-banana-foi-discutido-em-seminario-realizado-em-tangara-da-serra/" className="text-yellow-600 hover:text-yellow-700 font-semibold flex items-center">
+        Ler mais <ArrowRight className="ml-2 w-4 h-4" />
+      </a>
+    </div>
+  </div>
 
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-shadow duration-300 hover:shadow-xl">
-              <img src="/img/news3.jpg" alt="Governo fará campanha para evitar ingresso de fungo que ameaça plantações de banana" className="w-full h-48 object-cover" />
-              <div className="p-6">
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                  <a href="#" className="hover:text-yellow-600 transition-colors">Governo fará campanha para evitar ingresso de fungo que ameaça plantações de banana</a>
-                </h3>
-                <p className="text-sm text-gray-500 mb-4">01 de Maio de 2025</p>
-                <p className="text-gray-600 mb-4">Conheça as ações do governo do estado para conscientizar os produtores sobre os riscos do TR4.</p>
-                <a href="https://www.cnabrasil.org.br/noticias/governo-fara-campanha-para-evitar-ingresso-de-fungo-que-ameaca-plantacoes-de-banana" className="text-yellow-600 hover:text-yellow-700 font-semibold flex items-center">
-                  Ler mais <ArrowRight className="ml-2 w-4 h-4" />
-                </a>
-              </div>
-            </div>
+  <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-shadow duration-300 hover:shadow-xl">
+    {/* Caminho corrigido aqui */}
+    <img src="/img/news3.jpg" alt="Governo fará campanha para evitar ingresso de fungo que ameaça plantações de banana" className="w-full h-48 object-cover" />
+    <div className="p-6">
+      <h3 className="text-xl font-semibold text-gray-800 mb-2">
+        <a href="#" className="hover:text-yellow-600 transition-colors">Governo fará campanha para evitar ingresso de fungo que ameaça plantações de banana</a>
+      </h3>
+      <p className="text-sm text-gray-500 mb-4">01 de Maio de 2025</p>
+      <p className="text-gray-600 mb-4">Conheça as ações do governo do estado para conscientizar os produtores sobre os riscos do TR4.</p>
+      <a href="https://www.cnabrasil.org.br/noticias/governo-fara-campanha-para-evitar-ingresso-de-fungo-que-ameaca-plantacoes-de-banana" className="text-yellow-600 hover:text-yellow-700 font-semibold flex items-center">
+        Ler mais <ArrowRight className="ml-2 w-4 h-4" />
+      </a>
+    </div>
+  </div>
+</div>
+          <div className="text-center mt-10">
+            <Link
+              to="/noticias"
+              className="inline-flex items-center bg-yellow-500 text-white px-8 py-3 rounded-lg hover:bg-yellow-600 transition-colors font-semibold"
+            >
+              Ver Todas as Notícias
+            </Link>
           </div>
         </div>
 
