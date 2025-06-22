@@ -66,7 +66,7 @@ export const SugarcanePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50">
       {/* Hero Section with Banner */}
-      <div className="relative h-96 bg-cover bg-center" style={{ backgroundImage: "url('/src/public/img/banner_pisca.png')" }}>
+      <div className="relative h-96 bg-cover bg-center" style={{ backgroundImage: "url('/img/banner_pisca.png')" }}>
         <div className="absolute inset-0 bg-black opacity-60"></div>
         <div className="relative container mx-auto px-4 py-16 h-full flex items-center">
           <div className="text-white">
