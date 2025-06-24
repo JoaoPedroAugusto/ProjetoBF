@@ -1,131 +1,137 @@
-# Sistema de Apresentação - Documentação Final
+# Agricultural Insights Platform
 
-## Visão Geral
 Sistema completo de apresentação de slides integrado ao projeto Agricultural Insights Platform, com funcionalidades avançadas de navegação, edição e reprodução.
 
-## Funcionalidades Principais
+## 🚀 Novo Sistema de Banco de Dados Local
 
-### 1. Visualizador de Slides (SlideViewer)
-- **Navegação por setas**: Use as setas esquerda/direita ou teclas do teclado
-- **Modo tela cheia**: Pressione F ou clique no botão de tela cheia
-- **Controles de reprodução**: Play/pause para avanço automático
-- **Barra de progresso**: Mostra o progresso da apresentação
-- **Miniaturas**: Navegação rápida entre slides
-- **Suporte a mídia**: Imagens e vídeos integrados aos slides
+O projeto agora inclui um sistema de banco de dados local para armazenamento de mídia (imagens e vídeos) que:
 
-### 2. Editor de Slides (SlideEditor)
-- **Criação de slides**: Interface intuitiva para criar novos slides
-- **Edição completa**: Título, conteúdo, cores e backgrounds
-- **Upload de mídia**: Suporte a imagens e vídeos
-- **Reordenação**: Mova slides para cima/baixo
-- **Preview em tempo real**: Veja como ficará o slide
+- ✅ Salva arquivos localmente na pasta `DBmidia/`
+- ✅ Persiste após fechar o VSCode
+- ✅ É incluído no `git push` (versionado)
+- ✅ Funciona offline após o primeiro carregamento
 
-### 3. Gerenciador de Apresentações (PresentationManager)
-- **Organização por setor**: Cada setor tem sua própria apresentação
-- **Armazenamento local**: Slides salvos automaticamente no navegador
-- **Configurações**: Controle de avanço automático e outras opções
-- **Preview grid**: Visualização em grade de todos os slides
+### 📁 Estrutura de Pastas
 
-## Integração com Setores
-
-### Setores Integrados
-- ✅ Soja
-- ✅ Algodão  
-- ✅ Banana
-- 🔄 Cacau, Carne, Ovinocultura, Cana-de-Açúcar, Tomate, Piscicultura (estrutura pronta)
-
-### Como Usar
-1. Acesse qualquer página de setor
-2. Clique no botão "Apresentação" no cabeçalho
-3. Use "Editar" para personalizar os slides
-4. Clique "Apresentar" para modo tela cheia
-
-## Controles de Navegação
-
-### Teclado
-- **Seta Esquerda**: Slide anterior
-- **Seta Direita / Espaço**: Próximo slide
-- **F**: Alternar tela cheia
-- **Escape**: Sair da apresentação
-
-### Mouse/Touch
-- **Setas laterais**: Navegação entre slides
-- **Miniaturas**: Pular para slide específico
-- **Controles superiores**: Play/pause, tela cheia, fechar
-
-## Estrutura Técnica
-
-### Componentes Criados
 ```
-src/components/presentation/
-├── SlideViewer.tsx          # Visualizador principal
-├── SlideEditor.tsx          # Editor de slides
-├── PresentationManager.tsx  # Gerenciador geral
-└── index.ts                # Exportações
+ProjetoBF/
+├── DBmidia/
+│   ├── DBimg/          # Imagens salvas localmente
+│   ├── DBvideo/        # Vídeos salvos localmente
+│   └── metadata.json   # Metadados dos arquivos
+├── src/
+│   └── utils/
+│       └── mediaStorage.ts  # Sistema de armazenamento atualizado
+└── server.js           # Servidor backend Node.js
 ```
 
-### Tipos TypeScript
+## 🛠️ Como Usar
+
+### 1. Instalação das Dependências
+
+```bash
+npm install
 ```
-src/types/presentation.ts    # Interfaces e tipos
+
+### 2. Executar o Projeto Completo
+
+Para rodar tanto o frontend quanto o backend:
+
+```bash
+npm run dev:full
 ```
 
-### Armazenamento
-- **LocalStorage**: Slides salvos por setor
-- **Chave**: `presentation-{sectorId}`
-- **Formato**: JSON com metadados completos
+Ou executar separadamente:
 
-## Recursos Avançados
+```bash
+# Terminal 1 - Backend
+npm run server
 
-### Suporte a Vídeo
-- Upload direto de arquivos de vídeo
-- Controles nativos do navegador
-- Reprodução automática opcional
+# Terminal 2 - Frontend  
+npm run dev
+```
 
-### Responsividade
-- Design adaptável para desktop e mobile
-- Controles otimizados para touch
-- Layouts flexíveis
+### 3. Acessar a Aplicação
 
-### Acessibilidade
-- Navegação por teclado completa
-- Controles visuais claros
-- Feedback de estado
+- **Frontend**: http://localhost:5173
+- **Backend API**: http://localhost:3001
 
-## Próximos Passos
+## 📸 Funcionalidades do Sistema de Mídia
 
-### Para Completar a Integração
-1. Aplicar a mesma estrutura nas páginas restantes dos setores
-2. Adicionar mais templates de slides
-3. Implementar sincronização em nuvem (opcional)
+### Upload de Arquivos
+- Arraste e solte arquivos ou clique para selecionar
+- Suporte para imagens: JPEG, PNG, GIF, WebP
+- Suporte para vídeos: MP4, AVI, MOV, WebM
+- Limite de 500MB por arquivo
 
-### Melhorias Futuras
-- Transições animadas entre slides
-- Temas personalizáveis
-- Exportação para PDF/PowerPoint
-- Colaboração em tempo real
+### Biblioteca de Mídia
+- Visualização de todos os arquivos salvos
+- Estatísticas de armazenamento
+- Busca e filtros
+- Remoção de arquivos
 
-## Como Testar
+### Integração com Slides
+- Adicione mídia diretamente aos slides
+- Redimensione e posicione elementos
+- Controles de reprodução para vídeos
+- Efeitos e transparência
 
-1. **Desenvolvimento Local**:
-   ```bash
-   cd ProjetoBF2
-   npm install
-   npm run dev
-   ```
+## 🔧 Scripts Disponíveis
 
-2. **Build de Produção**:
-   ```bash
-   npm run build
-   npm run preview
-   ```
+- `npm run dev` - Executa apenas o frontend
+- `npm run server` - Executa apenas o backend
+- `npm run dev:full` - Executa frontend + backend
+- `npm run build` - Build de produção
+- `npm run preview` - Preview do build
 
-3. **Acesso às Funcionalidades**:
-   - Navegue para qualquer setor (ex: /soy)
-   - Clique em "Apresentação"
-   - Teste edição e visualização
+## 📦 Versionamento com Git
 
-## Status do Projeto
-✅ **Concluído**: Sistema base implementado e testado
-🔄 **Em Progresso**: Integração completa de todos os setores
-📋 **Próximo**: Deploy e testes finais com usuário
+O sistema está configurado para incluir a pasta `DBmidia/` no controle de versão:
+
+```bash
+git add .
+git commit -m "Adicionar mídia ao projeto"
+git push
+```
+
+**Importante**: A pasta `DBmidia/` NÃO está no `.gitignore`, então todos os arquivos de mídia serão versionados junto com o código.
+
+## 🚨 Solução de Problemas
+
+### Servidor Offline
+Se aparecer "Servidor Offline", execute:
+```bash
+npm run server
+```
+
+### Erro de Conexão
+Verifique se as portas 3001 (backend) e 5173 (frontend) estão livres.
+
+### Arquivos Não Aparecem
+1. Verifique se o servidor backend está rodando
+2. Verifique se a pasta `DBmidia/` existe
+3. Recarregue a página
+
+## 🔄 Migração de Dados Antigos
+
+O sistema detecta automaticamente dados antigos do IndexedDB/localStorage e sugere migração quando necessário.
+
+## 📱 Compatibilidade
+
+- ✅ Chrome/Chromium
+- ✅ Firefox
+- ✅ Safari
+- ✅ Edge
+- ✅ Mobile (responsivo)
+
+## 🎯 Próximos Passos
+
+- [ ] Compressão automática de imagens
+- [ ] Sincronização em nuvem (opcional)
+- [ ] Backup automático
+- [ ] Otimização de performance
+
+---
+
+**Desenvolvido para o Agricultural Insights Platform**
 
