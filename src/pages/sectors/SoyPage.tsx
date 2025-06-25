@@ -32,13 +32,13 @@ export const SoyPage: React.FC = () => {
         
         <div className="relative container mx-auto px-4 py-20">
           <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center group">
+          <div className="flex items-center group">
               <div className="relative">
                 <Droplets className="h-16 w-16 mr-6 text-white group-hover:scale-110 transition-transform duration-300" />
                 <div className="absolute -inset-2 bg-white opacity-20 rounded-full blur-md group-hover:opacity-30 transition-opacity"></div>
               </div>
               <div>
-                <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-white to-lime-200 bg-clip-text text-transparent">
+              <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-white to-lime-200 bg-clip-text text-transparent pb-3"> {/* Adicione pb-1 ou pb-2 */}
                   Manejo Digital
                 </h1>
                 <div className="h-1 w-32 bg-gradient-to-r from-lime-400 to-green-400 rounded-full mt-2"></div>
@@ -260,66 +260,7 @@ export const SoyPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Platform Overview Section */}
-        <div className="bg-white rounded-3xl shadow-xl p-12 mb-20 border border-gray-100">
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-2xl mb-6">
-              <BarChart3 className="h-10 w-10 text-white" />
-            </div>
-            <h2 className="text-4xl font-bold text-gray-800 mb-4">
-              Visão Geral da Plataforma
-            </h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-indigo-500 mx-auto rounded-full"></div>
-          </div>
-          
-          <div className="max-w-5xl mx-auto">
-            <p className="text-xl text-gray-700 mb-10 text-center leading-relaxed">
-              Acompanhe em tempo real a umidade do solo, previsões climáticas e recomendações de irrigação.
-            </p>
-            
-            <div className="relative">
-              <div className="h-96 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl overflow-hidden shadow-inner border-2 border-gray-200">
-                {/* TODO: Replace with actual 9.jpg image path */}
-                <img 
-                  src="/images/9.jpg" 
-                  alt="Dashboard da Plataforma Manejo Digital" 
-                  className="w-full h-full object-cover rounded-2xl hover:scale-105 transition-transform duration-500"
-                  onError={(e) => {
-                    // Fallback if image doesn't exist
-                    const target = e.currentTarget;
-                    target.style.display = 'none';
-                    const parent = target.parentElement!;
-                    parent.innerHTML = `
-                      <div class="flex flex-col items-center justify-center h-full text-gray-500">
-                        <div class="bg-white p-6 rounded-2xl shadow-lg mb-4">
-                          <svg class="h-16 w-16 text-blue-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                          </svg>
-                          <p class="text-xl font-bold text-gray-800">Dashboard da Plataforma</p>
-                          <p class="text-gray-600">Interface intuitiva para monitoramento</p>
-                        </div>
-                        <div class="grid grid-cols-3 gap-4 mt-6">
-                          <div class="bg-green-100 p-3 rounded-lg">
-                            <p class="text-sm font-medium text-green-800">Umidade do Solo</p>
-                          </div>
-                          <div class="bg-blue-100 p-3 rounded-lg">
-                            <p class="text-sm font-medium text-blue-800">Previsão Climática</p>
-                          </div>
-                          <div class="bg-purple-100 p-3 rounded-lg">
-                            <p class="text-sm font-medium text-purple-800">Recomendações</p>
-                          </div>
-                        </div>
-                      </div>
-                    `;
-                  }}
-                />
-              </div>
-              {/* Decorative elements */}
-              <div className="absolute -top-4 -right-4 w-8 h-8 bg-blue-400 rounded-full opacity-60 animate-bounce"></div>
-              <div className="absolute -bottom-4 -left-4 w-6 h-6 bg-indigo-400 rounded-full opacity-60 animate-pulse"></div>
-            </div>
-          </div>
-        </div>
+        
 
         {/* Mission, Vision, Values Section */}
         <div className="bg-gradient-to-br from-white to-gray-50 rounded-3xl shadow-xl p-12 mb-20 border border-gray-100">
