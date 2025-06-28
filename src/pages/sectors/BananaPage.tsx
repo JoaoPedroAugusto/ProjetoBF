@@ -34,7 +34,7 @@ export const BananaPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-orange-50">
       {/* Hero Section with Banner */}
-      <div className="relative bg-gradient-to-r from-yellow-500 to-orange-500 text-white">
+      <div className="relative h-96 bg-cover bg-center" style={{ backgroundImage: "url('/img/Banana.png')" }}>
         <div className="absolute inset-0 bg-black opacity-20"></div>
         <div className="relative container mx-auto px-4 py-16">
           <div className="flex items-center justify-between mb-6">

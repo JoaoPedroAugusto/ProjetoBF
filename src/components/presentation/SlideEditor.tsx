@@ -207,15 +207,29 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
 
   const loadMediaLibrary = async () => {
     try {
+      // Verificar se o servidor está rodando
+      const isServerRunning = await mediaStorage.checkServerStatus();
+      if (!isServerRunning) {
+        showAlert('Servidor Offline', 'O servidor de mídia não está rodando. Execute "npm run server" para iniciar o backend.');
+        return;
+      }
+
       const library = await mediaStorage.getMediaLibrary();
       setMediaLibrary(library);
     } catch (error) {
       console.error('Erro ao carregar biblioteca de mídia:', error);
+      showAlert('Erro', 'Erro ao carregar biblioteca de mídia. Verifique se o servidor backend está rodando.');
     }
   };
 
   const updateStorageStats = async () => {
     try {
+      // Verificar se o servidor está rodando
+      const isServerRunning = await mediaStorage.checkServerStatus();
+      if (!isServerRunning) {
+        return; // Não mostrar erro aqui, apenas não atualizar
+      }
+
       const stats = await mediaStorage.getStorageStats();
       setStorageStats(stats);
     } catch (error) {
