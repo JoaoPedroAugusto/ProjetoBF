@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Leaf, TrendingUp, MapPin, Presentation, Droplets, Sun, Thermometer, ShieldCheck, Cpu, Globe, CheckCircle, Cloud, Activity, Wifi, BarChart3, Zap, AlertTriangle, CloudRain, Wind, Gauge } from 'lucide-react';
 import { PresentationManager } from '../../components/presentation'; // Import PresentationManager
+import Dashboard from '../../components/dashboard_Manejo/src/components/Dashboard';
 
 export const SoyPage: React.FC = () => {
   const [showPresentation, setShowPresentation] = useState(false);
@@ -51,21 +52,19 @@ export const SoyPage: React.FC = () => {
   }
 
   if (showDashboard) {
-    return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="bg-white p-8 rounded-lg shadow-lg max-w-2xl">
-          <h2 className="text-2xl font-bold mb-4">Dashboard Inteligente</h2>
-          <p className="mb-4">O dashboard completo será carregado aqui.</p>
-          <button
-            onClick={() => setShowDashboard(false)}
-            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-          >
-            Fechar
-          </button>
-        </div>
-      </div>
-    );
-  }
+  return (
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center">
+      <Dashboard />
+      <button
+        onClick={() => setShowDashboard(false)}
+        className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 mt-4"
+      >
+        Fechar
+      </button>
+    </div>
+  );
+}
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-lime-50 text-gray-900 dark:text-gray-200">
